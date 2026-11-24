@@ -60,6 +60,7 @@ import { decodeGeoPackageGeometry, encodeGeoPackageGeometry, importColumnTypeFro
 import { oracleSdo2dWkbToDimensionalWkb } from "./oracle-gis-wkb.js";
 
 export { GisOperationError } from "@db-studio/gis";
+export { diagnoseSpatialIndex, type SpatialIndexDiagnostic } from "./spatial-index-diagnostic.js";
 export { OperationRegistry, type OperationHandle, type OperationType, type OperationRegistryOptions } from "./operation-handle.js";
 export { parseGisDriverCreationOptions } from "@db-studio/gis";
 export type { GdalOperationOptions, GisAttributePreview, GisCrsOptions, GisConversionOptions, GisDriverCreationOption, GisExportOptions, GisInputOptions, GisOperationReport, GisOutputFormatOptions, GisSpatialExtent } from "@db-studio/gis";

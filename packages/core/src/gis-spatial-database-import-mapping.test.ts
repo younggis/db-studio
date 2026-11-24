@@ -84,5 +84,5 @@ describe.each(["mysql", "mariadb", "sqlserver", "oracle"] as const)("GIS databas
     expect(batch!.columns).toContain("speed_value");
     const first = Object.fromEntries(batch!.columns.map((column, index) => [column, batch!.rows[0]?.[index]]));
     expect(first).toMatchObject({ feature_number: 17, display_name: "成都", speed_value: 42.5, service_time: "09:30:15" });
-  });
+  }, 30_000); // runs a real GDAL/OGR subprocess per engine
 });
