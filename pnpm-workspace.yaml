@@ -1,0 +1,8 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  cpu-features: true
+  electron: true
+  electron-winstaller: false
+  esbuild: false

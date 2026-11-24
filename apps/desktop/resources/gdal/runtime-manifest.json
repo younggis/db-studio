@@ -1,0 +1,1321 @@
+{
+  "platform": "win32-x64",
+  "sourceDistribution": "QGIS 3.44.8",
+  "gdalVersion": "3.12.2",
+  "executables": [
+    "ogrinfo.exe",
+    "ogr2ogr.exe",
+    "gdalinfo.exe"
+  ],
+  "systemDllsResolvedFromWindows": [
+    "advapi32.dll",
+    "bcrypt.dll",
+    "crypt32.dll",
+    "dnsapi.dll",
+    "iphlpapi.dll",
+    "kernel32.dll",
+    "normaliz.dll",
+    "odbc32.dll",
+    "ole32.dll",
+    "oleaut32.dll",
+    "secur32.dll",
+    "shell32.dll",
+    "shlwapi.dll",
+    "user32.dll",
+    "wldap32.dll",
+    "ws2_32.dll",
+    "xmllite.dll"
+  ],
+  "files": [
+    {
+      "path": "bin/archive.dll",
+      "size": 840192,
+      "sha256": "b281b62c093f3f14f32bf91a7c89798a2e2544f5197fc2b39b13f3173fcdda4b"
+    },
+    {
+      "path": "bin/arrow_acero.dll",
+      "size": 1284096,
+      "sha256": "385c0fc3cfbe892ea60d38f349efa232c1e52ccee0d65c8bb059847123c63db8"
+    },
+    {
+      "path": "bin/arrow_compute.dll",
+      "size": 9477632,
+      "sha256": "365bc7769ec6a8c4224de3d935cc13e8b72f2bf0296fbd13db0de9ae39f28f59"
+    },
+    {
+      "path": "bin/arrow_dataset.dll",
+      "size": 1371136,
+      "sha256": "5414d4cf7bff5c7b2116fa7298c5c4c644c254a979c18fdb8bd3dfa8df2aefed"
+    },
+    {
+      "path": "bin/arrow.dll",
+      "size": 11037696,
+      "sha256": "509d2fb32f0153e2fd7387681fd56362de65675afeb094f7d9a0bdc64fe539cf"
+    },
+    {
+      "path": "bin/blosc.dll",
+      "size": 69632,
+      "sha256": "87eab35d1380aba2914680e9ccef234018fd87f4f60aba10b3d49cd6672e0e3c"
+    },
+    {
+      "path": "bin/brotlicommon.dll",
+      "size": 137728,
+      "sha256": "4900d7e362cdb563d00dcbe1afcd3e41fb6a8957dd0edea06b9c87ca8642c5ff"
+    },
+    {
+      "path": "bin/brotlidec.dll",
+      "size": 51712,
+      "sha256": "9f8d0d678319f33c5f77b09d26a64a61e174603d4f14d9a1d5d85be37759f7e5"
+    },
+    {
+      "path": "bin/brotlienc.dll",
+      "size": 678912,
+      "sha256": "34cb2ee1f30ed370e37f66a25f4a7a162d57b51b0d8d5e9b9c2cc3e5b08c27d1"
+    },
+    {
+      "path": "bin/freetype.dll",
+      "size": 755200,
+      "sha256": "167bed360cd2c6a1d03e6211856fdd3a8997c3bac1be6d952337c2019c176bfc"
+    },
+    {
+      "path": "bin/freexl.dll",
+      "size": 307200,
+      "sha256": "f313ab8bf7f05fe02973e4877f51f325c085317f9188ef8f4251c3b19bb0764d"
+    },
+    {
+      "path": "bin/gdal312.dll",
+      "size": 43103232,
+      "sha256": "aa1fbfb9492fb6cb4d2c8ec609514247636363ec5ec30dfd6f126984cffaf354"
+    },
+    {
+      "path": "bin/gdalinfo.exe",
+      "size": 580096,
+      "sha256": "c16b1048a52576aca2a3d49515c13e1d99316c53150dafc063b84148ea1c6ed9"
+    },
+    {
+      "path": "bin/geos_c.dll",
+      "size": 502272,
+      "sha256": "d8719202ef8e7eaa9e64dbc0bddd5980493856975429123279d5eab4a27e890c"
+    },
+    {
+      "path": "bin/geos.dll",
+      "size": 2626048,
+      "sha256": "ab451b7eb7c4f713dc193b3cd4745d2e18bc5273a78c835347df67e2958cf929"
+    },
+    {
+      "path": "bin/hdf.dll",
+      "size": 460288,
+      "sha256": "7991f1d106b2c8dee79c9f24e9d9f718e2b27d082b5c7807c4174c0452d97349"
+    },
+    {
+      "path": "bin/hdf5_hl.dll",
+      "size": 120320,
+      "sha256": "f0f05f40026dd62e01351d82249887a6758026dc08d1678f4c50fe087f96de72"
+    },
+    {
+      "path": "bin/hdf5.dll",
+      "size": 3380736,
+      "sha256": "e70306113f88230049e916a0e3afefc78bbe6b76d4c1b27a3893889cdcf1552a"
+    },
+    {
+      "path": "bin/iconv-2.dll",
+      "size": 1024512,
+      "sha256": "b4780e9b249fd56688152419a667a5a9e9e0d2a307ac238c64f3e217db38242b"
+    },
+    {
+      "path": "bin/jpeg62.dll",
+      "size": 677376,
+      "sha256": "6abb88a08038a7d2365f1f03f41ef242b7ddec3e1983426b846b62e760fe172a"
+    },
+    {
+      "path": "bin/jxl_cms.dll",
+      "size": 148992,
+      "sha256": "820617fffca5099cc4987c6a9677879af0d78769ef26bf6b9398b8666d545f89"
+    },
+    {
+      "path": "bin/jxl_threads.dll",
+      "size": 25088,
+      "sha256": "bb4bb912f433d7272812e33f5ffe306ae8af91a3141c2996f6337de50ef65dd4"
+    },
+    {
+      "path": "bin/jxl.dll",
+      "size": 2745344,
+      "sha256": "65068348497abbe506f8bc535a771b1810667b670f4fb740d0d24f26416b5d11"
+    },
+    {
+      "path": "bin/lerc.dll",
+      "size": 524800,
+      "sha256": "46af972397b8fb3a8c3074bf18cedc864c50d71fe8a30ce27c2ba28824f4d3c5"
+    },
+    {
+      "path": "bin/libcrypto-3-x64.dll",
+      "size": 5232640,
+      "sha256": "d050eb324434b46d1bbceb86f5c726ee87df2acd6fb36940651100a6a164d6fe"
+    },
+    {
+      "path": "bin/libcurl.dll",
+      "size": 733184,
+      "sha256": "489e2c9ccab0fd27834c528cc87d2337c7dfcc1db74d7c99c0084df243ada6ad"
+    },
+    {
+      "path": "bin/libexpat.dll",
+      "size": 166400,
+      "sha256": "ca00a22697e9248858898d61fee2ad3a2bbca79804f928445c73d4b7c5f9e237"
+    },
+    {
+      "path": "bin/liblzma.dll",
+      "size": 185344,
+      "sha256": "601857e8037b1356d0dea881c6bf1d302bc483c4373bd311d15d430a5093acaa"
+    },
+    {
+      "path": "bin/libmysql.dll",
+      "size": 7334400,
+      "sha256": "89b1a2b87f846184d814bf28e8df70978ac36c10b933627467d65be47938d2a8"
+    },
+    {
+      "path": "bin/libpng16.dll",
+      "size": 201216,
+      "sha256": "5d47d702615ddc61541f7fa0acc90ad2bed5d3261ddb6e020c85d3359f603275"
+    },
+    {
+      "path": "bin/libpq.dll",
+      "size": 351232,
+      "sha256": "e0755439158c84af09865f28a1f4755d821b1b463269246371f5e4cd4c8a579f"
+    },
+    {
+      "path": "bin/libsharpyuv.dll",
+      "size": 26112,
+      "sha256": "285862407c65c24e770a6344e8067908053718732744949ce67b9683ce8d4656"
+    },
+    {
+      "path": "bin/libssl-3-x64.dll",
+      "size": 780800,
+      "sha256": "8b693c5f320b237f592c5c1c9cf75bdf3220ea01889956b902371a0f92be155c"
+    },
+    {
+      "path": "bin/libwebp.dll",
+      "size": 371712,
+      "sha256": "dfece94c7eb171df25cb34f50ecdb9e7699bdb7182af45f68bc4ed859264e8d2"
+    },
+    {
+      "path": "bin/libxml2.dll",
+      "size": 1362432,
+      "sha256": "28ed051e1dbf881d8ae4baedc0fdac0f2e3bc07a57c23d8e3bb932577f5862a4"
+    },
+    {
+      "path": "bin/lz4.dll",
+      "size": 120832,
+      "sha256": "247a77fae71e0dded66b1a381ba47b4db61ed51d98aee6d3ce1266b1fbaf289d"
+    },
+    {
+      "path": "bin/mfhdf.dll",
+      "size": 137216,
+      "sha256": "2a608adfebb2d706fa150cbdd036d1424aaf7e0f8728296e7356a16121fd0719"
+    },
+    {
+      "path": "bin/msvcp140.dll",
+      "size": 573008,
+      "sha256": "1e57a6df9e3742e31a1c6d9bff81ebeeae8a7de3b45a26e5079d5e1cce54cd98"
+    },
+    {
+      "path": "bin/netcdf.dll",
+      "size": 1178112,
+      "sha256": "bb90f52effebad8449c3e651880fd7bd93b29215d933e284ec5d4b5b72e6762f"
+    },
+    {
+      "path": "bin/ogr2ogr.exe",
+      "size": 863744,
+      "sha256": "87f3b6c5226df59aaa19a7a68477c0d2b772ff4a7d5f385748ee028a3ef5f86b"
+    },
+    {
+      "path": "bin/ogrinfo.exe",
+      "size": 860672,
+      "sha256": "a809904de0fca226587440df859ca238c527ff63de565481ea0a26e5c3f9ad45"
+    },
+    {
+      "path": "bin/openjp2.dll",
+      "size": 360960,
+      "sha256": "5294fea80d38dfa6363de34048728506916055c771f29701729b6a92fc7700a2"
+    },
+    {
+      "path": "bin/parquet.dll",
+      "size": 2693120,
+      "sha256": "2de467366f724d991870621353b27cc59fc14c205c923720f49c1f39356da6c3"
+    },
+    {
+      "path": "bin/poppler.dll",
+      "size": 3344384,
+      "sha256": "fc5f162889319e77d271a0115f146d58be0536fcba6f6ad67a62d3468c4d6ae0"
+    },
+    {
+      "path": "bin/proj_9.dll",
+      "size": 3613184,
+      "sha256": "adfdb141b8bde61991cea60647e1497b5b94ed2076a2a04bddac7ecb7e6dd630"
+    },
+    {
+      "path": "bin/spatialite.dll",
+      "size": 13570560,
+      "sha256": "c41767f81ae2adf707b46b589373454b9fef90c390b023cf5199e60ecaa264b8"
+    },
+    {
+      "path": "bin/sqlite3.dll",
+      "size": 2220544,
+      "sha256": "ac062519e1198bf681f9c5428a406a3cc6e0013f94062a15db9497fbe1c5f288"
+    },
+    {
+      "path": "bin/thriftmd.dll",
+      "size": 1216000,
+      "sha256": "ff52d64e9a72c433c743dd264bc9f7df5d89cefa8f4b967ed5272cdf8dcd86f8"
+    },
+    {
+      "path": "bin/tiff.dll",
+      "size": 503296,
+      "sha256": "233c1cf3cf695218e1b0e3f64d710cae7547c1a488341acd86b9c297ae6125f4"
+    },
+    {
+      "path": "bin/vcruntime140_1.dll",
+      "size": 49744,
+      "sha256": "6d3a6cde6fc4d3c79aabf785c04d2736a3e2fd9b0366c9b741f054a13ecd939e"
+    },
+    {
+      "path": "bin/vcruntime140.dll",
+      "size": 119376,
+      "sha256": "a06c9ea4f815dac75d2c99684d433fbfc782010fae887837a03f085a29a217e8"
+    },
+    {
+      "path": "bin/xerces-c_3_2.dll",
+      "size": 2791936,
+      "sha256": "817ad9e38cbb6e7f106b65c1427f7c01699113d40868d39ad371fce4dec8468d"
+    },
+    {
+      "path": "bin/zlib.dll",
+      "size": 89600,
+      "sha256": "de5a97fcb10060f04d6554b166d7acdbe778c2a53414ae88ee00e135ec273721"
+    },
+    {
+      "path": "bin/zstd.dll",
+      "size": 659968,
+      "sha256": "abb454a3aa95864a7dd19a25c7b501e773e56d5eb90973e9f10cbaa58b0b7690"
+    },
+    {
+      "path": "data/bag_template.xml",
+      "size": 9020,
+      "sha256": "daf7816f686c35b51ec66c90fc6aedbf12dbef97f28f9fae9731392f92afb733"
+    },
+    {
+      "path": "data/cubewerx_extra.wkt",
+      "size": 11977,
+      "sha256": "1cca3fa3e249f4cc7d1bf0ffb0a71a1a2afadd10afdf7ed0aa292dbc5e4f0768"
+    },
+    {
+      "path": "data/default.rsc",
+      "size": 463632,
+      "sha256": "9e1c9d7081d52775e750d4155d49255252b04ca81fef27cb2997675d3cd9626b"
+    },
+    {
+      "path": "data/ecw_cs.wkt",
+      "size": 364032,
+      "sha256": "d431893eb446b265d206eea8863dcdcce3b65c7c2a707daab58e89e583af033e"
+    },
+    {
+      "path": "data/eedaconf.json",
+      "size": 411,
+      "sha256": "03116848a7bacad105289c56f5d13fb59be264f1e3d3809e82745f4163fe1285"
+    },
+    {
+      "path": "data/epsg.wkt",
+      "size": 27,
+      "sha256": "e50895e9061aba6dd1588f06a088872aa562a8d98716588bc1a420189dcb254c"
+    },
+    {
+      "path": "data/esri_StatePlane_extra.wkt",
+      "size": 332546,
+      "sha256": "682df1b231cb6f1287685d4c64bf1b2611c0af43c30483473bbb366ce1bd8d33"
+    },
+    {
+      "path": "data/gdal_algorithm.schema.json",
+      "size": 7571,
+      "sha256": "819df8556b34c823d8d87a7cdaa0cb2fcc31658aa0d3cd70fd5dd7ae290bc22a"
+    },
+    {
+      "path": "data/gdalg.schema.json",
+      "size": 711,
+      "sha256": "6e938d02986cf9d87508efd11e73cbfc50c357da6e2638f5e953c5ed13904266"
+    },
+    {
+      "path": "data/gdalicon.png",
+      "size": 2021,
+      "sha256": "d90f50a8f74c325086c867bf006a92266c259a270d9166b2f41f586b67755729"
+    },
+    {
+      "path": "data/gdalinfo_output.schema.json",
+      "size": 9215,
+      "sha256": "726a4ce3f63b06e48650598f2af50930152c7cd8987343472885d6135d32f2b7"
+    },
+    {
+      "path": "data/GDALLogoBW.svg",
+      "size": 13022,
+      "sha256": "aac9dab33d479e0b832b8bd7c9e5510dcbef34a7c6cc9aea96bbe2aab5161c53"
+    },
+    {
+      "path": "data/GDALLogoColor.svg",
+      "size": 12305,
+      "sha256": "2c102a31c6e9116aa9b98787d8bf5cf648dbcc2b930aee653cd35df65ed118d0"
+    },
+    {
+      "path": "data/GDALLogoGS.svg",
+      "size": 12305,
+      "sha256": "1ae6e2d92e6b0439f3baee0cb55dad8b97abfb4fcc58c9189b23b63c818aeeca"
+    },
+    {
+      "path": "data/gdalmdiminfo_output.schema.json",
+      "size": 7449,
+      "sha256": "21394d93c7f6201c67b0be3ecbdad78f1f47081b3ff5cb789a5da9ab73c6108b"
+    },
+    {
+      "path": "data/gdaltileindex.xsd",
+      "size": 11000,
+      "sha256": "b012c77f59ec0cd2fdcfa9aa72e75eaf3dc4d996d74a045e25e74207fd817241"
+    },
+    {
+      "path": "data/gdalvrt.xsd",
+      "size": 41870,
+      "sha256": "5b067b235a1daa0b4715f8b4939e78cdebe326eaa1939d7cbc93463921bcb665"
+    },
+    {
+      "path": "data/gfs.xsd",
+      "size": 16469,
+      "sha256": "4c22f069538d543e8587de28e87c3e342943f3ed9eac1b33dd5f5d828ce61b92"
+    },
+    {
+      "path": "data/gml_registry.xml",
+      "size": 6643,
+      "sha256": "dab571b2a74e4b6de27a0fde62d34887141ca456d11caacdd75a166b2de5a743"
+    },
+    {
+      "path": "data/gml_registry.xsd",
+      "size": 6462,
+      "sha256": "ef90b625ec5812fddab313b8b1e387989ccfea09409c515f3139b6d63491297a"
+    },
+    {
+      "path": "data/gmlasconf.xml",
+      "size": 7432,
+      "sha256": "200939d2ef87de4df80e6ebf30908c60e9654e0bfc6b79c7ae4ea8a9447db76e"
+    },
+    {
+      "path": "data/gmlasconf.xsd",
+      "size": 47584,
+      "sha256": "b3817d574f8e3b737dca1ad9c8b020c9c8daaa2c60fcbec54e6e35b911ce6819"
+    },
+    {
+      "path": "data/grib2_center.csv",
+      "size": 4171,
+      "sha256": "f6ac1b6785bc9bcfba7591ba2c5b2471adeb0a0978d9b30b7f3834c9023f4233"
+    },
+    {
+      "path": "data/grib2_process.csv",
+      "size": 4926,
+      "sha256": "e6deb8aaa12ecf8df9fd541f2a3ea366b3e98bd19424f2fe5d2df657d5440a0f"
+    },
+    {
+      "path": "data/grib2_subcenter.csv",
+      "size": 2328,
+      "sha256": "1f53670bb3eeb074d46d2ddc1537e7c05c87b24aaf76024d029775143502945b"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_0.csv",
+      "size": 10363,
+      "sha256": "b29ddab138709efa293dfdb0fd59d664d82b540fa05809fc6b0700c695145f35"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_1.csv",
+      "size": 16886,
+      "sha256": "9bfdeb5cdfcfe9abb18ce71d1a660bb420bacaf7f94aa6d895b03232dbe68771"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_13.csv",
+      "size": 9596,
+      "sha256": "f2d6609fa4329bda9039b1155728e9e626e5b3a8f6a716b986de6e9e70f13a04"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_14.csv",
+      "size": 9551,
+      "sha256": "97666d1abd33dcb455591b0b338270de1bd6f260fdb4f3127b8985742685dd8b"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_15.csv",
+      "size": 9846,
+      "sha256": "ffe53233832a2c6fef2e3269d0ada70db6142f35ddbbb59bbef9e98ddce5db5c"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_16.csv",
+      "size": 9671,
+      "sha256": "54c7b3fe37f5bbb5a73dfc1dfb1fe4adc618c0a120133e9fa9323acae458f64e"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_17.csv",
+      "size": 9706,
+      "sha256": "2fbf01894019abf91e50bced6ab90d382a9b56829faff96789560cc577529da2"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_18.csv",
+      "size": 10369,
+      "sha256": "728531affc16fd8d6af47a2c00f6a99506b0d06475de96915454aee7958f1c50"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_19.csv",
+      "size": 12208,
+      "sha256": "6fe1ee145bed645a887f9283eb95c60fa31c5527012b7b55f0adff1ad4e53eb6"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_190.csv",
+      "size": 9507,
+      "sha256": "2f8b1eea14b4dd1ad9745479538a4cf0f36cba887f8e60db97cd06cec4192712"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_191.csv",
+      "size": 9787,
+      "sha256": "634fa2a5074727bf0ed2e7a8b17a59520c07fb86dd4cf662e80787c50eda2bdd"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_2.csv",
+      "size": 11460,
+      "sha256": "948cb6f41df750a4d0a5d2045edb3d1587f8fc8afb78226f0f2421757d92c21f"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_20.csv",
+      "size": 12360,
+      "sha256": "223726876117e2902008227bd44bd591b8db704ec13b8f3193f8ea364d2140c9"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_21.csv",
+      "size": 10389,
+      "sha256": "04b1a5878f847f7f93619f07babc7279648ca79eb22a235493d45819de88c6e9"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_22.csv",
+      "size": 9800,
+      "sha256": "ead0d4475aec4170564be112d378389b277f17242cd5e70b3d1cb322b4d384e3"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_3.csv",
+      "size": 10918,
+      "sha256": "dc7708ca78f8c4d0896621f27f4f401b5078a401afe1c6f3fe1cc5f193ec6c38"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_4.csv",
+      "size": 10666,
+      "sha256": "cce2288364ba77edbe82a7f24188977296a3b6e1b0456739cfee9d24b17211d2"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_5.csv",
+      "size": 10031,
+      "sha256": "78acdf00581815c32d16143869db6a638eaad5b54a8e0639e708cf22119b7316"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_6.csv",
+      "size": 11670,
+      "sha256": "a861ec195698924785a2f05034bd396376b2f7f79cac13fbf16a85b653ce4aaf"
+    },
+    {
+      "path": "data/grib2_table_4_2_0_7.csv",
+      "size": 10492,
+      "sha256": "6622965964bf01f2421a81561b75ec4a0c1a9d2426939f9474acef0320874f34"
+    },
+    {
+      "path": "data/grib2_table_4_2_1_0.csv",
+      "size": 10216,
+      "sha256": "209d330fb6486bbfb52be5549e13d6adf4c519fba196fa528114a1754fc4a70b"
+    },
+    {
+      "path": "data/grib2_table_4_2_1_1.csv",
+      "size": 9655,
+      "sha256": "dbaffb0960ace81ecf11d2314ea2f48c15ad90baee0f7ccbe29a493807070f42"
+    },
+    {
+      "path": "data/grib2_table_4_2_1_2.csv",
+      "size": 9979,
+      "sha256": "5e8f6d01236b13926ed3d4c71dca4f6469fe3f21f6bc8851293d78f9c48b24fb"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_0.csv",
+      "size": 12637,
+      "sha256": "6e9748d2eab0c88c8d9263e348df4faacf451563d3f07e9da3ae668ce4d7de1e"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_1.csv",
+      "size": 9625,
+      "sha256": "4a55618ccac29c47c3b747c7aa775bd7134b64caa91baa6d60ec45fcae3fd4db"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_191.csv",
+      "size": 9634,
+      "sha256": "e833aeb3d8c16ef87f9ede0e549ddc12a685ae2b8d1511d16ccafacf6aa7c30f"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_2.csv",
+      "size": 10221,
+      "sha256": "9048b0e1da5f07e1dc32c278d4c2cc32e3c7aa845d98b32dfb2be8c0a6c1dd2e"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_3.csv",
+      "size": 10055,
+      "sha256": "32dd11b8ab065c9b9b5f21d51469fb9af9f568e3fd15840f128fc1ea25bd04b8"
+    },
+    {
+      "path": "data/grib2_table_4_2_10_4.csv",
+      "size": 11327,
+      "sha256": "46126819726389d05e922e0a389b620446a28e20e4cda91572a643bb4d684c7e"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_0.csv",
+      "size": 13011,
+      "sha256": "ca125c5f693356c08e14423767fce7948efe632235600d23c25e6d34b95000b3"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_3.csv",
+      "size": 10651,
+      "sha256": "5f49292ac97bc4318703f25b1c60ae26ca694afcf056e034a872578cc34f018b"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_4.csv",
+      "size": 11589,
+      "sha256": "6a04e18d65f7dd398d726b17d0526ad84f00d87ed0a05ad8ae397777ee47d504"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_5.csv",
+      "size": 9513,
+      "sha256": "6f05605c553c1f1d80a67e4ccd85a331ee7a74d785026a5450dbfc17f98100e9"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_6.csv",
+      "size": 9687,
+      "sha256": "0792a4928a0e42b9ff2f41040ec6b914b9fef73f7d7830bc2eb49c3ce2a13a09"
+    },
+    {
+      "path": "data/grib2_table_4_2_2_7.csv",
+      "size": 9532,
+      "sha256": "2b82d85981229b76bb33a66f6587675359d6ec7376895c6a362660cee0644a8c"
+    },
+    {
+      "path": "data/grib2_table_4_2_20_0.csv",
+      "size": 9643,
+      "sha256": "e8f514eb30c2bd2c216d7a3ee8527fa8cd6a320a758b6a32444f0434204f4014"
+    },
+    {
+      "path": "data/grib2_table_4_2_20_1.csv",
+      "size": 9851,
+      "sha256": "0bdacf27fc1dbefc0c64e8e74ee7fb02322604fd2f179ce638259b25b92f9eac"
+    },
+    {
+      "path": "data/grib2_table_4_2_20_2.csv",
+      "size": 9506,
+      "sha256": "4c4687f58bebbc4ce5e412cfbd13560ca526141364c1624349dfb7a2686bc40e"
+    },
+    {
+      "path": "data/grib2_table_4_2_20_3.csv",
+      "size": 9787,
+      "sha256": "c57e8f9554fb73911d843ca04a941e3c6955004fa138f84bc286a644fb37a2b0"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_0.csv",
+      "size": 10951,
+      "sha256": "f8f4c0c0d7f5259e77e9256f794b8b96954b70ab1b115b4158506712faf0d87f"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_1.csv",
+      "size": 10740,
+      "sha256": "eb135b67ac68912b4d3ff4169b2521f04c1dea56b4eca4193dd149ccec513648"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_2.csv",
+      "size": 11535,
+      "sha256": "66acf15dd1e7f983c26ae1604db590b47d82b30721d961d695cb6595b6371695"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_3.csv",
+      "size": 9657,
+      "sha256": "890c9e58cecb7fffa1fc52803c144477b2c3c093ddcf892ab06f43a40d9506df"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_4.csv",
+      "size": 9744,
+      "sha256": "ac761a7c93cbcca9dd6dc88c609d694650f4ed4f3454bbb27ff2dcb0e2af8ee9"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_5.csv",
+      "size": 9703,
+      "sha256": "d59c6c508fd9bd919005ea09b461b59bf949be8cca3edae162ab46e61e247e6a"
+    },
+    {
+      "path": "data/grib2_table_4_2_3_6.csv",
+      "size": 9602,
+      "sha256": "073cd60e971cbf41f0873b754d29a85a7c9601f9823e994ba5c31d3918ebf7f1"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_0.csv",
+      "size": 9553,
+      "sha256": "2fbc41a1385f4238a8c26e3b401bf34c90dc4eb493e1454bf9057cc92c0c820a"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_1.csv",
+      "size": 9686,
+      "sha256": "2b56ac407becad7ff17a1e95de8777c06415892377362a2f63efbbc807fb992d"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_10.csv",
+      "size": 9701,
+      "sha256": "3c7c407ad87c018568709c94b55441db8fa6745f710932e76b2e4845c56b05d0"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_2.csv",
+      "size": 9660,
+      "sha256": "e10ab059821058fd73185bd0854a2677691aaf7dc3646859871d7ddd498149d9"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_3.csv",
+      "size": 9722,
+      "sha256": "65fd831e7f593b047f72939daf6a58d8332f8fd989adb72441fa8fd303c1f377"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_4.csv",
+      "size": 9690,
+      "sha256": "1bfa3573cf3cadede8999b85d2730c25074b0e7a4acf0b89abff482bcfe84d3b"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_5.csv",
+      "size": 9495,
+      "sha256": "d7358bab4e2f7ea3be88ba8178cfe4d2c4667d2db31235d441b1bc72190527de"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_6.csv",
+      "size": 9633,
+      "sha256": "886f07ef41814fc28b5ff90dd7878f72c330f61b8ed8f0caa1c0eaa1fa9408c2"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_7.csv",
+      "size": 9556,
+      "sha256": "9149b10daaafc21554b1ba9575ecd81d772fcddfad979a35056d9c39257345c1"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_8.csv",
+      "size": 9686,
+      "sha256": "1ed9d5c204c8f30c6f37fd00610fd56c156ea7c85182e5778430e264c45d8e2f"
+    },
+    {
+      "path": "data/grib2_table_4_2_4_9.csv",
+      "size": 9536,
+      "sha256": "4fd1d7c518b581a747d99838040d0833996a6707496bc55a45962d4b548b60d6"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_Canada.csv",
+      "size": 333,
+      "sha256": "9bc191c5bca974f42fbdd488037f074ee1cabba80efe2da50b8fd254c0dcbff5"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_HPC.csv",
+      "size": 87,
+      "sha256": "b89d17cbfcb8e9bf2ea92d17d8fd555293233db57ce6a87e3977bf487779a3fe"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_index.csv",
+      "size": 251,
+      "sha256": "88bed40dbb0d0df72b432792ba3214bfddcba29013b19a5dfcff677811a337b7"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_MRMS.csv",
+      "size": 15587,
+      "sha256": "1ffbbd585d7424d50b66bae0edf1380f4abeb451b4053dbc67cc37ba6a550e53"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_NCEP.csv",
+      "size": 27977,
+      "sha256": "deee78ecb6f0625ab5cc2e3c38520eaa9219987b686df914b5981df8ce93447b"
+    },
+    {
+      "path": "data/grib2_table_4_2_local_NDFD.csv",
+      "size": 2659,
+      "sha256": "f9ac7d3c6bcbdb448a9c1b66ff2794897895fcde82471d4f4ffd42fe228386c6"
+    },
+    {
+      "path": "data/grib2_table_4_5.csv",
+      "size": 10213,
+      "sha256": "5cddcee55da3821742dc66b44058765d9eb923a3dcc16f9c24d16a323ed0b11a"
+    },
+    {
+      "path": "data/grib2_table_versions.csv",
+      "size": 38,
+      "sha256": "913ce53273b1017c30c580523718a661a9a83a63a9824e562071e31389bd76fc"
+    },
+    {
+      "path": "data/gt_datum.csv",
+      "size": 15804,
+      "sha256": "dd0722e59b04d5da58409bceaec4436ec726306446bd6477ecbaa819c58f056d"
+    },
+    {
+      "path": "data/gt_ellips.csv",
+      "size": 1719,
+      "sha256": "c10676c298140d70248045e0c22d73e34c5cf85db359167374367d493ffa7cf4"
+    },
+    {
+      "path": "data/header.dxf",
+      "size": 6683,
+      "sha256": "6b1504db053a115fe0e245b08c7ddad107f7352ef93cb065a30110ac9b10688f"
+    },
+    {
+      "path": "data/inspire_cp_BasicPropertyUnit.gfs",
+      "size": 1740,
+      "sha256": "286d7b67c2fa3a5c321d439f83193bc06e0c6a0a6536838e79f151678ab5471c"
+    },
+    {
+      "path": "data/inspire_cp_CadastralBoundary.gfs",
+      "size": 1650,
+      "sha256": "55963c9317f76508f5b64729e6057a230f1f5fc9473851f1031f99c50b1aeb86"
+    },
+    {
+      "path": "data/inspire_cp_CadastralParcel.gfs",
+      "size": 2450,
+      "sha256": "6f14b49b1694abfe191f1d45c84c6e62678866e3941dc53f095e0ec6cfa30e24"
+    },
+    {
+      "path": "data/inspire_cp_CadastralZoning.gfs",
+      "size": 4812,
+      "sha256": "7b5182fbca4b8d9ea073e398d085037792cbd9444d1dc6b3596fa2ed030b4cfa"
+    },
+    {
+      "path": "data/jpfgdgml_AdmArea.gfs",
+      "size": 1640,
+      "sha256": "17c8bd25f28f7d6fe14d0c821dbf6baa69ea1e11f69c69557c016c985ebbf918"
+    },
+    {
+      "path": "data/jpfgdgml_AdmBdry.gfs",
+      "size": 1382,
+      "sha256": "5d8ef39888b78160d1e71216c7fc09a27ec881609fc1cf04c7ea15ca54024804"
+    },
+    {
+      "path": "data/jpfgdgml_AdmPt.gfs",
+      "size": 1633,
+      "sha256": "cef6ddf05a7f6735ca4980d6ada751b83ae48e9250b413f34f9148d5dc0e2899"
+    },
+    {
+      "path": "data/jpfgdgml_BldA.gfs",
+      "size": 1501,
+      "sha256": "014ef563b35e7961d1983078b6aefef83656010aac4d5fd744da498815542edd"
+    },
+    {
+      "path": "data/jpfgdgml_BldL.gfs",
+      "size": 1503,
+      "sha256": "f63eda54f4c92c3174235b1be98cd59682b5543e69015f9ee1a3f8929247f5b0"
+    },
+    {
+      "path": "data/jpfgdgml_Cntr.gfs",
+      "size": 1501,
+      "sha256": "c0e037fe697e0c714955718d16023c2a994e25fc0e98cf5a96e5935daa436093"
+    },
+    {
+      "path": "data/jpfgdgml_CommBdry.gfs",
+      "size": 1384,
+      "sha256": "74b1c1e7bf62091e9a21b34d8851da5ffc697622ecdf132a9bfceb459d64002c"
+    },
+    {
+      "path": "data/jpfgdgml_CommPt.gfs",
+      "size": 1635,
+      "sha256": "039dc82b8ad8a75b4ad5f01845c2e2fc0529442372695e82fe2293ab22e01150"
+    },
+    {
+      "path": "data/jpfgdgml_Cstline.gfs",
+      "size": 1509,
+      "sha256": "71bcd30fe0db762d900be9cef44a7c8bae04d82516de6f6746198a7a3eaaccb5"
+    },
+    {
+      "path": "data/jpfgdgml_ElevPt.gfs",
+      "size": 1500,
+      "sha256": "f4c45219e538115d6a019e90d89101b083574178f1b652e0ec91609c51f76c83"
+    },
+    {
+      "path": "data/jpfgdgml_GCP.gfs",
+      "size": 2523,
+      "sha256": "d5b4e640d79a4dc7b2bafbf6a78415042d7d28593768bc78b6006c19e650d064"
+    },
+    {
+      "path": "data/jpfgdgml_LeveeEdge.gfs",
+      "size": 1386,
+      "sha256": "9109ea50fa3225f8ea7ef76748007656f20df4533725dfabf5d08f38fa86899e"
+    },
+    {
+      "path": "data/jpfgdgml_RailCL.gfs",
+      "size": 1507,
+      "sha256": "59f70f7da031c91c07d2119847c716a3d2b391869e56374ca567428fcf0bd8b7"
+    },
+    {
+      "path": "data/jpfgdgml_RdArea.gfs",
+      "size": 1515,
+      "sha256": "95d2f09254e4b78faffbeb8839df44dd3e5ebc5c567940e0512e9c776eec80c4"
+    },
+    {
+      "path": "data/jpfgdgml_RdASL.gfs",
+      "size": 1251,
+      "sha256": "9a0fc53a66ee2a2bdc4e359c23155d7f7298ccabfdc749bb0d4188d541e714e9"
+    },
+    {
+      "path": "data/jpfgdgml_RdCompt.gfs",
+      "size": 1646,
+      "sha256": "7b5f405828ffe8613b011f2c504f16951519b8e903b1f3e056b9115b869968af"
+    },
+    {
+      "path": "data/jpfgdgml_RdEdg.gfs",
+      "size": 1642,
+      "sha256": "cc5ad650a75142969d9a44e8b6dae03719276c64dcfbced14ea4f3849f89b785"
+    },
+    {
+      "path": "data/jpfgdgml_RdMgtBdry.gfs",
+      "size": 1386,
+      "sha256": "89c49de530e38deaec512b619478cf6a775ef881690950042565917824a8d2f6"
+    },
+    {
+      "path": "data/jpfgdgml_RdSgmtA.gfs",
+      "size": 1644,
+      "sha256": "0eb42873db9b9127e413c40bd54be8abe11692562f48819e4f0f1cb89b59b995"
+    },
+    {
+      "path": "data/jpfgdgml_RvrMgtBdry.gfs",
+      "size": 1388,
+      "sha256": "de64860f4466d8f155f7b3b32038caf0c6f7740a26fee4000c7b482ac4b03633"
+    },
+    {
+      "path": "data/jpfgdgml_SBAPt.gfs",
+      "size": 1375,
+      "sha256": "e925e429672fe2c39fb1952d44f071de44a0d87f098122e12bf7f168784ec6e1"
+    },
+    {
+      "path": "data/jpfgdgml_SBArea.gfs",
+      "size": 1507,
+      "sha256": "7974755e986151e269a123aaa806e12a99f070369ab4861afd86a9df1c05245a"
+    },
+    {
+      "path": "data/jpfgdgml_SBBdry.gfs",
+      "size": 1253,
+      "sha256": "243c9248a0a15f7ab429eb5c0410bad81becaf9f6a8fc6aaeff2d69403ce332b"
+    },
+    {
+      "path": "data/jpfgdgml_WA.gfs",
+      "size": 1497,
+      "sha256": "1810a5b959ecf47b0d19032711be155da6188be70d808a3d2c360c0883559673"
+    },
+    {
+      "path": "data/jpfgdgml_WL.gfs",
+      "size": 1499,
+      "sha256": "27d04a20f449c98df4c068e0424f4262982e4a4dfc105e3bd3ac73608a8448a9"
+    },
+    {
+      "path": "data/jpfgdgml_WStrA.gfs",
+      "size": 1503,
+      "sha256": "ba5fa114ff40f6355c216e31292851e82d328d702af0710f52493ca0bc87dbb0"
+    },
+    {
+      "path": "data/jpfgdgml_WStrL.gfs",
+      "size": 1505,
+      "sha256": "ebfe2d9d185ec887fe737250c0a6314870388be23b39191fdc89f1ca01aac890"
+    },
+    {
+      "path": "data/leaflet_template.html",
+      "size": 3391,
+      "sha256": "fb2c1c1a5dc2376f029fa577abcbcba1ddfa57bd5e45051ad4d2010dc214c7e4"
+    },
+    {
+      "path": "data/LICENSE.TXT",
+      "size": 21841,
+      "sha256": "1dae3468e81d00da56e2936f74d33b8b3ad09d726437f19ce209a5dabea41f77"
+    },
+    {
+      "path": "data/MM_m_idofic.csv",
+      "size": 32388,
+      "sha256": "69c57dbb95e172744e3c236bbe732e97105a029678e7011df67ce31a85b29604"
+    },
+    {
+      "path": "data/netcdf_config.xsd",
+      "size": 6439,
+      "sha256": "4b76cc1221276e1ff54646d43ec477cb4027c1e68c0573f49363fe3f062f9389"
+    },
+    {
+      "path": "data/nitf_spec.xml",
+      "size": 198090,
+      "sha256": "0f8db84914b802ec7b73b85aa3ed1998427c49e65fea538432e8ce43c4a895be"
+    },
+    {
+      "path": "data/nitf_spec.xsd",
+      "size": 7741,
+      "sha256": "25e5d431d905316b94520d8f17432992b6b664cae1a38eef6794f405405b84e8"
+    },
+    {
+      "path": "data/ogr_fields_override.schema.json",
+      "size": 2863,
+      "sha256": "a5bfb0d97b5f61d6950c093889b761f2d917aee5f6b0fe872223efaa718c4337"
+    },
+    {
+      "path": "data/ogrinfo_output.schema.json",
+      "size": 12010,
+      "sha256": "9c4481efa589eb3910f144f63d4d03e108b201a9bc9a5ac2901c786bcdb45716"
+    },
+    {
+      "path": "data/ogrvrt.xsd",
+      "size": 24661,
+      "sha256": "179466c7ad003a5757dd9c5381189bb095495013b86217f168ca3e3f953129ed"
+    },
+    {
+      "path": "data/osmconf.ini",
+      "size": 5485,
+      "sha256": "a0e81bb3a04086b2440558774bf41ccd693191e5978d8f7f1be79a0441e5f198"
+    },
+    {
+      "path": "data/ozi_datum.csv",
+      "size": 8482,
+      "sha256": "e3678e3f144084aeb3488c2e1ae2247f07a841f501a89e7225ae9dd9bfb19868"
+    },
+    {
+      "path": "data/ozi_ellips.csv",
+      "size": 1349,
+      "sha256": "0c8363bfdedc1787d53463d705e2e1ce8fbdfcd49d1e3c778f5d4282980d75c6"
+    },
+    {
+      "path": "data/pci_datum.txt",
+      "size": 45587,
+      "sha256": "02f76b0a5451e06801ba4c4de661ac5c760065a65f42d06c9d359c3490ff9c81"
+    },
+    {
+      "path": "data/pci_ellips.txt",
+      "size": 6351,
+      "sha256": "5cf37efdea6a85406b544e6fd6286b8db5f23fa4cda38c6a1d5fbcb50432d7b6"
+    },
+    {
+      "path": "data/pdfcomposition.xsd",
+      "size": 33283,
+      "sha256": "e857da7dc84481784fb31bf4b6e56c68e6c92c979263fcf59f7b0f63c206456a"
+    },
+    {
+      "path": "data/pds4_template.xml",
+      "size": 3408,
+      "sha256": "bbccb2bf469dba2435eaabfd3de76107f17356a741d025a445244ecc04d27791"
+    },
+    {
+      "path": "data/plscenesconf.json",
+      "size": 41372,
+      "sha256": "55dfff5972723e8bb01d80f5defb989d3603b723c3ef03e4d71578a03710f867"
+    },
+    {
+      "path": "data/ruian_vf_ob_v1.gfs",
+      "size": 46735,
+      "sha256": "167bed33ecdae20aca5301d418bcc113fc315e3ff48983174a0f547f4d8ca41b"
+    },
+    {
+      "path": "data/ruian_vf_st_uvoh_v1.gfs",
+      "size": 2596,
+      "sha256": "0bc7126206e1897b89184f5a7813a839f711e265a453ef2116679986fdf4d9d3"
+    },
+    {
+      "path": "data/ruian_vf_st_v1.gfs",
+      "size": 45900,
+      "sha256": "d9214edc2d74694c198ad6ba232d7247eaca98d935145ede5f53ad07a908732e"
+    },
+    {
+      "path": "data/ruian_vf_v1.gfs",
+      "size": 67252,
+      "sha256": "4e5e3f8fa659824e83a371c30a63cbacccaf0dc23429967b72922f4cc87a1415"
+    },
+    {
+      "path": "data/s57agencies.csv",
+      "size": 13304,
+      "sha256": "212ef7211ed83c4382ba59e2ee4437a7331713b29833bee7645c0731cabc4270"
+    },
+    {
+      "path": "data/s57attributes.csv",
+      "size": 20001,
+      "sha256": "f4b6dfe2e82fea5e7ee433e13683292a3fa09bb66750428e4b1578f99a46d2de"
+    },
+    {
+      "path": "data/s57expectedinput.csv",
+      "size": 20885,
+      "sha256": "d5b09a5c4248f3eb0906a4e3ac68d7380c86f819d70deae3662e736f0597bc6c"
+    },
+    {
+      "path": "data/s57objectclasses.csv",
+      "size": 53425,
+      "sha256": "06acd7c27d8b9cc0e02db9136aff60c9c95cfad2f5c0cbbd9cdf8aa4d07d8716"
+    },
+    {
+      "path": "data/seed_2d.dgn",
+      "size": 9216,
+      "sha256": "dd8465f18569d9289809e9e0962115d365d0a56de021393952a5e7a0a20b527c"
+    },
+    {
+      "path": "data/seed_3d.dgn",
+      "size": 2048,
+      "sha256": "97c2f00ee6ea96873b7d16e5e898b4850e3d35448299d7d9d37e7d1792b56896"
+    },
+    {
+      "path": "data/stateplane.csv",
+      "size": 10360,
+      "sha256": "30c6210872b0a4c10d40739a8cb6beda630a7ef3eb4cb07a7128e26e8e83cbe3"
+    },
+    {
+      "path": "data/template_tiles.mapml",
+      "size": 2103,
+      "sha256": "9529fbcf05731ff078f8da34acea905b0867644b79f8d53f886c602af4d38ecf"
+    },
+    {
+      "path": "data/tms_LINZAntarticaMapTileGrid.json",
+      "size": 4115,
+      "sha256": "42327ca8964f95ce7e01f34fbc32780250a4a9524e4b2d7883b4f7eec512e5a0"
+    },
+    {
+      "path": "data/tms_MapML_APSTILE.json",
+      "size": 6273,
+      "sha256": "0a8d75f5f4689775e5be9e93bfc3b27ce3ebf282f277e84240e5ef2bb297e4a3"
+    },
+    {
+      "path": "data/tms_MapML_CBMTILE.json",
+      "size": 7792,
+      "sha256": "b5969c71b757b5c89a88ec8e9044968424f5946b625ed4f07d2be098dc26d780"
+    },
+    {
+      "path": "data/tms_NZTM2000.json",
+      "size": 5265,
+      "sha256": "8ab3317be77f1fdcf36a0af7152e1bb0965271f7be5cbbc43267716a725839ea"
+    },
+    {
+      "path": "data/trailer.dxf",
+      "size": 2275,
+      "sha256": "506baf0c593d7a8ff24fbcd783887292bd6d3c8d5054729e3bf38b9465d119fc"
+    },
+    {
+      "path": "data/vdv452.xml",
+      "size": 24765,
+      "sha256": "133ca409195aedb32cd9c845e1f10240c00106dad3221aee0100228d0ebecb50"
+    },
+    {
+      "path": "data/vdv452.xsd",
+      "size": 1803,
+      "sha256": "ffc93318746e8803251f36abcad1e1fbfb70898ca72071c333869663f1ac05af"
+    },
+    {
+      "path": "data/vicar.json",
+      "size": 3610,
+      "sha256": "7924ad101da757cf41091ad4a9e734dde1d23543753f72c2eede11c9cd7d02c8"
+    },
+    {
+      "path": "licenses/GDAL-LICENSE.TXT",
+      "size": 21841,
+      "sha256": "1dae3468e81d00da56e2936f74d33b8b3ad09d726437f19ce209a5dabea41f77"
+    },
+    {
+      "path": "licenses/osgeo4w/arrow-cpp-23.0.1-2.txt",
+      "size": 113501,
+      "sha256": "23fc45dce1769d9ddf4aac4d6cdaf3f7f0d14fcc4d930dd0d4afbefa2ea3322a"
+    },
+    {
+      "path": "licenses/osgeo4w/brotli-1.2.0-1.txt",
+      "size": 1084,
+      "sha256": "3d180008e36922a4e8daec11c34c7af264fed5962d07924aea928c38e8663c94"
+    },
+    {
+      "path": "licenses/osgeo4w/c-blosc-1.21.6-3.txt",
+      "size": 1644,
+      "sha256": "22623131a9b9f6a86a4dc6b9bccbb1d2aeb390df86bca00fc727af24735c2fae"
+    },
+    {
+      "path": "licenses/osgeo4w/curl-8.18.0-2.txt",
+      "size": 1088,
+      "sha256": "e18f1989333b70044b2adfb7dc2f905d0119dbdcac3bc9f4bc9d540e3a29de5b"
+    },
+    {
+      "path": "licenses/osgeo4w/expat-2.7.3-1.txt",
+      "size": 1144,
+      "sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87"
+    },
+    {
+      "path": "licenses/osgeo4w/freetype-2.13.3-3.txt",
+      "size": 2074,
+      "sha256": "2e3bbb7d7c5c396368dd0853a790ec29ce5b8647163dde42a0493fb0d6556b2b"
+    },
+    {
+      "path": "licenses/osgeo4w/freexl-2.0.0-4.txt",
+      "size": 25872,
+      "sha256": "122e48ceeb04ac94ee94acd4e6841059096e14d89f258243ff50165b41d5e369"
+    },
+    {
+      "path": "licenses/osgeo4w/gdal312-runtime-3.12.2-1.txt",
+      "size": 21841,
+      "sha256": "1dae3468e81d00da56e2936f74d33b8b3ad09d726437f19ce209a5dabea41f77"
+    },
+    {
+      "path": "licenses/osgeo4w/geos-3.14.1-1.txt",
+      "size": 26530,
+      "sha256": "dc626520dcd53a22f727af3ee42c770e56c97a64fe3adb063799d8ab032fe551"
+    },
+    {
+      "path": "licenses/osgeo4w/hdf4-4.3.0-2.txt",
+      "size": 6776,
+      "sha256": "44592152fb1918f32f3c70782a1152d44a2a54b2fdc8113ebb0d546796d52ac4"
+    },
+    {
+      "path": "licenses/osgeo4w/hdf5-1.14.6-1.txt",
+      "size": 5517,
+      "sha256": "587b532c4c27b64ecff3192d6189e149231934a00c753a401d4559231af7f7a7"
+    },
+    {
+      "path": "licenses/osgeo4w/lerc-4.0.0-1.txt",
+      "size": 9198,
+      "sha256": "77a8b761727c75e2167b15bfdf61b2c0bcf8792271228bebe80779106ad00671"
+    },
+    {
+      "path": "licenses/osgeo4w/libarchive-3.8.1-1.txt",
+      "size": 3089,
+      "sha256": "30e556b3959e3985d66efefec5eaac51d4995053caa1d3cffe6eb916f146f229"
+    },
+    {
+      "path": "licenses/osgeo4w/libiconv-1.17-1.txt",
+      "size": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "path": "licenses/osgeo4w/libjpeg-turbo-3.0.4-1.txt",
+      "size": 5620,
+      "sha256": "e548c96c0c09397c94b5c5531836c02ff2c403f1f2b130cad8e3ec9439b5a7cc"
+    },
+    {
+      "path": "licenses/osgeo4w/libjxl-0.11.0-2.txt",
+      "size": 1508,
+      "sha256": "8405932022a556380c2d8c272eff154a923feb197233f348ce5f7334fb0a5ede"
+    },
+    {
+      "path": "licenses/osgeo4w/libmysql-8.2.0-2.txt",
+      "size": 279351,
+      "sha256": "04abb092768b038563928822473bc27f0b7df0faaca53d32bfabd2c2922e32f6"
+    },
+    {
+      "path": "licenses/osgeo4w/libpng-1.6.43-1.txt",
+      "size": 5345,
+      "sha256": "7317e078e2d3b5d7ba5a6159e650945153262b44b76f6700f8e9edb261c5143e"
+    },
+    {
+      "path": "licenses/osgeo4w/libpq-17.3-1.txt",
+      "size": 1192,
+      "sha256": "e3822c4797fadcab31a3fc73f75c28ac20c73d72b565da91e9974cf9398ef4d2"
+    },
+    {
+      "path": "licenses/osgeo4w/libspatialite-5.1.0-9.txt",
+      "size": 26152,
+      "sha256": "b81965482914858383484d7e63b5de1d0c4647fa7f527e78d4499e4a7b76aab5"
+    },
+    {
+      "path": "licenses/osgeo4w/libtiff-4.7.1-1.txt",
+      "size": 2416,
+      "sha256": "0e27c2382d7b8147972bbb746e04059a1152c8d0fda9d03ef1399d1a433c4ade"
+    },
+    {
+      "path": "licenses/osgeo4w/libwebp-1.4.0-1.txt",
+      "size": 1496,
+      "sha256": "5aec868f669e384a22372a4e8a1a6cd7d44c64cd451f960ca69cc170d1e13acf"
+    },
+    {
+      "path": "licenses/osgeo4w/libxml2-2.12.5-1.txt",
+      "size": 1289,
+      "sha256": "7fb0a66f3989f9bd5c7e5438a3de02cd4a7a47dde0aea2f7ea2ba2ff454ee6a4"
+    },
+    {
+      "path": "licenses/osgeo4w/lz4-1.9.4-1.txt",
+      "size": 635,
+      "sha256": "2949fcf758d3c9bcb05f8393ca42cadfa15be04eb4ae4b3327c4ad7957511e1b"
+    },
+    {
+      "path": "licenses/osgeo4w/netcdf-4.9.2-7.txt",
+      "size": 1452,
+      "sha256": "58b3a925e82191209929dbf47891f9d661e09d8f8ee753ca90bd3f6a1262ecb7"
+    },
+    {
+      "path": "licenses/osgeo4w/openjpeg-2.5.4-1.txt",
+      "size": 2112,
+      "sha256": "a6af136f3e15038a666b61f376612a07d9a4e48cb7c01adbf3e33b3f14ab49b6"
+    },
+    {
+      "path": "licenses/osgeo4w/openssl-3.0.19-1.txt",
+      "size": 10175,
+      "sha256": "7d5450cb2d142651b8afa315b5f238efc805dad827d91ba367d8516bc9d49e7a"
+    },
+    {
+      "path": "licenses/osgeo4w/poppler-26.01.0-2.txt",
+      "size": 17987,
+      "sha256": "ab15fd526bd8dd18a9e77ebc139656bf4d33e97fc7238cd11bf60e2b9b8666c6"
+    },
+    {
+      "path": "licenses/osgeo4w/proj9-runtime-9.8.0-1.txt",
+      "size": 1784,
+      "sha256": "6a8f30793e877d32e3f88b972f0970a051a3b5a26cd057d3993cb51e21c43319"
+    },
+    {
+      "path": "licenses/osgeo4w/sqlite3-3.50.4-1.txt",
+      "size": 1499,
+      "sha256": "fba0e157b801e86da8c3458b955f5bd9131f18ecf9f7f966f6b673824944324d"
+    },
+    {
+      "path": "licenses/osgeo4w/thrift-0.21.0-2.txt",
+      "size": 15472,
+      "sha256": "d315e6cdedc07c478de6992027bfb66f220886c6216fd7e9885ced30c3703646"
+    },
+    {
+      "path": "licenses/osgeo4w/xerces-c-3.2.5-1.txt",
+      "size": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/osgeo4w/xz-5.4.7-1.txt",
+      "size": 3330,
+      "sha256": "72d7ef9c98be319fd34ce88b45203b36d5936f9c49e82bf3198ffee5e0c7d87e"
+    },
+    {
+      "path": "licenses/osgeo4w/zlib-1.3.1-1.txt",
+      "size": 994,
+      "sha256": "2b8367b882c194d38ef6d56174cfa3d5852fbdbee25878729534a3512422e022"
+    },
+    {
+      "path": "licenses/osgeo4w/zstd-1.5.7-1.txt",
+      "size": 18091,
+      "sha256": "f9c375a1be4a41f7b70301dd83c91cb89e41567478859b77eef375a52d782505"
+    },
+    {
+      "path": "licenses/PROJ-COPYING",
+      "size": 1790,
+      "sha256": "d19b57775c429de36739c15257fc4f2163e5006fed246a4a6b25964de9588d59"
+    },
+    {
+      "path": "proj/copyright_and_licenses.csv",
+      "size": 38815,
+      "sha256": "7d1e7cf2f5a3642f243def0d678951c66507b9116c8b4a2d7333c1484fb2baf5"
+    },
+    {
+      "path": "proj/nad.lst",
+      "size": 6385,
+      "sha256": "1a28ed872fd1550f5bf7b5a5e5bfc5e7500b5f94c9745b84a1d156b32039928c"
+    },
+    {
+      "path": "proj/proj.db",
+      "size": 10412032,
+      "sha256": "b7ef5f435e1af59c026e5ab9cf8ddaf9b10f646234718808f0b59630afe94481"
+    },
+    {
+      "path": "proj/proj.ini",
+      "size": 2435,
+      "sha256": "b95ebf0d007339244483d65d571cd887a51806e2bd2c1ab7f47b897d25320d65"
+    },
+    {
+      "path": "proj/projjson.schema.json",
+      "size": 38418,
+      "sha256": "67f090556bae996522edad482597c0f9e1b919ca4c9288ac9f8f7cd4180f49b6"
+    },
+    {
+      "path": "proj/README.DATA",
+      "size": 5159,
+      "sha256": "e0995ff3baab1e050e0ca37e485710f3e8cf961ecfe08b510b99cbc2a8b34a55"
+    }
+  ]
+}

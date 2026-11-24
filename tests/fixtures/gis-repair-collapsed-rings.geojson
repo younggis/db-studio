@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "name": "gis_repair_collapsed_rings",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "label": "hole-and-spike" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [[0, 0], [4, 0], [4, 4], [2, 4], [2, 6], [2, 4], [0, 4], [0, 0]],
+          [[1, 1], [1, 2], [2, 2], [2, 1], [1, 1]]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "label": "collapsed-shell" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[10, 0], [12, 0], [14, 0], [12, 0], [10, 0]]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "name": "points",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:EPSG::4326"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "名称": "甲"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [1.25, 2.5]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "名称": "乙"
+      },
+      "geometry": null
+    }
+  ]
+}

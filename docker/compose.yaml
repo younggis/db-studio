@@ -1,0 +1,156 @@
+name: db-studio
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    profiles: [postgres]
+    container_name: db-studio-postgres-test
+    environment:
+      POSTGRES_USER: ${DBSTUDIO_PG_USER:-dbstudio}
+      POSTGRES_PASSWORD: ${DBSTUDIO_PG_PASSWORD:?Set DBSTUDIO_PG_PASSWORD in docker/.env}
+      POSTGRES_DB: ${DBSTUDIO_PG_DATABASE:-dbstudio_test}
+    ports:
+      - "127.0.0.1:${DBSTUDIO_POSTGRES_PORT:-25433}:5432"
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: "no"
+
+  postgis:
+    image: postgis/postgis:16-3.6
+    profiles: [postgis]
+    container_name: db-studio-postgis-test
+    environment:
+      POSTGRES_USER: ${DBSTUDIO_PG_USER:-dbstudio}
+      POSTGRES_PASSWORD: ${DBSTUDIO_PG_PASSWORD:?Set DBSTUDIO_PG_PASSWORD in docker/.env}
+      POSTGRES_DB: ${DBSTUDIO_PG_DATABASE:-dbstudio_test}
+    ports:
+      - "127.0.0.1:${DBSTUDIO_POSTGIS_PORT:-25432}:5432"
+    volumes:
+      - postgis-test-data:/var/lib/postgresql/data
+      - ./init/001-enable-postgis.sql:/docker-entrypoint-initdb.d/20-db-studio-postgis.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: "no"
+
+  mysql:
+    image: mysql:8.4
+    profiles: [mysql]
+    container_name: db-studio-mysql-test
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in docker/.env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-dbstudio_test}
+      MYSQL_USER: ${MYSQL_USER:-dbstudio}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in docker/.env}
+    ports:
+      - "127.0.0.1:${MYSQL_PORT:-23306}:3306"
+    volumes:
+      - mysql-test-data:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, "mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 18
+    restart: "no"
+
+  mariadb:
+    image: mariadb:11.4
+    profiles: [mariadb]
+    container_name: db-studio-mariadb-test
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?Set MARIADB_ROOT_PASSWORD in docker/.env}
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-dbstudio_test}
+      MARIADB_USER: ${MARIADB_USER:-dbstudio}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?Set MARIADB_PASSWORD in docker/.env}
+    ports:
+      - "127.0.0.1:${MARIADB_PORT:-23307}:3306"
+    volumes:
+      - mariadb-test-data:/var/lib/mysql
+    healthcheck:
+      test: [CMD-SHELL, "healthcheck.sh --connect --innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 18
+    restart: "no"
+
+  mongodb:
+    image: mongo:7
+    profiles: [mongodb]
+    container_name: db-studio-mongodb-test
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USER:-dbstudio}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD:?Set MONGODB_ROOT_PASSWORD in docker/.env}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE:-dbstudio_test}
+    ports:
+      - "127.0.0.1:${MONGODB_PORT:-27018}:27017"
+    volumes:
+      - mongodb-test-data:/data/db
+    healthcheck:
+      test: [CMD-SHELL, "mongosh --quiet -u \"$${MONGO_INITDB_ROOT_USERNAME}\" -p \"$${MONGO_INITDB_ROOT_PASSWORD}\" --authenticationDatabase admin --eval \"db.adminCommand({ping: 1}).ok\""]
+      interval: 5s
+      timeout: 3s
+      retries: 18
+    restart: "no"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    profiles: [sqlserver]
+    container_name: db-studio-sqlserver-test
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:?Set SQLSERVER_SA_PASSWORD in docker/.env}
+    ports:
+      - "127.0.0.1:${SQLSERVER_PORT:-21433}:1433"
+    volumes:
+      - sqlserver-test-data:/var/opt/mssql
+    healthcheck:
+      test: [CMD-SHELL, "bash -c 'echo > /dev/tcp/127.0.0.1/1433'"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 60s
+    restart: "no"
+
+  oracle:
+    image: container-registry.oracle.com/database/free:latest-lite
+    profiles: [oracle]
+    container_name: db-studio-oracle-test
+    environment:
+      ORACLE_PWD: ${ORACLE_PASSWORD:-}
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "127.0.0.1:${ORACLE_PORT:-21521}:1521"
+    volumes:
+      - oracle-test-data:/opt/oracle/oradata
+    mem_limit: 6g
+    healthcheck:
+      test: [CMD-SHELL, "bash -c 'echo > /dev/tcp/127.0.0.1/1521'"]
+      interval: 10s
+      timeout: 3s
+      retries: 45
+      start_period: 5m
+    restart: "no"
+
+volumes:
+  postgres-test-data:
+    name: db-studio-postgres-test-data
+  postgis-test-data:
+    name: db-studio-postgis-test-data
+  mysql-test-data:
+    name: db-studio-mysql-test-data
+  mariadb-test-data:
+    name: db-studio-mariadb-test-data
+  mongodb-test-data:
+    name: db-studio-mongodb-test-data
+  sqlserver-test-data:
+    name: db-studio-sqlserver-test-data
+  oracle-test-data:
+    name: db-studio-oracle-test-data

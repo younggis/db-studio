@@ -1,0 +1,19 @@
+{
+  "type": "FeatureCollection",
+  "name": "gis_geometry_coverage",
+  "crs": {
+    "type": "name",
+    "properties": { "name": "urn:ogc:def:crs:EPSG::4326" }
+  },
+  "features": [
+    { "type": "Feature", "properties": { "source_code": 1, "kind": "Point", "名称": "点" }, "geometry": { "type": "Point", "coordinates": [0, 0] } },
+    { "type": "Feature", "properties": { "source_code": 2, "kind": "MultiPoint", "名称": "多点" }, "geometry": { "type": "MultiPoint", "coordinates": [[1, 1], [2, 2]] } },
+    { "type": "Feature", "properties": { "source_code": 3, "kind": "LineString", "名称": "线" }, "geometry": { "type": "LineString", "coordinates": [[0, 0], [1, 1]] } },
+    { "type": "Feature", "properties": { "source_code": 4, "kind": "MultiLineString", "名称": "多线" }, "geometry": { "type": "MultiLineString", "coordinates": [[[0, 1], [1, 2]], [[2, 3], [3, 4]]] } },
+    { "type": "Feature", "properties": { "source_code": 5, "kind": "Polygon", "名称": "面" }, "geometry": { "type": "Polygon", "coordinates": [[[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]]] } },
+    { "type": "Feature", "properties": { "source_code": 6, "kind": "MultiPolygon", "名称": "多面" }, "geometry": { "type": "MultiPolygon", "coordinates": [[[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]], [[[2, 2], [3, 2], [3, 3], [2, 3], [2, 2]]]] } },
+    { "type": "Feature", "properties": { "source_code": 7, "kind": "GeometryCollection", "名称": "集合" }, "geometry": { "type": "GeometryCollection", "geometries": [{ "type": "Point", "coordinates": [4, 4] }, { "type": "LineString", "coordinates": [[4, 4], [5, 5]] }] } },
+    { "type": "Feature", "properties": { "source_code": 8, "kind": "InvalidPolygon", "名称": "无效面" }, "geometry": { "type": "Polygon", "coordinates": [[[0, 0], [2, 2], [0, 2], [2, 0], [0, 0]]] } },
+    { "type": "Feature", "properties": { "source_code": 9, "kind": "NullGeometry", "名称": "空几何" }, "geometry": null }
+  ]
+}

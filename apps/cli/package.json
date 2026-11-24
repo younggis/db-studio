@@ -1,0 +1,21 @@
+{
+  "name": "@db-studio/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "dbstudio": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --dir src",
+    "cli": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@db-studio/ai": "workspace:*",
+    "@db-studio/core": "workspace:*",
+    "@db-studio/shared": "workspace:*",
+    "commander": "^15.0.0"
+  }
+}

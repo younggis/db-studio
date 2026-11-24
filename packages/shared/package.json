@@ -1,0 +1,32 @@
+{
+  "name": "@db-studio/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./format": {
+      "types": "./dist/format.d.ts",
+      "import": "./dist/format.js"
+    },
+    "./query-history": {
+      "types": "./dist/query-history.d.ts",
+      "import": "./dist/query-history.js"
+    },
+    "./schema-table-key": {
+      "types": "./dist/schema-table-key.d.ts",
+      "import": "./dist/schema-table-key.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --dir src"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

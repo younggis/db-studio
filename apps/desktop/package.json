@@ -1,0 +1,120 @@
+{
+  "name": "@db-studio/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "author": {
+    "name": "DB Studio"
+  },
+  "type": "module",
+  "main": "dist/electron/main.js",
+  "scripts": {
+    "dev": "pnpm run build:preload && concurrently -k \"vite --host 127.0.0.1\" \"tsc -p tsconfig.electron.json --watch\" \"pnpm run watch:preload\" \"wait-on tcp:127.0.0.1:5173 dist/electron/main.js dist/electron/preload.cjs && cross-env VITE_DEV_SERVER_URL=http://127.0.0.1:5173 electron .\"",
+    "build:preload": "pnpm exec esbuild electron/preload.cjs --bundle --platform=node --format=cjs --external:electron --outfile=dist/electron/preload.cjs",
+    "watch:preload": "pnpm exec esbuild electron/preload.cjs --bundle --platform=node --format=cjs --external:electron --outfile=dist/electron/preload.cjs --watch",
+    "build": "pnpm run build:preload && tsc -p tsconfig.electron.json && vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.electron.json --noEmit",
+    "test": "pnpm run build:preload && vitest run --dir src",
+    "start": "electron .",
+    "dist:win": "pnpm build && electron-builder --win nsis",
+    "dist:win:static-gdal": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal.cjs",
+    "dist:win:static-gdal-584": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584.cjs",
+    "dist:win:static-gdal-584-connection-recovery-20261111": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584-connection-recovery-20261111.cjs",
+    "dist:win:static-gdal-584-current-20261111": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584-current-20261111.cjs",
+    "dist:win:static-gdal-584-mixed-dim-20261111": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584-mixed-dim-20261111.cjs",
+    "dist:win:static-gdal-584-csv-20261109": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584-csv-20261109.cjs",
+    "dist:win:static-gdal-584-csv-fields-20261109": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-584-csv-fields-20261109.cjs",
+    "dist:win:static-gdal-geometry-validation-20261111": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geometry-validation-20261111.cjs",
+    "dist:win:static-gdal-geometry-count-csv-20261112": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geometry-count-csv-20261112.cjs",
+    "dist:win:static-gdal-geos-nsis312-20261113": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geos-nsis312-20261113.cjs",
+    "dist:win:static-gdal-geos-nsis-sandbox-acl-current-20261114": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geos-nsis-sandbox-acl-current-20261114.cjs",
+    "dist:win:static-gdal-geos-nsis-oracle-spatial-index-20261122": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geos-nsis-oracle-spatial-index-20261122.cjs",
+    "dist:win:static-gdal-geos-msi-20261113": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-20261113.cjs",
+    "dist:win:static-gdal-geos-msi-manufacturer-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-manufacturer-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-hardened-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-hardened-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-sandbox-acl-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-sandbox-acl-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-sandbox-acl-ai-lifecycle-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-sandbox-acl-ai-lifecycle-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-sandbox-acl-ai-provider-timeout-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-sandbox-acl-ai-provider-timeout-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-sandbox-acl-ai-provider-timeout-pathfix-20261114": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-sandbox-acl-ai-provider-timeout-pathfix-20261114.cjs",
+    "dist:win:static-gdal-geos-nsis-sandbox-acl-20261114": "pnpm build && electron-builder --win nsis --config electron-builder.static-gdal-geos-nsis-sandbox-acl-20261114.cjs",
+    "dist:win:static-gdal-geos-msi-trimmed-20261113": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-trimmed-20261113.cjs",
+    "dist:win:static-gdal-geos-msi-ai-sql-preserve-20261116": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-ai-sql-preserve-20261116.cjs",
+    "dist:win:static-gdal-geos-msi-postgis-mvt-20261117": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-postgis-mvt-20261117.cjs",
+    "dist:win:static-gdal-geos-msi-lazy-connection-form-20261117": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-lazy-connection-form-20261117.cjs",
+    "dist:win:static-gdal-geos-msi-transfer-timezone-20261118": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-transfer-timezone-20261118.cjs",
+    "dist:win:static-gdal-geos-msi-transfer-number-20261118": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-transfer-number-20261118.cjs",
+    "dist:win:static-gdal-geos-msi-json-precision-20261119": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-json-precision-20261119.cjs",
+    "dist:win:static-gdal-geos-msi-bundled-preload-20261120": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-bundled-preload-20261120.cjs",
+    "dist:win:static-gdal-geos-msi-geography-20261121": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-geography-20261121.cjs"
+  },
+  "dependencies": {
+    "@db-studio/ai": "workspace:*",
+    "@db-studio/core": "workspace:*",
+    "@db-studio/database": "workspace:*",
+    "@db-studio/gis": "workspace:*",
+    "@db-studio/shared": "workspace:*",
+    "@monaco-editor/react": "^4.7.0",
+    "@tanstack/react-query": "^5.90.5",
+    "antd": "^6.2.0",
+    "lucide-react": "^0.577.0",
+    "monaco-editor": "^0.55.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "sql-formatter": "15.9.0",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.1",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^45.1.0",
+    "electron-builder": "^26.0.12",
+    "tsx": "^4.23.15",
+    "vite": "^7.2.2",
+    "wait-on": "^8.0.4"
+  },
+  "build": {
+    "appId": "com.dbstudio.desktop",
+    "productName": "DB Studio",
+    "electronDist": "node_modules/electron/dist",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/preload.cjs",
+      "electron/gis-export-bridge.cjs",
+      "electron/ai-cancellation-bridge.cjs",
+      "package.json",
+      "../../packages/*/dist/**/*",
+      "../../node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "extraResources": [
+      {
+        "from": "resources/gdal",
+        "to": "gdal",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "node_modules/monaco-editor/min/vs",
+        "to": "monaco/vs",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "include": "build/installer.nsh"
+    }
+  }
+}
