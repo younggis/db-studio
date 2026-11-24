@@ -16,3 +16,6 @@ apps/desktop/build/
 # Desktop UI source is currently missing; keep compiled artifacts
 # (apps/desktop/dist, packages/*/dist, apps/cli/dist) in version control
 # so the working application is preserved.
+
+test-results/
+playwright-report/
