@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import type { Key } from "react";
 import { Button, Dropdown, Space, Spin, Tooltip, Tree, Typography } from "antd";
 import type { MenuProps } from "antd";
@@ -16,10 +17,23 @@ interface DatabaseObjectTreeProps {
   getContextMenuItems?: (node: DataNode) => MenuProps["items"];
 }
 
-// Navicat-style visual grouping, previously injected into the compiled chunk.
-// Implemented here in real source so `pnpm build` no longer needs a dist patch.
-const SUBGROUPS = ["Fields", "Indexes", "Foreign Keys", "Uniques", "Checks", "Rules", "Triggers"];
+// Node keys follow `${connectionId}:${schema}.${table}`; the Fields child key
+// appends `:fields`. We parse that to lazily load real column metadata.
+interface TableRef { connectionId: string; schema: string; table: string }
 
+function parseTableRef(key: string): TableRef | undefined {
+  const colon = key.indexOf(":");
+  if (colon < 0) return undefined;
+  const connectionId = key.slice(0, colon);
+  const qualified = key.slice(colon + 1).replace(/:fields$/, "");
+  const dot = qualified.indexOf(".");
+  if (dot < 0) return undefined;
+  return { connectionId, schema: qualified.slice(0, dot), table: qualified.slice(dot + 1) };
+}
+
+// Navicat-style grouping: Tables group with each table exposing a real Fields
+// node (lazy-loaded). Subgroups without an IPC API (Indexes/Foreign Keys/etc.)
+// are intentionally omitted rather than shown as dead placeholders.
 function navicatTransform(nodes: DataNode[]): DataNode[] {
   return nodes.map((node) => {
     if (!node.children?.length) return node;
@@ -29,14 +43,11 @@ function navicatTransform(nodes: DataNode[]): DataNode[] {
         if (!schema.children?.length) return schema;
         const tables = schema.children.map((table) => ({
           ...table,
-          children: SUBGROUPS.map((group) => ({
-            key: `${String(table.key)}:${group}`,
-            title: group,
+          children: [{
+            key: `${String(table.key)}:fields`,
+            title: "Fields",
             icon: <span className="tree-sub-icon" />,
-            isLeaf: true,
-            selectable: false,
-            disabled: true,
-          })),
+          }],
         }));
         return {
           ...schema,
@@ -61,6 +72,44 @@ export default function DatabaseObjectTree({
   onSelect,
   getContextMenuItems,
 }: DatabaseObjectTreeProps) {
+  const [fieldCache, setFieldCache] = useState<Record<string, string[]>>({});
+  const treeData = navicatTransform(data);
+
+  const loadData = useCallback(async (node: DataNode) => {
+    const key = String(node.key ?? "");
+    if (!key.endsWith(":fields")) return;
+    if (fieldCache[key]) return;
+    const ref = parseTableRef(key);
+    if (!ref) return;
+    try {
+      const columns = await window.dbStudio.database.columns(ref.connectionId, ref.table, ref.schema);
+      setFieldCache((current) => ({
+        ...current,
+        [key]: columns.map((column) => `${column.name} · ${column.dataType}${column.primaryKey ? " (PK)" : ""}${column.nullable ? "" : " NOT NULL"}`),
+      }));
+    } catch {
+      setFieldCache((current) => ({ ...current, [key]: ["读取字段失败"] }));
+    }
+  }, [fieldCache]);
+
+  const withFields = (nodes: DataNode[]): DataNode[] => nodes.map((node) => {
+    const key = String(node.key ?? "");
+    if (key.endsWith(":fields") && fieldCache[key]) {
+      return {
+        ...node,
+        isLeaf: true,
+        selectable: false,
+        children: fieldCache[key].map((label, index) => ({
+          key: `${key}:${index}`,
+          title: label,
+          isLeaf: true,
+          selectable: false,
+        })),
+      };
+    }
+    return node.children ? { ...node, children: withFields(node.children) } : node;
+  });
+
   return (
     <div className="object-tree">
       <div className="tree-label">
@@ -79,7 +128,8 @@ export default function DatabaseObjectTree({
         blockNode
         defaultExpandAll
         selectedKeys={[]}
-        treeData={navicatTransform(data)}
+        treeData={withFields(treeData)}
+        loadData={loadData}
         onSelect={(keys) => onSelect(keys)}
         titleRender={(node) => {
           const items = getContextMenuItems?.(node);

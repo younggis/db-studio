@@ -20,6 +20,38 @@ afterEach(async () => {
   vi.clearAllMocks();
 });
 
+
+describe("scanFeatureDimensions early stop", () => {
+  it("stops the subprocess once all four dimension signatures are seen", async () => {
+    const service = new GdalService({ DBSTUDIO_GDAL_BIN: "unused" });
+    const scanner = service as unknown as {
+      runOgr2Ogr: (args: string[], options: unknown, env: NodeJS.ProcessEnv, onStdout?: (chunk: string) => void) => Promise<void>;
+      scanFeatureDimensions: (prepared: { path: string; env: NodeJS.ProcessEnv; openOptions: string[]; cleanup: () => Promise<void> }, sourceLayer: string, spatialFilter: undefined, operationOptions: Record<string, unknown>) => Promise<{ signatures: Set<string>; targetSuffix: string; mixed: boolean }>;
+    };
+    let aborted = false;
+    vi.spyOn(scanner, "runOgr2Ogr").mockImplementation(async (_args, options, _env, onStdout) => {
+      const opts = options as { signal: AbortSignal };
+      opts.signal.addEventListener("abort", () => { aborted = true; });
+      for (const chunk of [
+        'WKT\n"POINT (1 2)"\n"POINT Z (1 2 3)"\n"POINT M (1 2 4)"\n"POINT ZM (1 2 3 4)"\n',
+        '"POINT (5 6)"\n'.repeat(100),
+      ]) {
+        if (opts.signal.aborted) break;
+        onStdout?.(chunk);
+      }
+      if (opts.signal.aborted) throw new Error("cancelled");
+    });
+    const result = await scanner.scanFeatureDimensions(
+      { path: "all-dimensions.geojson", env: {}, openOptions: [], cleanup: async () => undefined },
+      "mixed", undefined, {},
+    );
+    expect(aborted).toBe(true);
+    expect(result.signatures.size).toBe(4);
+    expect(result.targetSuffix).toBe("ZM");
+    expect(result.mixed).toBe(true);
+  });
+});
+
 describe("GDAL driver creation options", () => {
   it("parses safe repeatable NAME=VALUE entries and rejects duplicates or control characters", () => {
     expect(parseGisDriverCreationOptions(["VERSION=1.2", "DESCRIPTION=Main road = test"])).toEqual([

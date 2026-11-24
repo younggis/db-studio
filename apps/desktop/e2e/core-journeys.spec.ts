@@ -76,6 +76,18 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
     }
     expect(await page.locator(".object-tree").innerText()).toContain("Tables");
   }).toPass({ timeout: 15_000, intervals: [500, 1000, 2000] });
+
+  // Phase 3: no dead placeholder subgroups; Fields loads real column metadata.
+  const treeText = await page.locator(".object-tree").innerText();
+  expect(treeText).not.toContain("Foreign Keys");
+  expect(treeText).not.toContain("Triggers");
+  const tablesGroup = page.locator(".ant-tree-treenode").filter({ hasText: "Tables" }).first();
+  await tablesGroup.locator(".ant-tree-switcher").click();
+  const firstTable = page.locator(".ant-tree-treenode").filter({ hasText: "dbstudio_demo" }).first();
+  if (await firstTable.count()) {
+    await firstTable.locator(".ant-tree-switcher").click();
+    await expect(page.locator(".object-tree")).toContainText("Fields", { timeout: 10_000 });
+  }
 });
 
 test("phase 3 launcher opens spatial index and layer health panels", async () => {
