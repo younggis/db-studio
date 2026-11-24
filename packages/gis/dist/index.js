@@ -633,6 +633,8 @@ export class GdalService {
         }
     }
     async scanFeatureDimensions(prepared, sourceLayer, spatialFilter, operationOptions) {
+        /* dimensionEarlyStop */
+        const scanController = new AbortController();
         const signatures = new Set();
         let hasZ = false;
         let hasM = false;
@@ -658,6 +660,9 @@ export class GdalService {
             hasZ ||= featureHasZ;
             hasM ||= featureHasM;
             signatures.add(`${featureHasZ ? "Z" : ""}${featureHasM ? "M" : ""}`);
+            // Once every dimension combination is observed, the superset is known.
+            if (signatures.size >= 4)
+                scanController.abort();
         };
         const consumeChunk = (chunk) => {
             let offset = 0;
@@ -679,10 +684,22 @@ export class GdalService {
         if (spatialFilter)
             args.push("-spat", String(spatialFilter.minX), String(spatialFilter.minY), String(spatialFilter.maxX), String(spatialFilter.maxY));
         args.push(...openOptionArguments(prepared), prepared.path, sourceLayer);
-        await this.runOgr2Ogr(args, {
-            signal: operationOptions.signal,
-            onProgress: (percent) => operationOptions.onProgress?.(percent * 0.2),
-        }, prepared.env, consumeChunk);
+        const forwardAbort = () => scanController.abort();
+        operationOptions.signal?.addEventListener("abort", forwardAbort, { once: true });
+        try {
+            await this.runOgr2Ogr(args, {
+                signal: scanController.signal,
+                onProgress: (percent) => operationOptions.onProgress?.(percent * 0.2),
+            }, prepared.env, consumeChunk);
+        }
+        catch (error) {
+            // Early stop is intentional: we already have the full dimension superset.
+            if (!scanController.signal.aborted || operationOptions.signal?.aborted || signatures.size < 4)
+                throw error;
+        }
+        finally {
+            operationOptions.signal?.removeEventListener("abort", forwardAbort);
+        }
         if (linePrefix)
             consumeLine(linePrefix);
         const targetSuffix = hasZ && hasM ? "ZM" : hasZ ? "Z" : hasM ? "M" : "";

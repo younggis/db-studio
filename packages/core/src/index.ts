@@ -60,6 +60,8 @@ import { decodeGeoPackageGeometry, encodeGeoPackageGeometry, importColumnTypeFro
 import { oracleSdo2dWkbToDimensionalWkb } from "./oracle-gis-wkb.js";
 
 export { GisOperationError } from "@db-studio/gis";
+export { spatialIndexCapability, assertSpatialIndexSupported, type SpatialIndexCapability } from "./spatial-index-capability.js";
+export { createDecisionLedger, needsUserDecision, type EncodingCandidate, type EncodingDecision, type DecisionLedger } from "./encoding-decision.js";
 export { spatialFilterPredicate, validateExtent } from "./spatial-filter-sql.js";
 export { summarizeLayerHealth, type LayerHealthReport } from "./layer-health.js";
 export { diagnoseSpatialIndex, type SpatialIndexDiagnostic } from "./spatial-index-diagnostic.js";
