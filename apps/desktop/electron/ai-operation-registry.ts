@@ -1,28 +1,35 @@
-// RECONSTRUCTED from dist/electron/ai-operation-registry.js (tsc output of the lost source).
-// @ts-nocheck -- temporary: original type annotations were not preserved in the build output.
-export function registerAiOperation(operations, requestId, senderId, connectionId) {
-    if (operations.has(requestId))
-        throw new Error("该 AI 请求标识已在使用中。");
-    const operation = { senderId, connectionId, controller: new AbortController() };
-    operations.set(requestId, operation);
-    return operation;
+// Reconstructed and refactored (phase 2.1): AI operations now use the shared
+// OperationRegistry so cancellation, sender scoping and lifecycle are unified
+// with GIS and table-transfer operations.
+import { OperationRegistry, type OperationHandle } from "@db-studio/core";
+
+export function registerAiOperation(
+  operations: OperationRegistry,
+  requestId: string,
+  senderId: number,
+  connectionId: string,
+): OperationHandle {
+  return operations.start({
+    id: requestId,
+    type: "ai-chat",
+    senderId,
+    connectionId,
+  });
 }
-export function cancelAiOperation(operations, requestId, senderId) {
-    const operation = operations.get(requestId);
-    if (operation?.senderId === senderId)
-        operation.controller.abort();
+
+export function cancelAiOperation(operations: OperationRegistry, requestId: string, senderId: number): boolean {
+  return operations.cancel(requestId, senderId);
 }
-export function handleAiCancellationRequest(operations, requestId, senderId) {
-    if (typeof requestId !== "string")
-        return;
-    cancelAiOperation(operations, requestId, senderId);
+
+export function handleAiCancellationRequest(operations: OperationRegistry, requestId: unknown, senderId: number): void {
+  if (typeof requestId !== "string") return;
+  cancelAiOperation(operations, requestId, senderId);
 }
-export function finishAiOperation(operations, requestId, operation) {
-    if (operations.get(requestId) === operation)
-        operations.delete(requestId);
+
+export function finishAiOperation(operations: OperationRegistry, requestId: string, operation: OperationHandle): boolean {
+  return operations.finish(requestId, operation);
 }
-export function throwIfAiOperationCancelled(operation) {
-    if (operation.controller.signal.aborted)
-        throw new Error("AI 请求已取消。");
+
+export function throwIfAiOperationCancelled(operation: OperationHandle): void {
+  if (operation.controller.signal.aborted) throw new Error("AI 请求已取消。");
 }
-//# sourceMappingURL=ai-operation-registry.js.map

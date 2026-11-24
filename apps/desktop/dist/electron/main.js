@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
 import { applyPostgisSpatialMetadata, createEmbedding, emptySchemaIndex, findSchemaIndexTableCoverageDifferences, findStaleSchemaIndexTableKeys, isSchemaIndexSnapshot, loadPostgisSchemaMetadata, loadSchemaCandidateMetadata, rankSchemaCandidatesByRerank, replaceSchemaIndexChunks, rerank, runMongoAssistant, runSqlAssistant, schemaIndexScope, schemaModelFingerprint, schemaTableDocument, schemaTableDocumentChunks, searchSchemaIndex, selectRelevantTables, testChatModel, testEmbeddingModel, testRerankModel } from "@db-studio/ai";
 import { schemaTableKey } from "@db-studio/shared/schema-table-key";
-import { CoreService, GisOperationError, MongoDocumentService, stringifyMongoJson } from "@db-studio/core";
+import { CoreService, GisOperationError, MongoDocumentService, OperationRegistry, stringifyMongoJson } from "@db-studio/core";
 import { SshTunnelManager, validateSshTunnelConfig } from "@db-studio/database";
 import { parseExcelWorkbook, parseTabularData, queryResultToCsv, queryResultToXlsx } from "@db-studio/shared";
 import { appendQueryHistory, clearQueryHistory, createEmptyQueryHistorySnapshot, normalizeQueryHistorySnapshot, removeQueryFavorite, upsertQueryFavorite, } from "@db-studio/shared";
@@ -28,8 +28,8 @@ if (userDataOverride) {
 }
 const desktopEngines = new Set(["postgres", "mysql", "sqlite", "mariadb", "mongodb", "sqlserver", "oracle"]);
 const sshTunnelManager = new SshTunnelManager();
-const activeGisOperations = new Map();
-const activeAiOperations = new Map();
+const activeGisOperations = new OperationRegistry();
+const activeAiOperations = new OperationRegistry();
 const aiSchemaMetadataCache = new Map();
 const aiSettingsHeader = Buffer.from("DBSTUDIO\0AI-MODELS\0V1\0", "utf8");
 const aiDpapiHeader = Buffer.concat([aiSettingsHeader, Buffer.from("DPAPI\0", "ascii")]);
@@ -741,9 +741,7 @@ function registerHandlers() {
     ipcMain.on("gis:cancel", (event, operationId) => {
         if (typeof operationId !== "string")
             return;
-        const operation = activeGisOperations.get(operationId);
-        if (operation?.senderId === event.sender.id)
-            operation.controller.abort();
+        activeGisOperations.cancel(operationId, event.sender.id);
     });
     ipcMain.handle("ai:settings:get", async () => publicAiSettings(await readAiModelSettings()));
     ipcMain.handle("ai:settings:save", async (_event, input) => {
@@ -1352,7 +1350,7 @@ function registerHandlers() {
         await sshTunnelManager.close(input.id);
         await writeConnections(next);
         clearAiSchemaCache(input.id);
-        for (const operation of activeAiOperations.values()) {
+        for (const operation of activeAiOperations.list()) {
             if (operation.connectionId === input.id)
                 operation.controller.abort();
         }
@@ -1364,7 +1362,7 @@ function registerHandlers() {
             await sshTunnelManager.close(id);
         }, writeConnections);
         clearAiSchemaCache(id);
-        for (const operation of activeAiOperations.values()) {
+        for (const operation of activeAiOperations.list()) {
             if (operation.connectionId === id)
                 operation.controller.abort();
         }
@@ -1698,8 +1696,9 @@ function registerHandlers() {
         if (typeof operationId !== "string" || operationId.length > 128 || activeGisOperations.has(operationId)) {
             throw new Error("GIS 操作标识无效或已在运行。");
         }
-        const controller = new AbortController();
-        activeGisOperations.set(operationId, { senderId: event.sender.id, controller });
+        const operationType = "gis-import";
+        const handle = activeGisOperations.start({ id: operationId, type: operationType, senderId: event.sender.id, connectionId: id });
+        const controller = handle.controller;
         try {
             const connection = await connectionFor(id);
             const core = coreFor(connection);
@@ -1820,7 +1819,7 @@ function registerHandlers() {
             throw error;
         }
         finally {
-            activeGisOperations.delete(operationId);
+            activeGisOperations.finish(operationId, handle);
         }
     });
     ipcMain.handle("gis:export", async (event, id, table, output, options = {}, operationId) => {
@@ -1829,8 +1828,9 @@ function registerHandlers() {
         if (typeof operationId !== "string" || operationId.length > 128 || activeGisOperations.has(operationId)) {
             throw new Error("GIS 操作标识无效或已在运行。");
         }
-        const controller = new AbortController();
-        activeGisOperations.set(operationId, { senderId: event.sender.id, controller });
+        const operationType = "gis-export";
+        const handle = activeGisOperations.start({ id: operationId, type: operationType, senderId: event.sender.id, connectionId: id });
+        const controller = handle.controller;
         try {
             const connection = await connectionFor(id);
             const core = coreFor(connection);
@@ -1879,7 +1879,7 @@ function registerHandlers() {
             throw error;
         }
         finally {
-            activeGisOperations.delete(operationId);
+            activeGisOperations.finish(operationId, handle);
         }
     });
     ipcMain.handle("files:open-sql", async () => {
