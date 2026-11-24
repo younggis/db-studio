@@ -52,7 +52,7 @@
 
 ## 替换进度（2026-11-24）
 
-已替换为真实 TSX 的业务组件（9 个）：
+已替换为真实 TSX 的业务组件（13 个）：
 
 | 组件 | 源文件 |
 |---|---|
@@ -65,14 +65,15 @@
 | GisPreviewMap | `src/GisPreviewMap.tsx`（SVG 几何预览 + 拖拽框选） |
 | TableTransferModal | `src/TableTransferModal.tsx`（本地资源状态） |
 | TableDataEditorModal | `src/TableDataEditorModal.tsx`（复用 `table-data-edit` 差异/行变更逻辑） |
+| AiSettingsModal | `src/AiSettingsModal.tsx`（Chat/Embedding/Rerank 设置） |
+| ConnectionFormModal | `src/ConnectionFormModal.tsx`（含 SSH 隧道，复用 `connection-form-values`） |
+| MongoDocumentsPage | `src/MongoDocumentsPage.tsx` + `src/MongoAiPanel.tsx`（内嵌 AI 面板） |
 
-vendor 目录仍有 27 个编译 chunk（约 1.5 MB），但其中绝大多数是**第三方库**（React、antd、Monaco、sql-formatter、antd Table/Pagination/Dropdown 等），无需还原。真正待还原的业务组件只剩：
+vendor 目录仍有 27 个编译 chunk（约 1.5 MB），但其中绝大多数是**第三方库**（React、antd、Monaco、sql-formatter、antd Table/Pagination/Dropdown 等），无需还原。真正待还原的业务组件只剩 2 个：
 
 - `App-D3avBeWb.js`（488 KB，主组件；恢复源约 95%，仍有 JSX 结构缺口）
 - `ConnectionFormModal-CvGV5FvW.js`（29.5 KB）
 - `AiAssistantPanel-DZzJ5MwT.js`（22.6 KB；恢复源约 42%）
-- `MongoDocumentsPage-D9MAV3zD.js`（18.4 KB）
-- `AiSettingsModal-ChfFCd_5.js`（17.3 KB）
 
 ## 后续替换顺序（建议）
 
