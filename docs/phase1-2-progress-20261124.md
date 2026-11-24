@@ -12,23 +12,25 @@
 | 1.5 CI 流水线 | GitHub Actions：verify（typecheck/build/unit）+ integration（compose 起库、契约矩阵、MVT） | 文件在 `docs/ci/ci.yml` | `407bbb7` |
 | 2.4 SQL 只读校验基线 | `packages/ai/src/sql-validator.test.ts`：9 项覆盖 CTE、系统目录、空间函数、写操作、多语句、越界表、字符串内分号 | AI 包 104 项全通过 | `3c7f5b8` |
 | 2.2 IPC 运行时校验 | `packages/shared/src/ipc-contracts.ts`：16 个通道的 zod schema + 结构化错误；preload 边界 `invoke()` 统一校验 | shared 28 项测试通过；E2E 3/3；全量 test/typecheck/build 通过 | `b3dc68a` |
+| 2.3 AI Provider 抽象 | Rerank 扩展为 `openai-compatible` / 本地 `/v1/rerank`，保留 DashScope 路径；设置面板增加 Provider 选择 | AI 包 107 项通过（含 3 项新契约） | `bc381c6` |
+| 1.5 CI 激活 | workflow 已推送到 `.github/workflows/ci.yml`，API 验证 200 | GitHub Actions 将在 push/PR 运行 | `a0658de` |
+| 构建卫生 | 所有包 tsconfig 排除 `*.test.ts`，清理 132 个误入 dist 的编译测试产物 | build/test 全绿 | `5a37cd4` |
 
 ## 关键约束与待办
 
-- **CI 未激活**：当前 PAT 缺少 `workflow` scope，无法创建 `.github/workflows/ci.yml`。已把流水线放到 `docs/ci/ci.yml`。**激活步骤**：用带 `workflow` scope 的 token 或直接在 GitHub 网页把该文件复制到 `.github/workflows/ci.yml`。
+- **CI 已激活**：`.github/workflows/ci.yml` 已推送（用户为 PAT 增加 Workflows 权限后）。verify + integration 两个 job 会在 push/PR 自动运行。
 - **1.2 集成脚本迁移**（80 个 `.mjs` 迁入 Vitest projects）：未做，工作量大且与现有脚本运行方式重叠；建议保持现有脚本 + npm script 组织。
 - **1.6 结构化日志/报告**：未做。
 - **2.1 OperationHandle 统一任务模型**：未做（涉及主进程/GIS/AI 大范围重构）。
 - **2.2 IPC zod 运行时校验**：✅ 已完成，见上表。
-- **2.3 AI Provider 抽象与本地模型**：未做。
+- **2.3 AI Provider 抽象与本地模型**：部分完成（本地 Rerank 已支持；本地 Chat/Embedding 原已支持）。
 - **阶段 3–5**：未启动（产品差异化、性能、发行合规）。
 
 ## 当前全量状态
 `pnpm test` ✅（含新增 6 引擎契约、自包含 MVT、校验基线）· `pnpm typecheck` ✅ · `pnpm build` ✅ · `pnpm test:e2e` ✅ 3/3 · Git 本地/远端一致 `3c7f5b8`。
 
 ## 建议优先级
-1. 激活 CI（需 workflow token）——否则 1.1/1.3/1.4 无法在 PR 上自动把关。
-2. 阶段 2.1 OperationHandle 统一任务模型——涉及主进程/GIS/AI 大范围重构。
-3. 阶段 2.3 AI Provider 抽象与本地模型。
-4. 阶段 1.6 结构化日志 + 1.2 集成脚本迁移——工程效率。
-5. 阶段 3 产品差异化（图层体检面板、查询结果地图视图）——依赖桌面源码化收尾。
+1. 阶段 2.1 OperationHandle 统一任务模型——涉及主进程/GIS/AI 大范围重构。
+2. 阶段 1.6 结构化日志 + 1.2 集成脚本迁移——工程效率。
+3. 阶段 3 产品差异化（图层体检面板、查询结果地图视图）——依赖桌面源码化收尾。
+4. 阶段 4–5 性能与发行合规——需外部条件（法务、代码签名证书）。
