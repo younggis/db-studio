@@ -51,7 +51,18 @@
 |---|---|---|
 | 全新克隆后 `pnpm install && pnpm build` 成功 | ❌ | `pnpm --filter @db-studio/desktop run build` 退出码 1：`Could not resolve "electron/preload.cjs"`（`electron/`、`src/` 均缺失） |
 | MSI 内含全部四项 UI 效果，`dist` 无补丁标记 | ⚠️ | 当前 MSI（`release-static-gdal-geos-msi-connmenu-20261124`）四项效果齐全且已 CDP 验收；但 dist 中仍有手工注入标记 |
-| 远端仓库与离线备份各有一份可还原的完整副本 | ⚠️ | 远端 ✅；本地备份见 `backups/`（仅排除大体量可再生产物） |
+| 远端仓库与离线备份各有一份可还原的完整副本 | ✅ | 远端 `main` = `4fa7979`；本地 `D:\db-connect-backups\db-connect-git-20261124.zip`（46.3 MB，`git archive` 精确镜像已提交内容） |
+
+### 本次实测命令结果
+
+| 命令 | 退出码 | 结果 |
+|---|---|---|
+| `pnpm --filter @db-studio/desktop run build` | 1 | `Could not resolve "electron/preload.cjs"` |
+| `pnpm typecheck` | 2 | `apps/desktop`: `error TS18003: No inputs were found ... include ["electron/**/*.ts"]`；其余包通过 |
+| `pnpm test` | 1 | 各包全通过：gis 82、shared 22、database 77、ai 95、core 57（共 333）；`apps/desktop` 因 `build:preload` 找不到 `electron/preload.cjs` 失败 |
+| 打包版 CDP 冒烟 | 通过 | 7 张连接卡片；右键菜单 3 项可见；图标 18×20 / 标题 y 差 ≈1px；编辑项可打开连接弹窗（见 `.cache/ui-packaged-final.png`） |
+
+> 注：`pnpm test` 与 `pnpm typecheck` 的失败**仅来自桌面端源码缺失**，不是本轮改动引入的回归；packages/* 全部通过。
 
 ---
 
