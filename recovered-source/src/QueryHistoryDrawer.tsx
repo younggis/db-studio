@@ -128,16 +128,17 @@ export default function QueryHistoryDrawer({ open, sql, connection, connections,
   }
 
   const historyContent = <div className="query-history-tab-content">
-      <span>{history.length} 条记录</span>
-      <Popconfirm
-        title={filter === "all" ? "清空全部查询历史？" : "清空该连接的查询历史？"}
-        description="收藏的查询不会受影响。"
-        okText="清空"
-        cancelText="取消"
-        onConfirm={() => void clearHistory()}
-      >
-        <Button size="small" type="text" icon={<Trash2 size={13} />} disabled={!snapshot.history.length}>清空</Button>
-      </Popconfirm>
+    <div className="query-history-tab-heading">
+          <span>{history.length} 条记录</span>
+          <Popconfirm
+            title={filter === "all" ? "清空全部查询历史？" : "清空该连接的查询历史？"}
+            description="收藏的查询不会受影响。"
+            okText="清空"
+            cancelText="取消"
+            onConfirm={() => void clearHistory()}
+          >
+            <Button size="small" type="text" icon={<Trash2 size={13} />} disabled={!snapshot.history.length}>清空</Button>
+          </Popconfirm>
     </div>
     <List
       className="query-history-list"
@@ -201,3 +202,52 @@ export default function QueryHistoryDrawer({ open, sql, connection, connections,
       styles={{ wrapper: { width: 560 } }}
       destroyOnHidden
       title={<div className="query-history-title"><span><HistoryIcon size={16} /></span><div><b>查询历史与收藏</b><small>本机加密保存 · 最近 80 条 · 不保存查询结果</small></div></div>}
+      extra={<Button size="small" icon={<Star size={13} />} disabled={!currentSource} onClick={() => { if (currentSource) beginFavorite(currentSource); }}>收藏当前 SQL</Button>}
+    >
+      <div className="query-history-body">
+        <div className="query-history-controls">
+          <Input.Search
+            allowClear
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="搜索 SQL 或连接"
+          />
+          <Select
+            value={filter}
+            onChange={(value) => setFilter(value)}
+            options={[{ value: "all", label: "全部连接" }, ...connections.map((item) => ({ value: item.id, label: item.name }))]}
+          />
+        </div>
+        <Tabs
+          className="query-history-tabs"
+          items={[
+            { key: "history", label: <span><Clock3 size={13} /> 最近查询</span>, children: historyContent },
+            { key: "favorites", label: <span><Star size={13} /> 收藏夹</span>, children: favoritesContent },
+          ]}
+        />
+      </div>
+    </Drawer>
+    <Modal
+      title="收藏查询"
+      open={!!favoriteSource}
+      onCancel={() => setFavoriteSource(null)}
+      onOk={() => { void saveFavorite(); }}
+      okText="保存收藏"
+      cancelText="取消"
+      confirmLoading={favoriteBusy}
+      okButtonProps={{ disabled: !favoriteTitle.trim() }}
+    >
+      <Input
+        autoFocus
+        maxLength={120}
+        value={favoriteTitle}
+        onChange={(event) => setFavoriteTitle(event.target.value)}
+        placeholder="收藏名称"
+        onPressEnter={() => { void saveFavorite(); }}
+      />
+      <Typography.Paragraph type="secondary" className="query-history-modal-note">
+        SQL 将由系统安全存储加密后保存在本机。
+      </Typography.Paragraph>
+    </Modal>
+  </>;
+}
