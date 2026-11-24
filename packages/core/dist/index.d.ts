@@ -2,6 +2,7 @@ import { type DatabaseAdapter, type ImportColumnType, MongoDocumentAdapter, type
 import { type ColumnInfo, type DatabaseEngine, type QueryResult, type QueryResultBatch, type QueryStreamOptions, type TableForeignKeyInfo, type TableInfo, type TableRowChange, type TabularData } from "@db-studio/shared";
 import { GdalService, type GdalOperationOptions, type GdalRuntimeStatus, type GisAttributePreview, type GisCrsOptions, type GisConversionOptions, type GisDatasetInfo, type GisExportOptions, type GisFieldMapping, type GisInputOptions, type GisLayerInfo, type GisOperationReport, type GisSpatialExtent } from "@db-studio/gis";
 export { GisOperationError } from "@db-studio/gis";
+export { summarizeLayerHealth, type LayerHealthReport } from "./layer-health.js";
 export { diagnoseSpatialIndex, type SpatialIndexDiagnostic } from "./spatial-index-diagnostic.js";
 export { OperationRegistry, type OperationHandle, type OperationType, type OperationRegistryOptions } from "./operation-handle.js";
 export { parseGisDriverCreationOptions } from "@db-studio/gis";

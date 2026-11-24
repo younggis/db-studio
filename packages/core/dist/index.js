@@ -11,6 +11,7 @@ import { GisOperationError, GdalService, } from "@db-studio/gis";
 import { decodeGeoPackageGeometry, encodeGeoPackageGeometry, importColumnTypeFromSqliteDeclaration } from "./geopackage.js";
 import { oracleSdo2dWkbToDimensionalWkb } from "./oracle-gis-wkb.js";
 export { GisOperationError } from "@db-studio/gis";
+export { summarizeLayerHealth } from "./layer-health.js";
 export { diagnoseSpatialIndex } from "./spatial-index-diagnostic.js";
 export { OperationRegistry } from "./operation-handle.js";
 export { parseGisDriverCreationOptions } from "@db-studio/gis";
