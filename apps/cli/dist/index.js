@@ -6,6 +6,7 @@ import { loadPostgisSchemaMetadata, loadSchemaCandidateMetadata, runSqlAssistant
 import { databaseEngines } from "@db-studio/shared";
 import { CoreService, GisOperationError, MongoDocumentService, buildMongoGeoFilter, parseMongoEjson, stringifyMongoJson, } from "@db-studio/core";
 import { parseTabularData, queryResultToCsv, queryResultToXlsx } from "@db-studio/shared";
+import { StructuredLogger } from "@db-studio/shared/structured-log";
 import { addConnectionProfile, applyConnectionEnvironment, connectionSummary, environmentForConnection, readConnectionProfiles, removeConnectionProfile, updateConnectionProfile, } from "./connections.js";
 import { formatQueryResult, writeQueryResultNdjsonStream } from "./format.js";
 import { readDesktopAiModelSettings } from "./model-settings.js";
@@ -15,7 +16,8 @@ export function createProgram() {
     program
         .name("dbstudio")
         .description("Lightweight database and GIS tools")
-        .version(VERSION);
+        .version(VERSION)
+        .option("--verbose", "Emit structured diagnostic logs to stderr", false);
     program.command("doctor").description("Check runtime prerequisites")
         .option("--connection <name>", "Connection source", "environment")
         .action(() => {
@@ -1289,20 +1291,32 @@ function parseGisFieldMappings(fieldMaps, fieldTypes) {
     }
     return [...mappings.values()];
 }
+export let cliLogger = new StructuredLogger({ minLevel: "error" });
+export function configureCliLogger(verbose) {
+    cliLogger = new StructuredLogger({ minLevel: verbose ? "debug" : "error" });
+}
 function writeJson(value) {
     process.stdout.write(JSON.stringify(value, null, 2) + "\n");
 }
 export async function main(argv = process.argv) {
+    const verbose = argv.includes("--verbose");
+    configureCliLogger(verbose);
+    cliLogger.debug("cli:start", { data: { command: argv.slice(2).filter((part) => !part.startsWith("--")).join(" ") || "none" } });
     await createProgram().parseAsync(argv);
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     main().catch((error) => {
         const message = error instanceof Error ? error.message : "Unexpected error";
         if (error instanceof GisOperationError) {
+            cliLogger.error("cli:operation:failed", {
+                detail: message,
+                data: { status: error.report.status, operation: error.report.operation },
+            });
             process.stderr.write(JSON.stringify({ error: message, report: error.report }, null, 2) + "\n");
             process.exitCode = error.report.status === "cancelled" ? 130 : 1;
         }
         else {
+            cliLogger.error("cli:error", { detail: message });
             process.stderr.write(message + "\n");
             process.exitCode = 1;
         }
@@ -1323,6 +1337,7 @@ async function withGisProgress(run) {
                     return;
                 lastPercent = rounded;
                 printedProgress = true;
+                cliLogger.debug("cli:gis:progress", { data: { progress: rounded } });
                 process.stderr.write(`\rGIS ${rounded}%`);
             },
         });

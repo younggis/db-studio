@@ -24,6 +24,11 @@
       "types": "./dist/ipc-contracts.d.ts",
       "import": "./dist/ipc-contracts.js",
       "require": "./dist/ipc-contracts.js"
+    },
+    "./structured-log": {
+      "types": "./dist/structured-log.d.ts",
+      "import": "./dist/structured-log.js",
+      "require": "./dist/structured-log.js"
     }
   },
   "scripts": {

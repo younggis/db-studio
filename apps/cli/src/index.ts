@@ -16,6 +16,7 @@ import {
   type GdalOperationOptions,
 } from "@db-studio/core";
 import { parseTabularData, queryResultToCsv, queryResultToXlsx } from "@db-studio/shared";
+import { StructuredLogger } from "@db-studio/shared/structured-log";
 import {
   addConnectionProfile,
   applyConnectionEnvironment,
@@ -37,7 +38,8 @@ export function createProgram(): Command {
   program
     .name("dbstudio")
     .description("Lightweight database and GIS tools")
-    .version(VERSION);
+    .version(VERSION)
+    .option("--verbose", "Emit structured diagnostic logs to stderr", false);
 
   program.command("doctor").description("Check runtime prerequisites")
     .option("--connection <name>", "Connection source", "environment")
@@ -1436,11 +1438,20 @@ function parseGisFieldMappings(
   return [...mappings.values()];
 }
 
+export let cliLogger = new StructuredLogger({ minLevel: "error" });
+
+export function configureCliLogger(verbose: boolean): void {
+  cliLogger = new StructuredLogger({ minLevel: verbose ? "debug" : "error" });
+}
+
 function writeJson(value: unknown): void {
   process.stdout.write(JSON.stringify(value, null, 2) + "\n");
 }
 
 export async function main(argv: string[] = process.argv): Promise<void> {
+  const verbose = argv.includes("--verbose");
+  configureCliLogger(verbose);
+  cliLogger.debug("cli:start", { data: { command: argv.slice(2).filter((part) => !part.startsWith("--")).join(" ") || "none" } });
   await createProgram().parseAsync(argv);
 }
 
@@ -1448,9 +1459,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   main().catch((error: unknown) => {
     const message = error instanceof Error ? error.message : "Unexpected error";
     if (error instanceof GisOperationError) {
+      cliLogger.error("cli:operation:failed", {
+        detail: message,
+        data: { status: error.report.status, operation: error.report.operation },
+      });
       process.stderr.write(JSON.stringify({ error: message, report: error.report }, null, 2) + "\n");
       process.exitCode = error.report.status === "cancelled" ? 130 : 1;
     } else {
+      cliLogger.error("cli:error", { detail: message });
       process.stderr.write(message + "\n");
       process.exitCode = 1;
     }
@@ -1471,6 +1487,7 @@ async function withGisProgress<T>(run: (options: GdalOperationOptions) => Promis
         if (rounded <= lastPercent) return;
         lastPercent = rounded;
         printedProgress = true;
+        cliLogger.debug("cli:gis:progress", { data: { progress: rounded } });
         process.stderr.write(`\rGIS ${rounded}%`);
       },
     });
