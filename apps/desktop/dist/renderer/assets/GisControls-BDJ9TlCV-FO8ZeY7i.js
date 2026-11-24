@@ -1,0 +1,1 @@
+import{a as o}from"./index-dmh99wYy.js";import{a as e,e as s}from"./Table-DOSmdmJy-B7pXKGw6.js";function i(r){return o(e,{...r})}function n(r){return o(s,{...r})}export{i as GisCheckbox,n as GisProgress};
