@@ -89,7 +89,8 @@
     "test:integration:ai-cli-sql-assistant": "pnpm --filter @db-studio/shared build && pnpm --filter @db-studio/database build && pnpm --filter @db-studio/gis build && pnpm --filter @db-studio/core build && pnpm --filter @db-studio/ai build && pnpm --filter @db-studio/cli build && node tests/integration/ai-cli-sql-assistant-smoke.mjs",
     "test:integration:ai-cli-explain-plan-real-postgis": "pnpm build && node tests/integration/ai-cli-explain-plan-online.mjs --real-postgis-only",
     "test:integration:ai-cli-explain-plan-real-multidb": "pnpm --filter @db-studio/shared build && pnpm --filter @db-studio/database build && pnpm --filter @db-studio/core build && pnpm --filter @db-studio/ai build && pnpm --filter @db-studio/cli build && node tests/integration/ai-cli-explain-plan-real-multidb.mjs",
-    "test:integration:adapter-contract": "node tests/integration/adapter-contract.mjs"
+    "test:integration:adapter-contract": "node tests/integration/adapter-contract.mjs",
+    "test:integration:all": "node tests/integration/run-all.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
