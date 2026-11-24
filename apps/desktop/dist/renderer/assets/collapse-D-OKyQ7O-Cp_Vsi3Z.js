@@ -1,1 +1,0 @@
-const s=o=>{const{componentCls:t,antCls:n,motionDurationMid:i,motionEaseInOut:a}=o;return{[t]:{[`${n}-motion-collapse`]:{overflow:"hidden",transition:`${["height","opacity"].map(e=>`${e} ${i} ${a}`).join(", ")} !important`}}}};export{s};

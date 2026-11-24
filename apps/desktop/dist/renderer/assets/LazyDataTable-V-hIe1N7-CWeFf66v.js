@@ -1,0 +1,1 @@
+import{a8 as t}from"./index-C-ZygsZe.js";import{n as o}from"./Table-DOSmdmJy-DiTSHuCw.js";import"./App-D3avBeWb-UhkoPsNW.js";import"./Pagination-DZu5pWvM-Crv7IJSV.js";import"./index-C5DQ0nsD-BG6W-Bb5.js";import"./useBreakpoint-DxrfNT6s-B1nOz7NR.js";import"./useForm-WCsH_auA-DW8nf4Po.js";function e(r){return t.jsx(o,{...r})}export{e as default};
