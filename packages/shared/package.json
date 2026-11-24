@@ -19,6 +19,11 @@
     "./schema-table-key": {
       "types": "./dist/schema-table-key.d.ts",
       "import": "./dist/schema-table-key.js"
+    },
+    "./ipc-contracts": {
+      "types": "./dist/ipc-contracts.d.ts",
+      "import": "./dist/ipc-contracts.js",
+      "require": "./dist/ipc-contracts.js"
     }
   },
   "scripts": {
@@ -27,6 +32,7 @@
     "test": "vitest run --dir src"
   },
   "dependencies": {
-    "exceljs": "^4.4.0"
+    "exceljs": "^4.4.0",
+    "zod": "^4.6.7"
   }
 }
