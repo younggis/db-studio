@@ -1,3 +1,5 @@
+// RECONSTRUCTED from dist/electron/ai-operation-registry.js (tsc output of the lost source).
+// @ts-nocheck -- temporary: original type annotations were not preserved in the build output.
 export function registerAiOperation(operations, requestId, senderId, connectionId) {
     if (operations.has(requestId))
         throw new Error("该 AI 请求标识已在使用中。");
@@ -23,4 +25,5 @@ export function throwIfAiOperationCancelled(operation) {
     if (operation.controller.signal.aborted)
         throw new Error("AI 请求已取消。");
 }
+//# sourceMappingURL=ai-operation-registry.js.map
 //# sourceMappingURL=ai-operation-registry.js.map

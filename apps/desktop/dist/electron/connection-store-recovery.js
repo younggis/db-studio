@@ -1,3 +1,5 @@
+// RECONSTRUCTED from dist/electron/connection-store-recovery.js (tsc output of the lost source).
+// @ts-nocheck -- temporary: original type annotations were not preserved in the build output.
 import { copyFile } from "node:fs/promises";
 import { constants } from "node:fs";
 import path from "node:path";
@@ -46,4 +48,5 @@ export async function backupAndResetUnreadableConnectionStore(filePath, readStor
     }
     return backupPath;
 }
+//# sourceMappingURL=connection-store-recovery.js.map
 //# sourceMappingURL=connection-store-recovery.js.map

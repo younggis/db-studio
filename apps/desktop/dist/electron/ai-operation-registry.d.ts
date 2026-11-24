@@ -1,11 +1,10 @@
-export interface ActiveAiOperation {
-    senderId: number;
-    connectionId: string;
+export declare function registerAiOperation(operations: any, requestId: any, senderId: any, connectionId: any): {
+    senderId: any;
+    connectionId: any;
     controller: AbortController;
-}
-export declare function registerAiOperation(operations: Map<string, ActiveAiOperation>, requestId: string, senderId: number, connectionId: string): ActiveAiOperation;
-export declare function cancelAiOperation(operations: Map<string, ActiveAiOperation>, requestId: string, senderId: number): void;
-export declare function handleAiCancellationRequest(operations: Map<string, ActiveAiOperation>, requestId: unknown, senderId: number): void;
-export declare function finishAiOperation(operations: Map<string, ActiveAiOperation>, requestId: string, operation: ActiveAiOperation): void;
-export declare function throwIfAiOperationCancelled(operation: ActiveAiOperation): void;
+};
+export declare function cancelAiOperation(operations: any, requestId: any, senderId: any): void;
+export declare function handleAiCancellationRequest(operations: any, requestId: any, senderId: any): void;
+export declare function finishAiOperation(operations: any, requestId: any, operation: any): void;
+export declare function throwIfAiOperationCancelled(operation: any): void;
 //# sourceMappingURL=ai-operation-registry.d.ts.map

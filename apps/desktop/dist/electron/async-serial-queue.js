@@ -1,3 +1,5 @@
+// RECONSTRUCTED from dist/electron/async-serial-queue.js (tsc output of the lost source).
+// @ts-nocheck -- temporary: original type annotations were not preserved in the build output.
 export function createAsyncSerialQueue() {
     let tail = Promise.resolve();
     return function run(operation) {
@@ -6,4 +8,5 @@ export function createAsyncSerialQueue() {
         return result;
     };
 }
+//# sourceMappingURL=async-serial-queue.js.map
 //# sourceMappingURL=async-serial-queue.js.map

@@ -1,3 +1,5 @@
+// RECONSTRUCTED from dist/electron/main.js (tsc output of the lost source).
+// @ts-nocheck -- temporary: original type annotations were not preserved in the build output.
 import { app, BrowserWindow, dialog, ipcMain, safeStorage } from "electron";
 import { spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -1722,8 +1724,10 @@ function registerHandlers() {
             }
             const operationOptions = {
                 signal: controller.signal,
-                onProgress: (percent) => { if (!event.sender.isDestroyed())
-                    event.sender.send("gis:progress", { operationId, percent }); },
+                onProgress: (percent) => {
+                    if (!event.sender.isDestroyed())
+                        event.sender.send("gis:progress", { operationId, percent });
+                },
             };
             let report;
             if (connection.engine === "sqlite") {
@@ -1832,8 +1836,10 @@ function registerHandlers() {
             const core = coreFor(connection);
             const operationOptions = {
                 signal: controller.signal,
-                onProgress: (percent) => { if (!event.sender.isDestroyed())
-                    event.sender.send("gis:progress", { operationId, percent }); },
+                onProgress: (percent) => {
+                    if (!event.sender.isDestroyed())
+                        event.sender.send("gis:progress", { operationId, percent });
+                },
             };
             if (connection.engine === "sqlite") {
                 return { ok: true, dataset: await core.exportGisFromSqlite(table, output, options, operationOptions) };
@@ -1960,9 +1966,14 @@ app.whenReady().then(async () => {
         void sshTunnelManager.closeAll().catch(() => undefined).finally(() => app.quit());
     });
     await createWindow();
-    app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0)
-        void createWindow(); });
+    app.on("activate", () => {
+        if (BrowserWindow.getAllWindows().length === 0)
+            void createWindow();
+    });
 });
-app.on("window-all-closed", () => { if (process.platform !== "darwin")
-    app.quit(); });
+app.on("window-all-closed", () => {
+    if (process.platform !== "darwin")
+        app.quit();
+});
+//# sourceMappingURL=main.js.map
 //# sourceMappingURL=main.js.map
