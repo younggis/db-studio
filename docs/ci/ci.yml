@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22.13"
+
+jobs:
+  verify:
+    name: Build, typecheck and unit tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Unit tests
+        run: pnpm test
+
+  integration:
+    name: Integration (Docker)
+    runs-on: windows-latest
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Create local test environment
+        shell: pwsh
+        run: |
+          Copy-Item docker/.env.example docker/.env
+          # Integration tests use the committed example credentials for the local containers.
+
+      - name: Start database containers
+        shell: pwsh
+        run: docker compose -f docker/compose.yaml up -d --wait
+
+      - name: Adapter contract matrix
+        run: pnpm run test:integration:adapter-contract
+
+      - name: MVT PostGIS round-trip (synthetic PBF)
+        run: pnpm run test:integration:mvt-postgis
+
+      - name: Stop containers
+        if: always()
+        shell: pwsh
+        run: docker compose -f docker/compose.yaml down -v
