@@ -37,15 +37,25 @@
 |---|---|
 | `pnpm --filter @db-studio/desktop run build` | ✅ 通过（65 modules，含 vite build） |
 | `pnpm typecheck` | ✅ 通过 |
-| `pnpm test` | ⚠️ packages 333 项全通过；`apps/desktop` 因源码测试文件缺失报 `No test files found`（非回归） |
-| CDP 冒烟（新构建） | ✅ 7 张连接卡片、右键菜单 3 项、图标 18×20 与文字对齐、工具按钮隐藏 |
+| CDP 冒烟（新构建） | ✅ 7 张连接卡片、右键菜单 3 项、图标 18×20 与文字对齐、工具按钮隐藏、`Tables` 分组存在 |
+| `pnpm test` | ✅ 378 通过 / 6 跳过（含桌面 18 项新测试） |
+
+## 增量替换已解锁（React 实例桥）
+
+直接把真实 TSX 组件混入 vendor chunk 会因**双 React 实例**导致 hooks 报 `Cannot read properties of null (reading 'useContext')`。已解决：
+
+- 在 `src/vendor/index-CLh2VPBN.js` 末尾导出内部 React / ReactDOM 实例（`__dbStudioReactHooks` / `__dbStudioReactDom`），并补 `.d.ts`。
+- 新增 `src/react-compat.ts`、`src/jsx-runtime-compat.ts`、`src/react-dom-compat.ts`，把 npm 的 `react` / `react/jsx-runtime` / `react-dom` 入口全部别名到 vendor 实例（`vite.config.ts` 的 `resolve.alias`）。
+- 因此真实 TSX 与剩余 vendor chunk 共用同一个 hooks dispatcher，可**逐个**替换。
+
+**首个替换已完成**：`DatabaseObjectTree-BUT6wZ0A.js` → 真实 `src/DatabaseObjectTree.tsx`，并把 Navicat `Tables` 分组逻辑用源码实现（`navicatTransform`），不再依赖 JS 注入。CDP 验证 `Tables` 分组仍在、图标文字对齐、右键菜单正常。
 
 ## 后续替换顺序（建议）
 
-1. `src/main.tsx` 改为恢复出的真实入口（含 ConfigProvider、Monaco loader），此时需用 vendor chunk 提供的 React 实例，或整体切换到 npm React 并同步替换所有 chunk。
-2. 按 `recovered-source/src/App.tsx` + 编译 chunk 的对应关系逐组件重建：先 `DatabaseObjectTree`（已有完整源码）、`table-data-edit`、`workspace-layout` 等小模块，再 `App.tsx`。
-3. 每替换一个组件：删除对应 vendor chunk 的引用 → 构建 → CDP 冒烟 → 提交。
-4. 全部替换后删除 `src/vendor/`，恢复桌面单元测试（现缺失，需重写）。
+1. 继续翻译小 chunk：`GisControls`（Checkbox/Progress 包装）、`LazyDataTable`、`TableStructureModal`、`QueryHistoryDrawer` 等，按编译产物逐块还原为 TSX。
+2. 恢复 `recovered-source/src/App.tsx`（约 95%，仍有少量 JSX 结构缺口）作为最终入口，届时删除 `src/main.tsx` 薄壳。
+3. 每替换一个组件：把对应 vendor chunk 改为 re-export shim → `pnpm build` → `pnpm typecheck` → CDP 冒烟 → 提交。
+4. 全部替换后删除 `src/vendor/`、`src/*-compat.ts` 与 `vite.config.ts` 别名，回到纯 npm React。
 
 ## 已知限制
 
