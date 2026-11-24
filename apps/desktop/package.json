@@ -44,7 +44,8 @@
     "dist:win:static-gdal-geos-msi-transfer-number-20261118": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-transfer-number-20261118.cjs",
     "dist:win:static-gdal-geos-msi-json-precision-20261119": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-json-precision-20261119.cjs",
     "dist:win:static-gdal-geos-msi-bundled-preload-20261120": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-bundled-preload-20261120.cjs",
-    "dist:win:static-gdal-geos-msi-geography-20261121": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-geography-20261121.cjs"
+    "dist:win:static-gdal-geos-msi-geography-20261121": "pnpm build && electron-builder --win msi --config electron-builder.static-gdal-geos-msi-geography-20261121.cjs",
+    "test:e2e": "playwright test --config playwright.config.ts"
   },
   "dependencies": {
     "@db-studio/ai": "workspace:*",
@@ -63,6 +64,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.1",
