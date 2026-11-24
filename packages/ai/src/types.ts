@@ -71,7 +71,7 @@ export interface PublicEmbeddingModelConfig extends Omit<EmbeddingModelConfig, "
 }
 
 export interface RerankModelConfig {
-  provider: "dashscope";
+  provider: "dashscope" | "openai-compatible";
   baseURL: string;
   model: string;
   apiKey: string;

@@ -451,12 +451,20 @@ export async function rerank(config, query, documents, signal) {
         throw new AiProviderError("Rerank 需要查询文本和 1 到 100 条候选文本。", "configuration");
     const resolvedBase = await resolveModelBaseUrl(config.baseURL);
     const base = resolvedBase.url;
-    const url = new URL("/api/v1/services/rerank/text-rerank/text-rerank", base.origin);
-    const result = await postJson(url, resolvedBase.addresses, { model: config.model, input: { query, documents }, parameters: { return_documents: false, top_n: documents.length } }, config.apiKey, config.timeoutMs ?? 60_000, signal);
+    const dashscope = config.provider === "dashscope";
+    // DashScope uses its service path + nested output.results shape; local
+    // OpenAI-compatible rerankers use /v1/rerank + a flat results array.
+    const url = dashscope
+        ? new URL("/api/v1/services/rerank/text-rerank/text-rerank", base.origin)
+        : new URL("/v1/rerank", base);
+    const body = dashscope
+        ? { model: config.model, input: { query, documents }, parameters: { return_documents: false, top_n: documents.length } }
+        : { model: config.model, query, documents, raw_scores: false };
+    const result = await postJson(url, resolvedBase.addresses, body, config.apiKey, config.timeoutMs ?? 60_000, signal);
     if (!result || typeof result !== "object" || Array.isArray(result)) {
         throw new AiProviderError("Rerank 响应排序结果无效。", "response");
     }
-    const rows = result.output?.results ?? [];
+    const rows = dashscope ? (result.output?.results ?? []) : (result.results ?? []);
     if (!rows.length || rows.some((row) => !row || typeof row !== "object" || Array.isArray(row)
         || !Number.isInteger(row.index) || row.index < 0 || row.index >= documents.length
         || typeof row.relevance_score !== "number" || !Number.isFinite(row.relevance_score))

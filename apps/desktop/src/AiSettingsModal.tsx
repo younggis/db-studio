@@ -284,6 +284,13 @@ export default function AiSettingsModal({ open, onClose, onSaved }: AiSettingsMo
                 <span className="ai-switch-label"><Switch checked={rerank.enabled} onChange={(checked) => setRerank((current) => ({ ...current, enabled: checked }))} />启用</span>
               </div>
               <div className="ai-field-grid">
+                <label>Provider
+                  <Select
+                    value={rerank.provider}
+                    onChange={(value) => setRerank((current) => ({ ...current, provider: value }))}
+                    options={[{ value: "dashscope", label: "DashScope" }, { value: "openai-compatible", label: "OpenAI-compatible / 本地" }]}
+                  />
+                </label>
                 <label>Model ID<Input value={rerank.model} onChange={(event) => setRerank((current) => ({ ...current, model: event.target.value }))} /></label>
                 <label>超时（毫秒）<InputNumber min={1000} max={300000} value={rerank.timeoutMs} onChange={(value) => setRerank((current) => ({ ...current, timeoutMs: value ?? 60_000 }))} /></label>
                 <label className="wide">Base URL<Input value={rerank.baseURL} onChange={(event) => setRerank((current) => ({ ...current, baseURL: event.target.value }))} /></label>
