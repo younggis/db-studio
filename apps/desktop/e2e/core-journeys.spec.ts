@@ -69,8 +69,23 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   // Expand the public schema so the Navicat "Tables" group renders.
   const publicNode = page.locator(".ant-tree-treenode").filter({ hasText: "public" }).first();
   await expect(publicNode).toBeVisible({ timeout: 10_000 });
-  await publicNode.locator(".ant-tree-switcher").click();
-  await expect(page.locator(".object-tree")).toContainText("Tables", { timeout: 10_000 });
+  // Metadata loading is async; retry the expand until the Tables group appears.
+  await expect(async () => {
+    if (!(await page.locator(".object-tree").innerText()).includes("Tables")) {
+      await publicNode.locator(".ant-tree-switcher").click();
+    }
+    expect(await page.locator(".object-tree").innerText()).toContain("Tables");
+  }).toPass({ timeout: 15_000, intervals: [500, 1000, 2000] });
+});
+
+test("phase 3 launcher opens spatial index and layer health panels", async () => {
+  const page = await attach();
+  await expect(page.locator(".phase3-launcher")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole("button", { name: "索引诊断" })).toBeVisible();
+  await page.getByRole("button", { name: "索引诊断" }).click();
+  await expect(page.locator(".ant-drawer-title")).toContainText("空间索引诊断", { timeout: 10_000 });
+  await page.locator(".ant-drawer-close").first().click();
+  await expect(page.getByRole("button", { name: "图层体检" })).toBeEnabled();
 });
 
 test("SQL page opens AI assistant and history drawers", async () => {

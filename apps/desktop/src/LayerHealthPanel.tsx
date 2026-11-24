@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Drawer, Select, Space, Spin, Table, Tag, Typography, message } from "antd";
 import { Activity, CheckCircle2, RefreshCw } from "lucide-react";
-import { summarizeLayerHealth, type LayerHealthReport } from "@db-studio/core";
+import { summarizeLayerHealth, type LayerHealthReport } from "@db-studio/core/layer-health";
 import type { GisAttributePreview, GisDatasetInfo, GisGeometryValidationReport } from "@db-studio/gis";
 
 const { Text } = Typography;

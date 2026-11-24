@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Drawer, Input, Select, Space, Table, Tag, Typography, message } from "antd";
 import { Database } from "lucide-react";
-import { diagnoseSpatialIndex, type SpatialIndexDiagnostic } from "@db-studio/core";
+import { diagnoseSpatialIndex, type SpatialIndexDiagnostic } from "@db-studio/core/spatial-index-diagnostic";
 import type { ColumnInfo, DatabaseEngine, TableInfo } from "@db-studio/shared";
 
 const { Text } = Typography;
