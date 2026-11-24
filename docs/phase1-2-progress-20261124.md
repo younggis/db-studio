@@ -11,6 +11,7 @@
 | 1.4 Electron E2E | Playwright + CDP 接管现有 dev runtime，3 条核心旅程（连接卡片/右键菜单、对象树 Tables 分组/图标对齐、SQL 页 AI/历史抽屉） | 3 passed / 10.3s | `132ea09` |
 | 1.5 CI 流水线 | GitHub Actions：verify（typecheck/build/unit）+ integration（compose 起库、契约矩阵、MVT） | 文件在 `docs/ci/ci.yml` | `407bbb7` |
 | 2.4 SQL 只读校验基线 | `packages/ai/src/sql-validator.test.ts`：9 项覆盖 CTE、系统目录、空间函数、写操作、多语句、越界表、字符串内分号 | AI 包 104 项全通过 | `3c7f5b8` |
+| 2.2 IPC 运行时校验 | `packages/shared/src/ipc-contracts.ts`：16 个通道的 zod schema + 结构化错误；preload 边界 `invoke()` 统一校验 | shared 28 项测试通过；E2E 3/3；全量 test/typecheck/build 通过 | `b3dc68a` |
 
 ## 关键约束与待办
 
@@ -18,7 +19,7 @@
 - **1.2 集成脚本迁移**（80 个 `.mjs` 迁入 Vitest projects）：未做，工作量大且与现有脚本运行方式重叠；建议保持现有脚本 + npm script 组织。
 - **1.6 结构化日志/报告**：未做。
 - **2.1 OperationHandle 统一任务模型**：未做（涉及主进程/GIS/AI 大范围重构）。
-- **2.2 IPC zod 运行时校验**：未做（zod 未安装）。
+- **2.2 IPC zod 运行时校验**：✅ 已完成，见上表。
 - **2.3 AI Provider 抽象与本地模型**：未做。
 - **阶段 3–5**：未启动（产品差异化、性能、发行合规）。
 
@@ -27,6 +28,7 @@
 
 ## 建议优先级
 1. 激活 CI（需 workflow token）——否则 1.1/1.3/1.4 无法在 PR 上自动把关。
-2. 阶段 2.2 IPC 运行时校验（装 zod，给 preload 的 `window.dbStudio` 入参加 schema）——安全收益高、范围可控。
-3. 阶段 1.6 结构化日志 + 1.2 集成脚本迁移——工程效率。
-4. 阶段 3 产品差异化（图层体检面板、查询结果地图视图）——依赖桌面源码化收尾。
+2. 阶段 2.1 OperationHandle 统一任务模型——涉及主进程/GIS/AI 大范围重构。
+3. 阶段 2.3 AI Provider 抽象与本地模型。
+4. 阶段 1.6 结构化日志 + 1.2 集成脚本迁移——工程效率。
+5. 阶段 3 产品差异化（图层体检面板、查询结果地图视图）——依赖桌面源码化收尾。
