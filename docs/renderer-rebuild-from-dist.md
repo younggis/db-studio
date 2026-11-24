@@ -52,7 +52,7 @@
 
 ## 替换进度（2026-11-24）
 
-已替换为真实 TSX 的业务组件（13 个）：
+已替换为真实 TSX 的业务组件（14 个）：
 
 | 组件 | 源文件 |
 |---|---|
@@ -68,6 +68,7 @@
 | AiSettingsModal | `src/AiSettingsModal.tsx`（Chat/Embedding/Rerank 设置） |
 | ConnectionFormModal | `src/ConnectionFormModal.tsx`（含 SSH 隧道，复用 `connection-form-values`） |
 | MongoDocumentsPage | `src/MongoDocumentsPage.tsx` + `src/MongoAiPanel.tsx`（内嵌 AI 面板） |
+| AiAssistantPanel | `src/AiAssistantPanel.tsx` + `src/ai-request-guard.ts`（六任务、Schema 同意/索引、DiffEditor） |
 
 vendor 目录仍有 27 个编译 chunk（约 1.5 MB），但其中绝大多数是**第三方库**（React、antd、Monaco、sql-formatter、antd Table/Pagination/Dropdown 等），无需还原。真正待还原的业务组件只剩 2 个：
 
