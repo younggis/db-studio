@@ -1,1 +1,0 @@
-import{j as r}from"./jsx-runtime-compat-DjZqvNa5.js";import"./index-C5DQ0nsD-CvsE6WRY.js";import"./progress-DXpE86zY-rtVHsWk9.js";import{n as o}from"./Table-DOSmdmJy-_nxmNaQB.js";import"./index-C0Lb3CZ3.js";import"./App-D3avBeWb-CAEJ_nO-.js";function f(t){return r(o,{...t})}export{f as default};
