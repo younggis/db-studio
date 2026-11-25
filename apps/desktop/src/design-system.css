@@ -1,0 +1,241 @@
+/* ============================================================
+   DB Studio design system — Linear/Raycast/TablePlus inspired
+   Semantic tokens; light default, dark via [data-theme="dark"].
+   All rules are scoped to existing App class names so state and
+   behaviour stay untouched.
+   ============================================================ */
+:root {
+  --ds-bg: #f1f5f9;
+  --ds-surface: #ffffff;
+  --ds-surface-2: #f8fafc;
+  --ds-sidebar: #f8fafc;
+  --ds-line: #e2e8f0;
+  --ds-line-strong: #cbd5e1;
+  --ds-ink: #0f172a;
+  --ds-ink-2: #475569;
+  --ds-ink-3: #94a3b8;
+  --ds-brand: #0f766e;
+  --ds-brand-hover: #115e59;
+  --ds-brand-soft: #ccfbf1;
+  --ds-hover: #f1f5f9;
+  --ds-selected: #e6f4f1;
+  --ds-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 4px 12px rgba(15, 23, 42, .04);
+  --ds-radius: 8px;
+  --ds-font: "Inter", "SF Pro Text", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  --ds-mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, monospace;
+}
+[data-theme="dark"] {
+  --ds-bg: #0b1120;
+  --ds-surface: #0f172a;
+  --ds-surface-2: #111c2e;
+  --ds-sidebar: #0d1526;
+  --ds-line: #1e293b;
+  --ds-line-strong: #334155;
+  --ds-ink: #e2e8f0;
+  --ds-ink-2: #94a3b8;
+  --ds-ink-3: #64748b;
+  --ds-brand: #14b8a6;
+  --ds-brand-hover: #2dd4bf;
+  --ds-brand-soft: #134e4a;
+  --ds-hover: #1e293b;
+  --ds-selected: #134e4a;
+  --ds-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 12px rgba(0, 0, 0, .25);
+}
+
+/* ---- App shell & surfaces ---- */
+.shell { background: var(--ds-bg); color: var(--ds-ink); font-family: var(--ds-font); }
+.main-frame, .workspace { background: var(--ds-surface); }
+.sidebar {
+  background: var(--ds-sidebar) !important;
+  border-right: 1px solid var(--ds-line) !important;
+}
+
+/* ---- Compact 44px topbar: merge brand + breadcrumb ---- */
+.topbar {
+  height: 46px !important;
+  padding: 0 14px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface) !important;
+  color: var(--ds-ink) !important;
+  gap: 10px;
+}
+.topbar .brand-lockup { width: auto !important; gap: 8px; }
+.topbar .brand-mark {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: var(--ds-brand-soft) !important;
+  color: var(--ds-brand) !important;
+  border: 1px solid var(--ds-line) !important;
+}
+.topbar .brand-lockup strong { font-size: 12px; letter-spacing: .04em; color: var(--ds-ink); }
+.topbar .brand-lockup span { font-size: 9px; color: var(--ds-ink-3); letter-spacing: .08em; }
+.topbar .topbar-divider { height: 18px; background: var(--ds-line); }
+.topbar .breadcrumb { font-size: 12px; color: var(--ds-ink-2); gap: 6px; }
+.topbar .breadcrumb b { color: var(--ds-ink); font-weight: 600; }
+.topbar .topbar-actions { gap: 10px; }
+.topbar .env-label { font-size: 10px; color: var(--ds-ink-3); letter-spacing: .06em; }
+.topbar .environment-dot { background: var(--ds-brand); box-shadow: 0 0 0 3px var(--ds-brand-soft); }
+
+/* ---- Workspace head: fold title into the bar, drop duplicate picker ---- */
+.workspace-head {
+  min-height: 44px !important;
+  padding: 6px 16px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  gap: 12px;
+}
+.workspace-head .page-title { gap: 8px; }
+.workspace-head .title-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--ds-surface-2); color: var(--ds-brand);
+  display: grid; place-items: center;
+}
+.workspace-head .page-title h4 { font-size: 14px !important; font-weight: 600; color: var(--ds-ink); margin: 0; }
+.workspace-head .page-title .ant-typography:not(h4) { font-size: 11px !important; color: var(--ds-ink-3) !important; }
+.workspace-head .head-actions { gap: 6px; }
+.workspace-head .head-actions .connection-picker { display: none !important; }
+/* Mode switcher pill */
+.workspace-head .head-actions > .ant-btn:not(.ant-btn-primary) {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ds-ink-2) !important;
+  border-radius: 6px !important;
+}
+.workspace-head .head-actions > .ant-btn:not(.ant-btn-primary):hover { background: var(--ds-hover) !important; color: var(--ds-ink) !important; }
+.workspace-head .head-actions > .ant-btn-primary { background: var(--ds-brand) !important; border-color: var(--ds-brand) !important; }
+
+/* ---- Sidebar: compact connection cards ---- */
+.sidebar-heading {
+  padding: 8px 12px 4px !important;
+  font-size: 10px !important; font-weight: 600; letter-spacing: .08em;
+  color: var(--ds-ink-3) !important; text-transform: uppercase;
+}
+.connection-list { padding: 0 6px !important; gap: 1px !important; display: flex; flex-direction: column; }
+.connection-card { margin: 0 !important; border-radius: 6px !important; border: 1px solid transparent !important; }
+.connection-card:hover { background: var(--ds-hover) !important; }
+.connection-card.selected {
+  background: var(--ds-selected) !important;
+  border-color: color-mix(in srgb, var(--ds-brand) 30%, transparent) !important;
+  box-shadow: inset 2px 0 0 var(--ds-brand) !important;
+}
+.connection-select { padding: 4px 6px !important; min-height: 28px; gap: 7px !important; text-align: left; }
+.connection-select .db-icon { width: 20px !important; height: 20px !important; }
+.connection-select .db-icon svg { width: 13px; height: 13px; }
+.connection-name b { font-size: 12px !important; font-weight: 550; color: var(--ds-ink); }
+.connection-name small { font-size: 10px !important; color: var(--ds-ink-3) !important; }
+.connected-indicator { background: var(--ds-brand); }
+.sidebar .object-tree { border-top: 1px solid var(--ds-line); margin-top: 6px; padding-top: 6px; }
+.tree-label { padding: 6px 10px !important; font-size: 10px !important; font-weight: 600; letter-spacing: .06em; color: var(--ds-ink-3) !important; text-transform: uppercase; }
+.sidebar-bottom { border-top: 1px solid var(--ds-line) !important; }
+.runtime-chip { background: var(--ds-surface-2) !important; border: 1px solid var(--ds-line) !important; color: var(--ds-ink-3) !important; font-size: 10px !important; }
+.runtime-dot { background: var(--ds-brand) !important; }
+.sidebar-footer { color: var(--ds-ink-3) !important; font-size: 10px !important; }
+
+/* ---- Object tree: tighter, clearer hierarchy ---- */
+.object-tree .ant-tree-treenode { min-height: 20px; line-height: 20px; }
+.object-tree .ant-tree-node-content-wrapper { min-height: 20px; line-height: 20px; padding: 0 3px; border-radius: 4px; }
+.object-tree .ant-tree-node-content-wrapper:hover { background: var(--ds-hover) !important; }
+.object-tree .ant-tree-node-content-wrapper.ant-tree-node-selected { background: var(--ds-selected) !important; color: var(--ds-brand); }
+.object-tree .tree-node-title { font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.object-tree .tree-group-icon { background: var(--ds-ink-3) !important; }
+.object-tree .tree-sub-icon { background: var(--ds-ink-3) !important; opacity: .6; }
+
+/* ---- Editor toolbar: icon-only with tooltips ---- */
+.query-workspace { padding: 10px 14px; gap: 8px; }
+.editor-panel, .results-panel {
+  background: var(--ds-surface) !important;
+  border: 1px solid var(--ds-line) !important;
+  border-radius: var(--ds-radius) !important;
+  box-shadow: var(--ds-shadow) !important;
+  overflow: hidden;
+}
+.panel-toolbar {
+  min-height: 34px !important; padding: 3px 8px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface-2) !important;
+}
+.document-tab { font-size: 11px !important; color: var(--ds-ink-2); gap: 5px; }
+.toolbar-actions { gap: 2px !important; }
+.toolbar-actions .ant-btn:not(.ant-btn-primary) {
+  padding: 0 6px !important;
+  height: 26px !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ds-ink-2) !important;
+  font-size: 0 !important; /* keep icon only; text nodes collapse */
+}
+.toolbar-actions .ant-btn:not(.ant-btn-primary) .ant-btn-icon { font-size: 14px; margin: 0 !important; }
+.toolbar-actions .ant-btn:not(.ant-btn-primary):hover { background: var(--ds-hover) !important; color: var(--ds-ink) !important; }
+.toolbar-actions .ant-btn-primary {
+  background: var(--ds-brand) !important;
+  border-color: var(--ds-brand) !important;
+  border-radius: 6px !important;
+  height: 26px !important;
+  font-size: 11px !important;
+  box-shadow: 0 1px 2px rgba(15, 118, 110, .25);
+}
+.toolbar-separator { width: 1px; height: 16px; background: var(--ds-line); margin: 0 4px; }
+.editor-status { border-top: 1px solid var(--ds-line) !important; font-size: 10px !important; color: var(--ds-ink-3) !important; padding: 3px 10px !important; }
+.editor-status .status-spacer { flex: 1; }
+.pane-splitter { background: transparent !important; }
+.pane-splitter:hover::after { background: var(--ds-brand) !important; }
+
+/* ---- Results: sticky gray header, compact zebra rows ---- */
+.results-toolbar {
+  min-height: 34px !important; padding: 3px 10px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  background: var(--ds-surface-2) !important;
+}
+.results-title b { font-size: 12px !important; color: var(--ds-ink); }
+.results-title .ant-tag { font-size: 10px !important; }
+.results-toolbar-right .ant-btn { font-size: 11px !important; height: 24px !important; }
+.results-meta { font-size: 11px !important; color: var(--ds-ink-3) !important; }
+.query-table .ant-table-thead > tr > th {
+  background: var(--ds-surface-2) !important;
+  color: var(--ds-ink-2) !important;
+  font-size: 11px !important; font-weight: 600 !important;
+  padding: 6px 10px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+  position: sticky !important; top: 0 !important; z-index: 2;
+}
+.query-table .ant-table-tbody > tr > td {
+  padding: 5px 10px !important;
+  height: 32px !important;
+  font-size: 12px !important;
+  border-bottom: 1px solid var(--ds-line) !important;
+}
+.query-table .ant-table-tbody > tr:nth-child(even) > td { background: color-mix(in srgb, var(--ds-surface-2) 60%, transparent) !important; }
+.query-table .ant-table-tbody > tr:hover > td { background: var(--ds-hover) !important; }
+.query-table .result-column { font-family: var(--ds-mono); font-size: 11px; }
+.query-table .numeric-value { font-family: var(--ds-mono); text-align: right; }
+.ant-table-pagination.ant-pagination { margin: 8px 12px !important; }
+.query-failure { border-radius: 6px !important; }
+
+/* ---- Status bar ---- */
+.statusbar { border-top: 1px solid var(--ds-line) !important; background: var(--ds-surface) !important; font-size: 10px !important; color: var(--ds-ink-3) !important; height: 24px !important; }
+.status-ready { color: var(--ds-brand) !important; }
+.status-host { color: var(--ds-ink-3) !important; }
+.status-separator { color: var(--ds-line-strong) !important; }
+
+/* ---- Focus ring: precise, not heavy ---- */
+:where(button, [tabindex], input, select):focus-visible { outline: 2px solid var(--ds-brand) !important; outline-offset: 1px !important; }
+
+/* ---- Phase 3 launcher: adapt to theme ---- */
+.phase3-launcher { background: var(--ds-surface) !important; border-color: var(--ds-line) !important; box-shadow: var(--ds-shadow) !important; }
+.phase3-launcher .ant-btn-text { color: var(--ds-ink-2) !important; }
+.phase3-launcher .ant-btn-text:hover { background: var(--ds-hover) !important; color: var(--ds-ink) !important; }
+
+/* ---- Dark-mode fixes for areas painted by the compiled App / antd tokens ---- */
+[data-theme="dark"] .workspace-head,
+[data-theme="dark"] .editor-status,
+[data-theme="dark"] .results-toolbar,
+[data-theme="dark"] .panel-toolbar { background: var(--ds-surface-2) !important; color: var(--ds-ink) !important; }
+[data-theme="dark"] .workspace-head .page-title h4,
+[data-theme="dark"] .document-tab span,
+[data-theme="dark"] .results-title b { color: var(--ds-ink) !important; }
+[data-theme="dark"] .workspace-head .page-title .ant-typography:not(h4) { color: var(--ds-ink-3) !important; }
+[data-theme="dark"] .query-table .ant-table-thead > tr > th { background: var(--ds-surface-2) !important; color: var(--ds-ink-2) !important; }
+[data-theme="dark"] .connection-name b,
+[data-theme="dark"] .status-left span,
+[data-theme="dark"] .results-meta { color: var(--ds-ink) !important; }
+[data-theme="dark"] .ant-tree-node-content-wrapper:hover { background: var(--ds-hover) !important; }

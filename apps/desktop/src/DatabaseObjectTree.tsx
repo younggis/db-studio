@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Key } from "react";
 import { Button, Dropdown, Space, Spin, Tooltip, Tree, Typography } from "antd";
 import type { MenuProps } from "antd";
@@ -75,7 +75,9 @@ export default function DatabaseObjectTree({
 }: DatabaseObjectTreeProps) {
   const [fieldCache, setFieldCache] = useState<Record<string, FieldInfo[]>>({});
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
-  const treeData = navicatTransform(data);
+  const [filter, setFilter] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  const rawTreeData = navicatTransform(data);
 
   // Default: expand only the connection(s), never the whole tree.
   useEffect(() => {
@@ -83,6 +85,33 @@ export default function DatabaseObjectTree({
       setExpandedKeys(data.map((node) => node.key).filter((key): key is Key => key != null));
     }
   }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Cmd/Ctrl+P focuses the tree filter.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "p") {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Filter tree by table/schema name; keep ancestors of matches.
+  const treeData = useMemo(() => {
+    const term = filter.trim().toLowerCase();
+    if (!term) return rawTreeData;
+    const filterNodes = (nodes: DataNode[]): DataNode[] => nodes.flatMap((node) => {
+      const label = typeof node.title === "string" ? node.title.toLowerCase() : "";
+      const children = node.children ? filterNodes(node.children) : undefined;
+      if (label.includes(term) || (children && children.length)) {
+        return [{ ...node, children }];
+      }
+      return [];
+    });
+    return filterNodes(rawTreeData);
+  }, [rawTreeData, filter]);
 
   const loadData = useCallback(async (node: DataNode) => {
     const key = String(node.key ?? "");
@@ -138,13 +167,23 @@ export default function DatabaseObjectTree({
       <div className="tree-label">
         <span>对象浏览器</span>
         <Space size={0}>
-          <Tooltip title="搜索数据库对象">
-            <Button type="text" size="small" icon={<Search size={13} />} aria-label="搜索数据库对象" onClick={onSearch} />
+          <Tooltip title="搜索数据库对象（Ctrl/⌘+P）">
+            <Button type="text" size="small" icon={<Search size={13} />} aria-label="搜索数据库对象" onClick={() => searchRef.current?.focus()} />
           </Tooltip>
           <Tooltip title="刷新对象列表">
             <Button type="text" size="small" icon={<RefreshCw size={13} />} onClick={onRefresh} />
           </Tooltip>
         </Space>
+      </div>
+      <div className="tree-filter-wrap">
+        <input
+          ref={searchRef}
+          className="tree-filter"
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+          placeholder="过滤表 / Schema…  ⌘P"
+          aria-label="过滤数据库对象"
+        />
       </div>
       {loading ? <Spin size="small" /> : <Tree
         showIcon

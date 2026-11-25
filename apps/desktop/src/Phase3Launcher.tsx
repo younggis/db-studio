@@ -1,21 +1,21 @@
-// Phase 3 composition: a self-contained launcher that exposes the two
-// review-only GIS panels without modifying the compiled App chunk. It owns its
-// own connection/file selection so it does not depend on App internal state.
-import { useEffect, useState } from "react";
+// Phase 3 composition: a self-contained launcher for the two review-only GIS
+// panels. It derives the active connection from the App's selected card (no
+// separate dropdown), so there is exactly one connection selector visible.
+import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { Button, Select, Space, Tooltip } from "antd";
-import { Activity, Database, ScanSearch } from "lucide-react";
+import { Button, Space, Tooltip } from "antd";
+import { Activity, Moon, ScanSearch, Sun } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
 import LayerHealthPanel from "./LayerHealthPanel";
 import type { DatabaseEngine } from "@db-studio/shared";
 
-interface ConnectionChoice {
-  id: string;
-  name: string;
-  engine: DatabaseEngine;
-}
-
+interface ConnectionChoice { id: string; name: string; engine: DatabaseEngine }
 type Panel = "spatial-index" | "layer-health" | null;
+
+function readSelectedName(): string | undefined {
+  const card = document.querySelector(".connection-card.selected .connection-name b");
+  return card?.textContent?.trim() || undefined;
+}
 
 export function mountPhase3Launcher(): void {
   const host = document.createElement("div");
@@ -26,23 +26,46 @@ export function mountPhase3Launcher(): void {
 
 export default function Phase3Launcher() {
   const [connections, setConnections] = useState<ConnectionChoice[]>([]);
-  const [connectionId, setConnectionId] = useState<string>();
+  const [activeId, setActiveId] = useState<string>();
   const [panel, setPanel] = useState<Panel>(null);
   const [vectorPath, setVectorPath] = useState<string>();
+  const [dark, setDark] = useState(false);
 
   useEffect(() => {
     window.dbStudio.connections.list().then((items) => {
-      const choices = items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        engine: item.engine as DatabaseEngine,
-      }));
+      const choices = items.map((item) => ({ id: item.id, name: item.name, engine: item.engine as DatabaseEngine }));
       setConnections(choices);
-      setConnectionId((current) => current && choices.some((item) => item.id === current) ? current : choices[0]?.id);
+      setActiveId((current) => current ?? choices[0]?.id);
     }).catch(() => undefined);
   }, []);
 
-  const selected = connections.find((item) => item.id === connectionId);
+  // Track the App's selected connection card by observing class changes.
+  useEffect(() => {
+    const sync = () => {
+      const name = readSelectedName();
+      if (!name) return;
+      const match = connections.find((item) => name.includes(item.name));
+      if (match) setActiveId((current) => current === match.id ? current : match.id);
+    };
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["class"], childList: true });
+    return () => observer.disconnect();
+  }, [connections]);
+
+  const selected = connections.find((item) => item.id === activeId);
+
+  const [schemas, setSchemas] = useState<string[]>([]);
+  useEffect(() => {
+    if (!activeId) { setSchemas([]); return; }
+    window.dbStudio.database.schemas(activeId).then(setSchemas).catch(() => setSchemas([]));
+  }, [activeId]);
+
+  function toggleTheme() {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.setAttribute("data-theme", next ? "dark" : "light");
+  }
 
   async function openLayerHealth() {
     const path = await window.dbStudio.files.openVector();
@@ -51,37 +74,20 @@ export default function Phase3Launcher() {
     setPanel("layer-health");
   }
 
-  async function openSpatialIndex() {
-    if (!connectionId) return;
-    setPanel("spatial-index");
-  }
-
-  async function schemasForSelected(): Promise<string[]> {
-    if (!connectionId) return [];
-    try { return await window.dbStudio.database.schemas(connectionId); }
-    catch { return []; }
-  }
-
-  const [schemas, setSchemas] = useState<string[]>([]);
-  useEffect(() => { if (connectionId) void schemasForSelected().then(setSchemas); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [connectionId]);
+  const openSpatialIndex = useCallback(() => { if (activeId) setPanel("spatial-index"); }, [activeId]);
 
   return (
     <>
       <div className="phase3-launcher" aria-label="GIS 辅助工具">
-        <Space size={6}>
-          <Select
-            value={connectionId}
-            onChange={setConnectionId}
-            placeholder="连接"
-            size="small"
-            style={{ width: 190 }}
-            options={connections.map((item) => ({ value: item.id, label: `${item.name} · ${item.engine}` }))}
-          />
-          <Tooltip title="查看表空间索引建议（只展示不执行）">
-            <Button size="small" icon={<ScanSearch size={14} />} disabled={!connectionId} onClick={() => void openSpatialIndex()}>索引诊断</Button>
+        <Space size={4}>
+          <Tooltip title={dark ? "切换浅色主题" : "切换深色护眼主题"}>
+            <Button type="text" size="small" aria-label="切换主题" icon={dark ? <Sun size={14} /> : <Moon size={14} />} onClick={toggleTheme} />
+          </Tooltip>
+          <Tooltip title="查看当前连接的表空间索引建议（只展示不执行）">
+            <Button type="text" size="small" aria-label="索引诊断" icon={<ScanSearch size={14} />} disabled={!activeId} onClick={openSpatialIndex} />
           </Tooltip>
           <Tooltip title="选择矢量文件并做导入前体检">
-            <Button size="small" icon={<Activity size={14} />} onClick={() => void openLayerHealth()}>图层体检</Button>
+            <Button type="text" size="small" aria-label="图层体检" icon={<Activity size={14} />} onClick={() => void openLayerHealth()} />
           </Tooltip>
         </Space>
       </div>
@@ -89,7 +95,7 @@ export default function Phase3Launcher() {
       <SpatialIndexPanel
         open={panel === "spatial-index"}
         onClose={() => setPanel(null)}
-        connectionId={connectionId}
+        connectionId={activeId}
         engine={selected?.engine}
         schemas={schemas}
       />
