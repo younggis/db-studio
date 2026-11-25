@@ -21,7 +21,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  height: 28px !important;
+  height: var(--wb-tree-row-h) !important;
   line-height: 1.2 !important;
 }
 .object-tree.object-tree .tree-label .ant-btn { display: inline-flex; align-items: center; justify-content: center; }
@@ -36,13 +36,13 @@
   width: 100%;
   height: 28px;
   padding: 0 6px 0 8px;
-  background: var(--ds-surface, #fff);
-  border: 1px solid var(--ds-line, #e2e8f0);
+  background: var(--wb-bg-surface);
+  border: 1px solid var(--wb-border);
   border-radius: 5px;
   transition: border-color .15s, box-shadow .15s;
 }
 .object-tree .tree-filter-shell:focus-within {
-  border-color: var(--ds-brand, #0f766e);
+  border-color: var(--wb-brand);
   box-shadow: 0 0 0 2px rgba(15, 118, 110, .12);
 }
 .object-tree .tree-filter {
@@ -53,12 +53,12 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: var(--ds-ink, #334155);
+  color: var(--wb-text);
   font-family: inherit;
   font-size: 11px;
   line-height: 1.2;
 }
-.object-tree .tree-filter::placeholder { color: var(--ds-ink-3, #94a3b8); }
+.object-tree .tree-filter::placeholder { color: var(--wb-text-muted); }
 .object-tree .tree-filter-kbd {
   flex: 0 0 auto;
   margin-left: 6px;
@@ -66,9 +66,9 @@
   font-family: inherit;
   font-size: 10px;
   line-height: 1.2;
-  color: var(--ds-ink-3, #64748b);
-  background: var(--ds-surface-2, #f1f5f9);
-  border: 1px solid var(--ds-line, #e2e8f0);
+  color: var(--wb-text-muted);
+  background: var(--wb-bg-subtle);
+  border: 1px solid var(--wb-border);
   border-radius: 4px;
   white-space: nowrap;
   user-select: none;
@@ -78,8 +78,8 @@
 .object-tree.object-tree .ant-tree-treenode {
   display: flex !important;
   align-items: center !important;
-  height: 28px !important;
-  min-height: 28px !important;
+  height: var(--wb-tree-row-h) !important;
+  min-height: var(--wb-tree-row-h) !important;
   line-height: 1.2 !important;
   padding: 0 !important;
   white-space: nowrap;
@@ -93,10 +93,10 @@
 }
 .object-tree.object-tree .ant-tree-indent-unit {
   position: relative !important;
-  width: 16px !important;
-  min-width: 16px !important;
-  flex: 0 0 16px !important;
-  height: 28px !important;
+  width: var(--wb-tree-slot) !important;
+  min-width: var(--wb-tree-slot) !important;
+  flex: 0 0 var(--wb-tree-slot) !important;
+  height: var(--wb-tree-row-h) !important;
 }
 .object-tree.object-tree .ant-tree-indent-unit::before {
   content: "";
@@ -104,10 +104,10 @@
   top: 0;
   bottom: 0;
   left: 7px;
-  border-left: 1px solid #e2e8f0;
+  border-left: 1px solid var(--wb-tree-guide);
 }
 [data-theme="dark"] .object-tree.object-tree .ant-tree-indent-unit::before {
-  border-left-color: var(--ds-line-strong, #334155);
+  border-left-color: var(--wb-border-strong);
 }
 
 /* ---- arrow slot: always 16px, even on leaves (.ant-tree-switcher-noop) ---- */
@@ -118,11 +118,11 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 16px !important;
-  min-width: 16px !important;
-  height: 16px !important;
-  flex: 0 0 16px !important;
-  line-height: 16px !important;
+  width: var(--wb-tree-slot) !important;
+  min-width: var(--wb-tree-slot) !important;
+  height: var(--wb-tree-slot) !important;
+  flex: 0 0 var(--wb-tree-slot) !important;
+  line-height: var(--wb-tree-slot) !important;
   margin: 0 !important;
 }
 .object-tree.object-tree .ant-tree-switcher svg { width: 10px; height: 10px; }
@@ -131,11 +131,11 @@
 .object-tree.object-tree .ant-tree-node-content-wrapper {
   display: flex !important;
   align-items: center !important;
-  gap: 6px !important;
+  gap: var(--wb-tree-gap) !important;
   flex: 1 1 auto !important;
   min-width: 0 !important;
-  height: 28px !important;
-  min-height: 28px !important;
+  height: var(--wb-tree-row-h) !important;
+  min-height: var(--wb-tree-row-h) !important;
   line-height: 1.2 !important;
   padding: 0 8px !important;
   border-radius: 4px !important;
@@ -145,10 +145,10 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 16px !important;
-  min-width: 16px !important;
-  height: 16px !important;
-  flex: 0 0 16px !important;
+  width: var(--wb-tree-slot) !important;
+  min-width: var(--wb-tree-slot) !important;
+  height: var(--wb-tree-slot) !important;
+  flex: 0 0 var(--wb-tree-slot) !important;
   margin: 0 !important;
   line-height: 1 !important;
 }
@@ -166,9 +166,9 @@
   height: 12px !important;
   margin: 0 !important;
   border-radius: 3px;
-  background: #6f92ad;
+  background: var(--wb-text-muted);
 }
-.object-tree.object-tree .tree-sub-icon { background: #9bb4c4; }
+.object-tree.object-tree .tree-sub-icon { background: var(--wb-border-strong); }
 
 /* ---- text: centre the glyph box, not just the outer box ----
    antd gives .ant-tree-title a 22px box while our line-height is 13.2px.
@@ -204,13 +204,13 @@
   font-size: 11px;
   line-height: 1.2;
 }
-.object-tree.object-tree .tree-field-name { color: var(--ds-ink, #2c3e50); }
-.object-tree.object-tree .tree-field-type { color: var(--ds-ink-3, #8a9aa8); font-size: 10px; }
+.object-tree.object-tree .tree-field-name { color: var(--wb-text); }
+.object-tree.object-tree .tree-field-type { color: var(--wb-text-muted); font-size: 10px; }
 .object-tree.object-tree .tree-field-pk {
-  color: #b8860b;
+  color: var(--wb-warning);
   font-size: 10px;
   line-height: 1.2;
-  background: #fff8e6;
+  background: var(--wb-bg-subtle);
   padding: 0 3px;
   border-radius: 2px;
 }

@@ -49,6 +49,13 @@
   --wb-space-2: 8px;
   --wb-space-3: 12px;
   --wb-space-4: 16px;
+
+  /* object tree geometry (E2E-locked: 28px rows, 16px slots, 6px gap) */
+  --wb-tree-row-h: 28px;
+  --wb-tree-slot: 16px;
+  --wb-tree-gap: 6px;
+  --wb-tree-font-size: 11px;
+  --wb-tree-guide: #e2e8f0;
 }
 
 [data-theme="dark"] {
