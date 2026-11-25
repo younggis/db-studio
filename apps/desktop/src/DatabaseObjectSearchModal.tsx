@@ -137,7 +137,7 @@ export default function DatabaseObjectSearchModal({
   const allFailed = !!objects?.failedSchemas.length && (objects?.tables.length ?? 0) === 0;
 
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       title={<span><Search size={16} />　数据库对象搜索</span>}
       open={open}
       onCancel={onClose}

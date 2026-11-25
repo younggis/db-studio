@@ -172,7 +172,7 @@ export default function MongoAiPanel({ open, onClose, onApply, connectionId, dat
   }
 
   return (
-    <Drawer
+    <Drawer rootClassName="wb-surface"
       title={
         <div className="mongo-ai-title">
           <span><Braces size={15} /> AI MongoDB 查询助手</span>

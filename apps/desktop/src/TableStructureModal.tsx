@@ -16,7 +16,7 @@ interface TableStructureModalProps {
 
 export default function TableStructureModal({ table, columns, loading, error, onClose }: TableStructureModalProps) {
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       title={
         <div className="modal-title">
           <div className="modal-icon"><Database size={17} /></div>

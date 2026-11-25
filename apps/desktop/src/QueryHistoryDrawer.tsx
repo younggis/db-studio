@@ -195,7 +195,7 @@ export default function QueryHistoryDrawer({ open, sql, connection, connections,
   </div>;
 
   return <>
-    <Drawer
+    <Drawer rootClassName="wb-surface"
       className="query-history-drawer"
       open={open}
       onClose={onClose}

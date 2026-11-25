@@ -55,7 +55,7 @@ export default function SpatialIndexPanel({ open, onClose, connectionId, engine,
   }
 
   return (
-    <Drawer
+    <Drawer rootClassName="wb-surface"
       title={<span><Database size={16} /> 空间索引诊断</span>}
       open={open}
       onClose={onClose}

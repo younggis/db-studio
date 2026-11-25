@@ -91,7 +91,7 @@ export default function ConnectionFormModal({
   }, [form, initialValues, open]);
 
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       title={
         <div className="modal-title">
           <div className="modal-icon"><Database size={17} /></div>

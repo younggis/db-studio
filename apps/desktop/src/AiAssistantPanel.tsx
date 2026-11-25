@@ -286,7 +286,7 @@ export default function AiAssistantPanel(props: AiAssistantPanelProps) {
 
   return (
     <Fragment>
-      <Drawer
+      <Drawer rootClassName="wb-surface"
         open={props.open}
         onClose={props.onClose}
         styles={{ wrapper: { width: 500 } }}

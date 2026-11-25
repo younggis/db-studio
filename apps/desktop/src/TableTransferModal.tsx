@@ -180,7 +180,7 @@ export default function TableTransferModal({
     && Object.values(mappings).some(Boolean);
 
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       open={open}
       title="传输表数据"
       okText="追加数据"
