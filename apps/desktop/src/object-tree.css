@@ -1,17 +1,197 @@
-/* Object tree: compact, lazy-expanded, fields visually subordinate to tables.
+/* Object tree: precise alignment.
    Higher specificity + !important wins over the vendor CSS loaded by the
-   compiled entry chunk (which also targets .object-tree .ant-tree-*). */
-.object-tree.object-tree .ant-tree-indent-unit{width:8px!important}
-.object-tree.object-tree .ant-tree-switcher{width:14px!important;line-height:20px!important}
-.object-tree.object-tree .ant-tree-treenode{min-height:20px!important;line-height:20px!important}
-.object-tree.object-tree .ant-tree-node-content-wrapper{min-height:20px!important;line-height:20px!important;padding:0 3px!important}
-.object-tree.object-tree .tree-group-icon,.object-tree.object-tree .tree-sub-icon{display:inline-block;width:10px;height:10px;margin-right:3px;border-radius:2px;background:#6f92ad;vertical-align:middle}
-.object-tree.object-tree .tree-sub-icon{background:#9bb4c4}
-.object-tree.object-tree .tree-field{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:20px}
-.object-tree.object-tree .tree-field-name{color:#2c3e50}
-.object-tree.object-tree .tree-field-type{color:#8a9aa8;font-size:10px}
-.object-tree.object-tree .tree-field-pk{color:#b8860b;font-size:10px;background:#fff8e6;padding:0 3px;border-radius:2px}
-.object-tree .tree-filter-wrap{padding:2px 8px 6px}
-.object-tree .tree-filter{width:100%;height:24px;padding:0 8px;font-size:11px;font-family:inherit;color:#334155;background:#fff;border:1px solid #e2e8f0;border-radius:5px;outline:none}
-.object-tree .tree-filter:focus{border-color:#0f766e;box-shadow:0 0 0 2px rgba(15,118,110,.12)}
-.object-tree .tree-filter::placeholder{color:#94a3b8}
+   compiled entry chunk (which also targets .object-tree .ant-tree-*).
+
+   Layout contract per row (all values are fixed, no collapsing):
+     [indent n x 16px][arrow slot 16px][icon slot 16px][gap 6px][label]
+   Every level adds exactly one 16px indent unit; leaf rows keep an empty
+   arrow slot so every icon's left edge stays on the same vertical column. */
+
+/* Inline SVG has a baseline gap by default — kill it everywhere in the tree. */
+.object-tree svg { display: block !important; flex-shrink: 0 !important; }
+
+/* ---- header label ---- */
+.object-tree.object-tree .tree-label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  height: 28px !important;
+  line-height: 1.2 !important;
+}
+.object-tree.object-tree .tree-label .ant-btn { display: inline-flex; align-items: center; justify-content: center; }
+.object-tree.object-tree .tree-label svg { width: 13px; height: 13px; }
+
+/* ---- search box: [input][kbd badge] ---- */
+.object-tree .tree-filter-wrap { padding: 2px 8px 8px; }
+.object-tree .tree-filter-shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 28px;
+  padding: 0 6px 0 8px;
+  background: var(--ds-surface, #fff);
+  border: 1px solid var(--ds-line, #e2e8f0);
+  border-radius: 5px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.object-tree .tree-filter-shell:focus-within {
+  border-color: var(--ds-brand, #0f766e);
+  box-shadow: 0 0 0 2px rgba(15, 118, 110, .12);
+}
+.object-tree .tree-filter {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ds-ink, #334155);
+  font-family: inherit;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.object-tree .tree-filter::placeholder { color: var(--ds-ink-3, #94a3b8); }
+.object-tree .tree-filter-kbd {
+  flex: 0 0 auto;
+  margin-left: 6px;
+  padding: 1px 5px;
+  font-family: inherit;
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--ds-ink-3, #64748b);
+  background: var(--ds-surface-2, #f1f5f9);
+  border: 1px solid var(--ds-line, #e2e8f0);
+  border-radius: 4px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* ---- rows: forced vertical centering, compact 28px ---- */
+.object-tree.object-tree .ant-tree-treenode {
+  display: flex !important;
+  align-items: center !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;
+  white-space: nowrap;
+}
+
+/* ---- indentation: one 16px unit per level + hairline guide ---- */
+.object-tree.object-tree .ant-tree-indent {
+  display: flex !important;
+  align-self: stretch !important;
+  flex: 0 0 auto !important;
+}
+.object-tree.object-tree .ant-tree-indent-unit {
+  position: relative !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  flex: 0 0 16px !important;
+  height: 28px !important;
+}
+.object-tree.object-tree .ant-tree-indent-unit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 7px;
+  border-left: 1px solid #e2e8f0;
+}
+[data-theme="dark"] .object-tree.object-tree .ant-tree-indent-unit::before {
+  border-left-color: var(--ds-line-strong, #334155);
+}
+
+/* ---- arrow slot: always 16px, even on leaves (.ant-tree-switcher-noop) ---- */
+.object-tree.object-tree .ant-tree-switcher,
+.object-tree.object-tree .ant-tree-switcher-noop,
+.object-tree.object-tree .ant-tree-switcher_open,
+.object-tree.object-tree .ant-tree-switcher_close {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 16px !important;
+  line-height: 16px !important;
+  margin: 0 !important;
+}
+.object-tree.object-tree .ant-tree-switcher svg { width: 10px; height: 10px; }
+
+/* ---- node content: icon slot 16px + fixed 6px gap to text ---- */
+.object-tree.object-tree .ant-tree-node-content-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  line-height: 1.2 !important;
+  padding: 0 8px !important;
+  border-radius: 4px !important;
+}
+.object-tree.object-tree .ant-tree-iconEle,
+.object-tree.object-tree .ant-tree-icon__customize {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 16px !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+.object-tree.object-tree .ant-tree-iconEle svg,
+.object-tree.object-tree .ant-tree-iconEle .anticon {
+  display: block !important;
+  flex-shrink: 0 !important;
+  width: 14px;
+  height: 14px;
+}
+.object-tree.object-tree .tree-group-icon,
+.object-tree.object-tree .tree-sub-icon {
+  display: block !important;
+  width: 8px !important;
+  height: 8px !important;
+  margin: 0 !important;
+  border-radius: 2px;
+  background: #6f92ad;
+}
+.object-tree.object-tree .tree-sub-icon { background: #9bb4c4; }
+
+/* ---- text: leading-none so the glyph中线 matches the icon centre ---- */
+.object-tree.object-tree .ant-tree-title,
+.object-tree.object-tree .tree-node-title {
+  display: block !important;
+  min-width: 0 !important;
+  line-height: 1.2 !important;
+  font-size: 11px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- lazy field rows ---- */
+.object-tree.object-tree .tree-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.object-tree.object-tree .tree-field-name { color: var(--ds-ink, #2c3e50); }
+.object-tree.object-tree .tree-field-type { color: var(--ds-ink-3, #8a9aa8); font-size: 10px; }
+.object-tree.object-tree .tree-field-pk {
+  color: #b8860b;
+  font-size: 10px;
+  line-height: 1.2;
+  background: #fff8e6;
+  padding: 0 3px;
+  border-radius: 2px;
+}
+.object-tree.object-tree .tree-error { font-size: 11px; line-height: 1.2; }

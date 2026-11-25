@@ -176,14 +176,17 @@ export default function DatabaseObjectTree({
         </Space>
       </div>
       <div className="tree-filter-wrap">
-        <input
-          ref={searchRef}
-          className="tree-filter"
-          value={filter}
-          onChange={(event) => setFilter(event.target.value)}
-          placeholder="过滤表 / Schema…  ⌘P"
-          aria-label="过滤数据库对象"
-        />
+        <div className="tree-filter-shell">
+          <input
+            ref={searchRef}
+            className="tree-filter"
+            value={filter}
+            onChange={(event) => setFilter(event.target.value)}
+            placeholder="过滤表 / Schema…"
+            aria-label="过滤数据库对象"
+          />
+          <kbd className="tree-filter-kbd">⌘P</kbd>
+        </div>
       </div>
       {loading ? <Spin size="small" /> : <Tree
         showIcon

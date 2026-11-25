@@ -66,6 +66,23 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   expect(icon).not.toBeNull();
   expect(title).not.toBeNull();
   expect(Math.abs((icon!.y + icon!.height / 2) - (title!.y + title!.height / 2))).toBeLessThan(4);
+  // Alignment contract: fixed 16px arrow/icon slots, 28px rows, 6px gap, kbd badge.
+  await expect(page.locator(".tree-filter-kbd")).toHaveText("⌘P");
+  const metrics = await page.evaluate(() => {
+    const node = Array.from(document.querySelectorAll(".object-tree .ant-tree-treenode"))
+      .find((element) => (element as HTMLElement).offsetParent !== null
+        && element.querySelector(".ant-tree-switcher") && element.querySelector(".ant-tree-node-content-wrapper"));
+    const sw = node?.querySelector(".ant-tree-switcher");
+    const iconSlot = node?.querySelector(".ant-tree-iconEle");
+    const wrapper = node?.querySelector(".ant-tree-node-content-wrapper");
+    return {
+      row: node ? getComputedStyle(node).height : "",
+      arrow: sw ? getComputedStyle(sw).width : "",
+      iconSlot: iconSlot ? getComputedStyle(iconSlot).width : "",
+      gap: wrapper ? getComputedStyle(wrapper).gap : "",
+    };
+  });
+  expect(metrics).toEqual({ row: "28px", arrow: "16px", iconSlot: "16px", gap: "6px" });
   // Expand the public schema so the Navicat "Tables" group renders.
   const publicNode = page.locator(".ant-tree-treenode").filter({ hasText: "public" }).first();
   await expect(publicNode).toBeVisible({ timeout: 10_000 });
