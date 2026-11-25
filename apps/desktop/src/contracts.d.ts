@@ -129,6 +129,8 @@ export interface DbStudioApi {
       partialFilterExpression?: Record<string, unknown>;
     }>>;
     createTwoDSphereIndex(id: string, database: string, collection: string, field: string): Promise<string>;
+    deleteDocument(id: string, database: string, collection: string, filterJson: string): Promise<number>;
+    replaceDocument(id: string, database: string, collection: string, filterJson: string, replacementJson: string): Promise<number>;
     find(id: string, database: string, collection: string, options: {
       filter?: Record<string, unknown>;
       projection?: Record<string, unknown>;

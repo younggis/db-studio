@@ -1610,6 +1610,26 @@ function registerHandlers() {
         const documents = await mongoFor(await connectionFor(id)).findDocuments(database, collection, options);
         return stringifyMongoJson(documents);
     });
+    ipcMain.handle("mongo:delete-document", async (_event, id, database, collection, filterJson) => {
+        if (typeof database !== "string" || !database.trim())
+            throw new Error("MongoDB 数据库名不能为空。");
+        if (typeof collection !== "string" || !collection.trim())
+            throw new Error("MongoDB Collection 名称不能为空。");
+        if (typeof filterJson !== "string" || !filterJson.trim())
+            throw new Error("MongoDB 删除条件不能为空。");
+        return mongoFor(await connectionFor(id)).deleteDocument(database, collection, filterJson);
+    });
+    ipcMain.handle("mongo:replace-document", async (_event, id, database, collection, filterJson, replacementJson) => {
+        if (typeof database !== "string" || !database.trim())
+            throw new Error("MongoDB 数据库名不能为空。");
+        if (typeof collection !== "string" || !collection.trim())
+            throw new Error("MongoDB Collection 名称不能为空。");
+        if (typeof filterJson !== "string" || !filterJson.trim())
+            throw new Error("MongoDB 替换条件不能为空。");
+        if (typeof replacementJson !== "string" || !replacementJson.trim())
+            throw new Error("MongoDB 文档不能为空。");
+        return mongoFor(await connectionFor(id)).replaceDocument(database, collection, filterJson, replacementJson);
+    });
     ipcMain.handle("mongo:aggregate", async (_event, id, database, collection, pipeline, limit = 100) => {
         if (typeof database !== "string" || !database.trim())
             throw new Error("MongoDB 数据库名不能为空。");

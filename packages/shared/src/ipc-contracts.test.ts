@@ -28,6 +28,8 @@ describe("IPC argument contracts", () => {
       changes: [{ primaryKeyValues: { id: 1 }, values: { name: "x" } }],
     }])).toBeUndefined();
     expect(validateIpcArgs("mongo:aggregate", ["conn-1", "db", "c", [{ $limit: 10 }], 100])).toBeUndefined();
+    expect(validateIpcArgs("mongo:delete-document", ["conn-1", "db", "c", '{"_id":1}'])).toBeUndefined();
+    expect(validateIpcArgs("mongo:replace-document", ["conn-1", "db", "c", '{"_id":1}', '{"name":"x"}'])).toBeUndefined();
   });
 
   it("rejects invalid identifiers, engines and unknown fields with structured issues", () => {

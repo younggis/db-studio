@@ -180,6 +180,29 @@ export class MongoDocumentAdapter {
     return cursor.toArray() as Promise<MongoDocument[]>;
   }
 
+  async deleteDocument(database: string, collection: string, filterJson: string): Promise<number> {
+    const filter = parseMongoEjson(filterJson, "MongoDB 删除条件") as Document;
+    if (!filter || typeof filter !== "object" || Array.isArray(filter)) {
+      throw new Error("MongoDB 删除条件必须是 JSON 对象。");
+    }
+    const result = await (await this.connect()).db(database).collection<Document>(collection).deleteOne(filter);
+    return result.deletedCount;
+  }
+
+  async replaceDocument(database: string, collection: string, filterJson: string, replacementJson: string): Promise<number> {
+    const filter = parseMongoEjson(filterJson, "MongoDB 替换条件") as Document;
+    const replacement = parseMongoEjson(replacementJson, "MongoDB 文档") as Document;
+    if (!filter || typeof filter !== "object" || Array.isArray(filter)) {
+      throw new Error("MongoDB 替换条件必须是 JSON 对象。");
+    }
+    if (!replacement || typeof replacement !== "object" || Array.isArray(replacement)) {
+      throw new Error("MongoDB 文档必须是 JSON 对象。");
+    }
+    const { _id: _ignored, ...body } = replacement;
+    const result = await (await this.connect()).db(database).collection<Document>(collection).replaceOne(filter, body);
+    return result.matchedCount;
+  }
+
   async aggregateDocuments(
     database: string,
     collection: string,

@@ -160,6 +160,8 @@ export declare const ipcArgSchemas: {
     }, z.core.$strict>], null>;
     readonly "mongo:find": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>], null>;
     readonly "mongo:aggregate": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodNumber], null>;
+    readonly "mongo:delete-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
+    readonly "mongo:replace-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
     readonly "gis:import": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodRecord<z.ZodString, z.ZodUnknown>, z.ZodOptional<z.ZodString>], null>;
     readonly "gis:export": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodOptional<z.ZodString>], null>;
 };

@@ -20592,6 +20592,8 @@ var init_ipc_contracts = __esm({
       }).strict()]),
       "mongo:find": external_exports.tuple([identifier, identifier, identifier, external_exports.record(external_exports.string(), external_exports.unknown()).optional()]),
       "mongo:aggregate": external_exports.tuple([identifier, identifier, identifier, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).max(1e3), external_exports.number().int().min(1).max(1e3)]),
+      "mongo:delete-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4)]),
+      "mongo:replace-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4), boundedText]),
       "gis:import": external_exports.tuple([identifier, external_exports.string().min(1).max(4096), identifier, external_exports.record(external_exports.string(), external_exports.unknown()), identifier.optional()]),
       "gis:export": external_exports.tuple([identifier, identifier, external_exports.string().min(1).max(4096), external_exports.record(external_exports.string(), external_exports.unknown()).optional(), identifier.optional()])
     };
@@ -20661,6 +20663,8 @@ contextBridge.exposeInMainWorld("dbStudio", {
     indexes: (id, database, collection) => ipcRenderer.invoke("mongo:indexes", id, database, collection),
     createTwoDSphereIndex: (id, database, collection, field) => ipcRenderer.invoke("mongo:create-2dsphere-index", id, database, collection, field),
     find: (id, database, collection, options) => invoke("mongo:find", id, database, collection, options),
+    deleteDocument: (id, database, collection, filterJson) => invoke("mongo:delete-document", id, database, collection, filterJson),
+    replaceDocument: (id, database, collection, filterJson, replacementJson) => invoke("mongo:replace-document", id, database, collection, filterJson, replacementJson),
     aggregate: (id, database, collection, pipeline, limit) => invoke("mongo:aggregate", id, database, collection, pipeline, limit),
     import: (id, database, collection) => ipcRenderer.invoke("mongo:import", id, database, collection),
     export: (id, database, collection, filter) => ipcRenderer.invoke("mongo:export", id, database, collection, filter),

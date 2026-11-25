@@ -116,6 +116,23 @@ test("GIS exchange page has import/export segmented flow", async () => {
   await expect(page.locator(".gx-format-pill")).toHaveCount(5, { timeout: 10_000 });
 });
 
+test("MongoDB documents page has compact query bar and view switcher", async () => {
+  const page = await attach();
+  // select the MongoDB connection before opening the documents page
+  const mongoCard = page.locator(".connection-card").filter({ hasText: "MongoDB" }).first();
+  await expect(mongoCard).toBeVisible({ timeout: 20_000 });
+  await mongoCard.locator("button").first().click();
+  await page.getByRole("button", { name: "Mongo 文档" }).first().click();
+  await expect(page.locator(".mongo-page")).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".mongo-labeled-prefix")).toHaveCount(2);
+  await expect(page.locator(".json-mini")).toHaveCount(3);
+  await expect(page.locator(".mongo-view-switch .ant-segmented-item")).toHaveCount(3);
+  await expect(page.locator(".mongo-template")).toHaveCount(3);
+  // switching to Aggregate replaces the three editors with a pipeline editor
+  await page.locator(".mongo-mode-switch .ant-segmented-item").nth(1).click();
+  await expect(page.locator(".mongo-page .json-mini-label")).toHaveText("Aggregate Pipeline");
+});
+
 test("SQL page opens AI assistant and history drawers", async () => {
   const page = await attach();
   // ensure we are on the SQL page regardless of the previous test

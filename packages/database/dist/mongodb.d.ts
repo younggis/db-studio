@@ -40,6 +40,8 @@ export declare class MongoDocumentAdapter {
     listIndexes(database: string, collection: string): Promise<MongoIndexMetadata[]>;
     createTwoDSphereIndex(database: string, collection: string, field?: string): Promise<string>;
     findDocuments(database: string, collection: string, options?: MongoFindOptions): Promise<MongoDocument[]>;
+    deleteDocument(database: string, collection: string, filterJson: string): Promise<number>;
+    replaceDocument(database: string, collection: string, filterJson: string, replacementJson: string): Promise<number>;
     aggregateDocuments(database: string, collection: string, pipeline: MongoDocument[], limit?: number): Promise<MongoDocument[]>;
     importDocuments(database: string, collection: string, documents: MongoDocument[]): Promise<number>;
     importGeoJson(database: string, collection: string, content: string, geometryField?: string): Promise<number>;

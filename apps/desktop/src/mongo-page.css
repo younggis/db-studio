@@ -1,0 +1,207 @@
+/* MongoDB Compass-inspired page. The App renders <MongoDocumentsPage>
+   directly in the workspace via the vendor shim, so no overlay is needed. */
+.workspace:has(> .mongo-page) .workspace-head .page-title { display: none !important; }
+.workspace:has(> .mongo-page) .workspace-head { justify-content: flex-end !important; }
+
+.mongo-page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 16px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------- top bar ---------- */
+.mongo-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: var(--ds-shadow);
+}
+.mongo-topbar-left, .mongo-topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mongo-topbar-right { margin-left: auto; }
+.mongo-labeled-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 34px;
+  border: 1px solid var(--ds-line-strong);
+  border-radius: 7px;
+  background: var(--ds-surface);
+  transition: border-color .15s, box-shadow .15s;
+}
+.mongo-labeled-select:hover { border-color: var(--ds-brand); }
+.mongo-labeled-select:focus-within { border-color: var(--ds-brand); box-shadow: 0 0 0 2px var(--ds-brand-soft); }
+.mongo-db-select { width: 196px; }
+.mongo-coll-select { width: 210px; }
+.mongo-labeled-prefix {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0 8px; height: 100%;
+  border-right: 1px solid var(--ds-line);
+  color: var(--ds-brand); font-size: 11px; font-weight: 600;
+  white-space: nowrap;
+}
+.mongo-native-select {
+  flex: 1; min-width: 0; height: 100%;
+  border: 0; outline: 0; background: transparent;
+  color: var(--ds-ink); font-size: 12px;
+  padding: 0 20px 0 8px; appearance: none; cursor: pointer;
+}
+.mongo-native-select:disabled { color: var(--ds-ink-3); }
+.mongo-select-caret { position: absolute; right: 8px; color: var(--ds-ink-3); pointer-events: none; }
+.mongo-mode-switch .ant-segmented-item-label { font-size: 12px; padding: 4px 12px !important; }
+.mongo-info-btn { color: var(--ds-ink-3); }
+.mongo-primary.ant-btn-primary {
+  background: var(--ds-brand) !important;
+  border-color: var(--ds-brand) !important;
+  box-shadow: none !important;
+  font-weight: 600;
+}
+.mongo-primary.ant-btn-primary:hover { background: var(--ds-brand-hover) !important; border-color: var(--ds-brand-hover) !important; }
+
+/* ---------- query panel ---------- */
+.mongo-query-panel {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-line);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: var(--ds-shadow);
+}
+.mongo-editor-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.json-mini {
+  border: 1px solid var(--ds-line);
+  border-radius: 8px;
+  background: var(--ds-surface-2);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.json-mini:focus-within, .json-mini-expanded { border-color: var(--ds-brand); box-shadow: 0 0 0 2px var(--ds-brand-soft); }
+.json-mini-expanded { grid-column: 1 / -1; }
+.json-mini-head {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 26px; padding: 0 8px;
+  background: var(--ds-surface); border-bottom: 1px solid var(--ds-line);
+}
+.json-mini-label { font-size: 11px; font-weight: 600; color: var(--ds-ink-2); }
+.json-mini-head-actions { display: inline-flex; align-items: center; gap: 2px; }
+.json-mini-head-actions .ant-btn { color: var(--ds-brand); font-size: 11px; height: 22px; }
+.json-mini-body { position: relative; min-height: 38px; }
+.json-mini-input {
+  display: block; width: 100%; min-height: 38px;
+  resize: none; border: 0; outline: 0;
+  background: transparent; color: var(--ds-ink);
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  font-size: 12px; line-height: 19px;
+  padding: 9px 10px;
+  white-space: pre; overflow: auto; tab-size: 2;
+}
+.json-mini:not(.json-mini-expanded) .json-mini-input { height: 38px; white-space: nowrap; }
+.json-mini-highlight {
+  position: absolute; inset: 0; margin: 0;
+  pointer-events: none; overflow: hidden;
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  font-size: 12px; line-height: 19px;
+  padding: 9px 10px; white-space: pre; color: var(--ds-ink);
+}
+.json-mini-expanded .json-mini-input { color: transparent; caret-color: var(--ds-brand); position: relative; z-index: 1; }
+.json-mini-expanded .json-mini-input::selection { background: var(--ds-brand-soft); color: transparent; }
+.jmk-key { color: #0f766e; font-weight: 600; }
+.jmk-str { color: #b45309; }
+.jmk-num { color: #7c3aed; }
+.jmk-bool { color: #2563eb; }
+.jmk-op { color: #be123c; font-weight: 600; }
+
+/* ---------- results panel ---------- */
+.mongo-results-panel {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-line);
+  border-radius: 10px;
+  box-shadow: var(--ds-shadow);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.mongo-results-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--ds-line);
+  background: var(--ds-surface-2);
+}
+.mongo-results-title { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--ds-ink); }
+.mongo-results-title svg { color: var(--ds-brand); }
+.mongo-results-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.mongo-view-switch .ant-segmented-item-label { font-size: 11px; padding: 3px 10px !important; display: inline-flex; align-items: center; gap: 4px; }
+.mongo-ctrl-divider { width: 1px; height: 18px; background: var(--ds-line-strong); margin: 0 4px; }
+.mongo-ctrl-label { font-size: 11px; white-space: nowrap; }
+.mongo-num-sm { width: 72px; }
+.mongo-results-body { padding: 12px; min-height: 220px; }
+.mongo-loading { display: flex; align-items: center; justify-content: center; gap: 8px; height: 220px; color: var(--ds-ink-3); font-size: 12px; }
+.mongo-error { margin: 10px 12px 0; }
+
+/* tree view */
+.mongo-tree-view { display: flex; flex-direction: column; gap: 8px; }
+.mongo-doc-tree {
+  position: relative;
+  border: 1px solid var(--ds-line);
+  border-radius: 8px;
+  background: var(--ds-surface-2);
+  padding: 8px 10px;
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+  font-size: 12px;
+}
+.mongo-doc-tree:hover { border-color: var(--ds-brand); }
+.mongo-doc-actions {
+  position: absolute; top: 6px; right: 8px;
+  display: inline-flex; gap: 2px;
+  opacity: 0; transition: opacity .12s;
+  background: var(--ds-surface); border-radius: 6px;
+  border: 1px solid var(--ds-line);
+  box-shadow: var(--ds-shadow); padding: 1px;
+  z-index: 2;
+}
+.mongo-doc-tree:hover .mongo-doc-actions, .mongo-table .ant-table-row:hover .mongo-doc-actions { opacity: 1; }
+.mongo-doc-actions .ant-btn { width: 22px; height: 22px; }
+.jtree-leaf { display: flex; gap: 6px; padding: 2px 0; line-height: 18px; }
+.jtree-key { color: var(--ds-brand); font-weight: 600; margin-right: 4px; }
+.jtree-value.jv-str { color: #b45309; }
+.jtree-value.jv-num { color: #7c3aed; }
+.jtree-value.jv-null { color: var(--ds-ink-3); font-style: italic; }
+.jtree-node { padding: 2px 0; }
+.jtree-node > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 4px; line-height: 18px; }
+.jtree-node > summary::-webkit-details-marker { display: none; }
+.jtree-node > summary::before { content: "▸"; color: var(--ds-ink-3); font-size: 10px; transform: rotate(0deg); transition: transform .12s; }
+.jtree-node[open] > summary::before { transform: rotate(90deg); }
+.jtree-bracket { color: var(--ds-ink-3); }
+.jtree-count { color: var(--ds-ink-3); font-size: 10px; background: var(--ds-surface); border-radius: 8px; padding: 0 5px; }
+.jtree-children { border-left: 1px dashed var(--ds-line-strong); margin-left: 5px; }
+
+/* empty state */
+.mongo-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; min-height: 220px; color: var(--ds-ink-3); text-align: center;
+}
+.mongo-empty svg { color: var(--ds-brand); opacity: .7; }
+.mongo-empty b { font-size: 13px; color: var(--ds-ink-2); }
+.mongo-empty span { font-size: 11px; }
+.mongo-template-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+.mongo-template {
+  border: 1px dashed var(--ds-line-strong);
+  background: var(--ds-surface);
+  border-radius: 16px; padding: 5px 12px; cursor: pointer;
+  color: var(--ds-ink-2); font-size: 11px; transition: all .15s;
+}
+.mongo-template:hover { border-color: var(--ds-brand); color: var(--ds-brand); background: var(--ds-brand-soft); }
+.mongo-template code { font-family: inherit; }
+
+/* map view */
+.mongo-map-view { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.mongo-map-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ds-ink-3); }
+.mongo-map-empty { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ds-ink-3); padding: 28px; }
+.mongo-edit-hint { font-size: 11px; color: var(--ds-ink-3); margin-bottom: 10px; }

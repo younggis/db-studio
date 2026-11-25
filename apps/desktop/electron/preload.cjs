@@ -64,6 +64,8 @@ contextBridge.exposeInMainWorld("dbStudio", {
     indexes: (id, database, collection) => ipcRenderer.invoke("mongo:indexes", id, database, collection),
     createTwoDSphereIndex: (id, database, collection, field) => ipcRenderer.invoke("mongo:create-2dsphere-index", id, database, collection, field),
     find: (id, database, collection, options) => invoke("mongo:find", id, database, collection, options),
+    deleteDocument: (id, database, collection, filterJson) => invoke("mongo:delete-document", id, database, collection, filterJson),
+    replaceDocument: (id, database, collection, filterJson, replacementJson) => invoke("mongo:replace-document", id, database, collection, filterJson, replacementJson),
     aggregate: (id, database, collection, pipeline, limit) => invoke("mongo:aggregate", id, database, collection, pipeline, limit),
     import: (id, database, collection) => ipcRenderer.invoke("mongo:import", id, database, collection),
     export: (id, database, collection, filter) => ipcRenderer.invoke("mongo:export", id, database, collection, filter),

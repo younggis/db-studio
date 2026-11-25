@@ -3256,6 +3256,16 @@ export class MongoDocumentService {
     return this.withMongo((adapter) => adapter.findDocuments(target, collection, options));
   }
 
+  async deleteDocument(database: string | undefined, collection: string, filterJson: string): Promise<number> {
+    const target = this.requireDatabase(database);
+    return this.withMongo((adapter) => adapter.deleteDocument(target, collection, filterJson));
+  }
+
+  async replaceDocument(database: string | undefined, collection: string, filterJson: string, replacementJson: string): Promise<number> {
+    const target = this.requireDatabase(database);
+    return this.withMongo((adapter) => adapter.replaceDocument(target, collection, filterJson, replacementJson));
+  }
+
   async aggregateDocuments(database: string | undefined, collection: string, pipeline: MongoDocument[], limit = 100): Promise<MongoDocument[]> {
     const target = this.requireDatabase(database);
     return this.withMongo((adapter) => adapter.aggregateDocuments(target, collection, pipeline, limit));

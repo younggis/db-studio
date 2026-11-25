@@ -184,6 +184,8 @@ export declare class MongoDocumentService {
     listIndexes(database: string | undefined, collection: string): Promise<MongoIndexMetadata[]>;
     createTwoDSphereIndex(database: string | undefined, collection: string, field?: string): Promise<string>;
     findDocuments(database: string | undefined, collection: string, options?: MongoFindOptions): Promise<MongoDocument[]>;
+    deleteDocument(database: string | undefined, collection: string, filterJson: string): Promise<number>;
+    replaceDocument(database: string | undefined, collection: string, filterJson: string, replacementJson: string): Promise<number>;
     aggregateDocuments(database: string | undefined, collection: string, pipeline: MongoDocument[], limit?: number): Promise<MongoDocument[]>;
     importDocuments(database: string | undefined, collection: string, documents: MongoDocument[]): Promise<number>;
     importJson(database: string | undefined, collection: string, content: string): Promise<number>;

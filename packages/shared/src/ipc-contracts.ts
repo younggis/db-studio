@@ -101,6 +101,8 @@ export const ipcArgSchemas = {
   }).strict()]),
   "mongo:find": z.tuple([identifier, identifier, identifier, z.record(z.string(), z.unknown()).optional()]),
   "mongo:aggregate": z.tuple([identifier, identifier, identifier, z.array(z.record(z.string(), z.unknown())).max(1000), z.number().int().min(1).max(1000)]),
+  "mongo:delete-document": z.tuple([identifier, identifier, identifier, z.string().min(1).max(20_000)]),
+  "mongo:replace-document": z.tuple([identifier, identifier, identifier, z.string().min(1).max(20_000), boundedText]),
   "gis:import": z.tuple([identifier, z.string().min(1).max(4096), identifier, z.record(z.string(), z.unknown()), identifier.optional()]),
   "gis:export": z.tuple([identifier, identifier, z.string().min(1).max(4096), z.record(z.string(), z.unknown()).optional(), identifier.optional()]),
 } as const;

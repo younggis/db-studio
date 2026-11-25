@@ -2848,6 +2848,14 @@ export class MongoDocumentService {
         const target = this.requireDatabase(database);
         return this.withMongo((adapter) => adapter.findDocuments(target, collection, options));
     }
+    async deleteDocument(database, collection, filterJson) {
+        const target = this.requireDatabase(database);
+        return this.withMongo((adapter) => adapter.deleteDocument(target, collection, filterJson));
+    }
+    async replaceDocument(database, collection, filterJson, replacementJson) {
+        const target = this.requireDatabase(database);
+        return this.withMongo((adapter) => adapter.replaceDocument(target, collection, filterJson, replacementJson));
+    }
     async aggregateDocuments(database, collection, pipeline, limit = 100) {
         const target = this.requireDatabase(database);
         return this.withMongo((adapter) => adapter.aggregateDocuments(target, collection, pipeline, limit));
