@@ -5,8 +5,8 @@
   bottom: 36px;
   z-index: 900;
   padding: 6px 8px;
-  background: #ffffff;
-  border: 1px solid #dfe6ea;
+  background: var(--wb-bg-surface);
+  border: 1px solid var(--wb-border);
   border-radius: 8px;
   box-shadow: 0 4px 14px rgba(32, 48, 64, 0.12);
 }

@@ -56,6 +56,13 @@
   --wb-tree-gap: 6px;
   --wb-tree-font-size: 11px;
   --wb-tree-guide: #e2e8f0;
+
+  /* JSON / code syntax highlight */
+  --wb-code-key: #0f766e;
+  --wb-code-string: #b45309;
+  --wb-code-number: #7c3aed;
+  --wb-code-bool: #2563eb;
+  --wb-code-op: #be123c;
 }
 
 [data-theme="dark"] {

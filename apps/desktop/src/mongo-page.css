@@ -112,11 +112,11 @@
 }
 .json-mini-expanded .json-mini-input { color: transparent; caret-color: var(--ds-brand); position: relative; z-index: 1; }
 .json-mini-expanded .json-mini-input::selection { background: var(--ds-brand-soft); color: transparent; }
-.jmk-key { color: #0f766e; font-weight: 600; }
-.jmk-str { color: #b45309; }
-.jmk-num { color: #7c3aed; }
-.jmk-bool { color: #2563eb; }
-.jmk-op { color: #be123c; font-weight: 600; }
+.jmk-key { color: var(--wb-code-key); font-weight: 600; }
+.jmk-str { color: var(--wb-code-string); }
+.jmk-num { color: var(--wb-code-number); }
+.jmk-bool { color: var(--wb-code-bool); }
+.jmk-op { color: var(--wb-code-op); font-weight: 600; }
 
 /* ---------- results panel ---------- */
 .mongo-results-panel {
@@ -170,8 +170,8 @@
 .mongo-doc-actions .ant-btn { width: 22px; height: 22px; }
 .jtree-leaf { display: flex; gap: 6px; padding: 2px 0; line-height: 18px; }
 .jtree-key { color: var(--ds-brand); font-weight: 600; margin-right: 4px; }
-.jtree-value.jv-str { color: #b45309; }
-.jtree-value.jv-num { color: #7c3aed; }
+.jtree-value.jv-str { color: var(--wb-code-string); }
+.jtree-value.jv-num { color: var(--wb-code-number); }
 .jtree-value.jv-null { color: var(--ds-ink-3); font-style: italic; }
 .jtree-node { padding: 2px 0; }
 .jtree-node > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 4px; line-height: 18px; }

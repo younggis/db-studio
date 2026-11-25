@@ -69,7 +69,7 @@ body.gis-page-active .workspace-head { justify-content: flex-end !important; }
 }
 .gis-exchange .gx-format-pill:hover { border-color: var(--ds-brand); }
 .gis-exchange .gx-format-pill.active {
-  background: var(--ds-brand); color: #fff; border-color: var(--ds-brand);
+  background: var(--ds-brand); color: var(--wb-bg-surface); border-color: var(--ds-brand);
 }
 .gis-exchange .gx-primary {
   height: 36px; padding: 0 22px; font-size: 13px; font-weight: 600;
