@@ -16,6 +16,7 @@ import type {
 } from "@db-studio/gis";
 import type { DatabaseEngine, TableInfo } from "@db-studio/shared";
 import GisPreviewMap from "./GisPreviewMap";
+import { WbWorkbench, WbToolbar, WbToolButton, WbStatusBar } from "./workbench/Workbench";
 
 const { Text, Title } = Typography;
 
@@ -162,25 +163,32 @@ export default function GisExchangePage() {
   })), [preview]);
 
   return (
-    <div className="gis-exchange">
-      <div>
-        <Title level={4} className="gx-title">{mode === "import" ? "导入矢量数据" : "导出矢量数据"}</Title>
-        <div className="gx-subtitle">
-          {mode === "import"
-            ? `矢量文件 → 空间数据表${importConnInfo ? ` · 导入到 ${importConnInfo.name}` : ""}`
-            : `空间数据表 → 矢量文件${exportConnInfo ? ` · 来自 ${exportConnInfo.name}` : ""}`}
-        </div>
-      </div>
-
-      <Segmented
-        value={mode}
-        onChange={(v) => { setMode(v as Mode); setReport(undefined); }}
-        options={[
-          { value: "import", label: <span><ArrowDownToLine size={14} /> 导入矢量文件到数据库</span> },
-          { value: "export", label: <span><ArrowUpFromLine size={14} /> 从空间数据库导出</span> },
-        ]}
-      />
-
+    <WbWorkbench
+      className="gis-exchange"
+      toolbar={
+        <WbToolbar>
+          <div className="gx-head">
+            <div>
+              <Title level={5} className="gx-title">{mode === "import" ? "导入矢量数据" : "导出矢量数据"}</Title>
+              <div className="gx-subtitle">
+                {mode === "import"
+                  ? `矢量文件 → 空间数据表${importConnInfo ? ` · 导入到 ${importConnInfo.name}` : ""}`
+                  : `空间数据表 → 矢量文件${exportConnInfo ? ` · 来自 ${exportConnInfo.name}` : ""}`}
+              </div>
+            </div>
+            <Segmented
+              value={mode}
+              onChange={(v) => { setMode(v as Mode); setReport(undefined); }}
+              options={[
+                { value: "import", label: <span><ArrowDownToLine size={14} /> 导入矢量文件到数据库</span> },
+                { value: "export", label: <span><ArrowUpFromLine size={14} /> 从空间数据库导出</span> },
+              ]}
+            />
+          </div>
+        </WbToolbar>
+      }
+      statusbar={<WbStatusBar left={`GIS 数据交换 · ${mode === "import" ? "导入" : "导出"}`} right={busy ? "处理中…" : "就绪"} />}
+    >
       {mode === "import" ? (
         <>
           <section className="gx-card">
@@ -301,6 +309,7 @@ export default function GisExchangePage() {
           </section>
         </>
       )}
-    </div>
+    
+    </WbWorkbench>
   );
 }
