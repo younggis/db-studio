@@ -15,7 +15,7 @@ import LazyDataTable from "./LazyDataTable";
 import MongoAiPanel, { type MongoQueryDraft } from "./MongoAiPanel";
 import JsonMiniEditor from "./JsonMiniEditor";
 import GisPreviewMap from "./GisPreviewMap";
-import { WbWorkbench, WbToolbar, WbDataTable, WbStatusBar } from "./workbench/Workbench";
+import { WbWorkbench, WbToolbar, WbDataTable, WbStatusBar, WbInspector, WbToolButton } from "./workbench/Workbench";
 import type { MongoQueryMode } from "@db-studio/ai";
 
 const { Text } = Typography;
@@ -547,14 +547,14 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
         <div className="mongo-results-body">{renderBody()}</div>
       </section>
 
-      <Drawer title={`${collection || "Collection"} 索引`} open={indexesOpen} onClose={() => setIndexesOpen(false)} width={640}>
+      inspector={<WbInspector open={indexesOpen} title={`${collection || "Collection"} 索引`} onClose={() => setIndexesOpen(false)} width={360}>
         <Space.Compact style={{ width: "100%", marginBottom: 16 }}>
           <Input value={geometryField} onChange={(event) => setGeometryField(event.target.value)} placeholder="GeoJSON 字段路径" aria-label="GeoJSON 字段路径" />
-          <Button type="primary" className="mongo-primary" onClick={() => void create2dsphere()} loading={metaLoading}>创建 2dsphere</Button>
+          <WbToolButton className="mongo-primary" onClick={() => void create2dsphere()} loading={metaLoading} label="创建 2dsphere" />
         </Space.Compact>
         {metaError !== undefined && <Alert showIcon type="error" message="读取索引失败" description={describeError(metaError, "未知错误")} />}
         <WbDataTable rowKey="name" columns={indexColumns} dataSource={indexes} loading={metaLoading} pagination={false} />
-      </Drawer>
+</WbInspector>}
 
       <Modal title="编辑文档" open={editingDoc !== null} onCancel={() => setEditingDoc(null)} onOk={() => void saveEdit()}
         okText="保存修改" cancelText="取消" width={720} destroyOnClose>

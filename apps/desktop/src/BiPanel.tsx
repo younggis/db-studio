@@ -4,6 +4,7 @@ import { Button, Drawer, Input, Select, Space, Tabs, Typography, message } from 
 import { BarChart3, Play, RefreshCw, Save, Trash2 } from "lucide-react";
 import type { DatabaseEngine } from "@db-studio/shared";
 import MiniChart from "./MiniChart";
+import { WbTabContainer, WbToolButton } from "./workbench/Workbench";
 import { prepareChartData, type Aggregation, type ChartType, type ChartData } from "./chart-data";
 
 const { Text } = Typography;
@@ -30,6 +31,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
   const [aggregation, setAggregation] = useState<Aggregation>("none");
   const [title, setTitle] = useState("");
   const [busy, setBusy] = useState(false);
+  const [activeTab, setActiveTab] = useState<"design" | "dashboard">("design");
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [dashboardData, setDashboardData] = useState<Record<string, ChartData>>({});
 
@@ -103,7 +105,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
 
   return (
     <Drawer title="BI 图表 / 仪表盘" width={960} open={open} onClose={onClose} rootClassName="wb-app">
-      <Tabs items={[
+      <WbTabContainer activeKey={activeTab} onChange={(key) => setActiveTab(key as "design" | "dashboard")} items={[
         {
           key: "design",
           label: "图表设计",
@@ -112,7 +114,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
               <span className="dbtools-label">连接</span>
               <Select value={connectionId || undefined} onChange={setConnectionId}
                 options={connections.map((item) => ({ value: item.id, label: `${item.name} · ${item.engine}` }))} style={{ width: 280 }} />
-              <Button icon={<Play size={14} />} loading={busy} onClick={() => void runQuery()}>执行查询</Button>
+              <WbToolButton icon={<Play size={14} />} loading={busy} onClick={() => void runQuery()} label="执行查询" />
             </div>
             <Input.TextArea rows={3} value={sql} onChange={(event) => setSql(event.target.value)} spellCheck={false}
               placeholder="SELECT category, SUM(value) AS total FROM t GROUP BY category" style={{ fontFamily: "monospace", fontSize: 12 }} />
@@ -133,7 +135,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
             <MiniChart type={chartType} data={chartData} height={300} />
             <div className="dbtools-actions">
               <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="图表标题" style={{ width: 220 }} />
-              <Button type="primary" className="mongo-primary" icon={<Save size={14} />} loading={busy} onClick={() => void saveWidget()}>保存到仪表盘</Button>
+              <WbToolButton className="mongo-primary" icon={<Save size={14} />} loading={busy} onClick={() => void saveWidget()} label="保存到仪表盘" />
             </div>
           </>,
         },
@@ -142,7 +144,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
           label: "仪表盘",
           children: <>
             <Space style={{ marginBottom: 12 }}>
-              <Button icon={<RefreshCw size={14} />} loading={busy} onClick={() => void refreshDashboard()}>刷新全部</Button>
+              <WbToolButton icon={<RefreshCw size={14} />} loading={busy} onClick={() => void refreshDashboard()} label="刷新全部" />
               <Text type="secondary">{widgets.length} 个图表</Text>
             </Space>
             <div className="bi-dashboard-grid">
@@ -152,7 +154,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
                     <b>{widget.title}</b>
                     <Space size={2}>
                       <Text type="secondary">{widget.type}</Text>
-                      <Button type="text" size="small" danger icon={<Trash2 size={13} />} onClick={() => void removeWidget(widget.id)} />
+                      <WbToolButton danger icon={<Trash2 size={13} />} ariaLabel="删除图表" onClick={() => void removeWidget(widget.id)} />
                     </Space>
                   </div>
                   <MiniChart type={widget.type as ChartType} data={dashboardData[widget.id] ?? { labels: [], series: [] }} height={220} />

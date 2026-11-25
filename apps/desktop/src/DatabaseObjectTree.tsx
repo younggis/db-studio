@@ -5,6 +5,7 @@ import type { MenuProps } from "antd";
 import type { DataNode } from "antd/es/tree";
 import { RefreshCw, Search } from "lucide-react";
 import { groupTablesByParent } from "./tree-partition";
+import { WbTreeSidebar, WbToolButton } from "./workbench/Workbench";
 
 const { Text } = Typography;
 
@@ -205,72 +206,59 @@ export default function DatabaseObjectTree({
   };
 
   return (
-    <div className="object-tree">
-      <div className="tree-label">
-        <span>对象浏览器</span>
+    <WbTreeSidebar
+      className="object-tree"
+      headClassName="tree-label"
+      searchClassName="tree-filter-wrap"
+      hostClassName="tree-virtual-host"
+      height={treeHeight}
+      title={<span>对象浏览器</span>}
+      actions={
         <Space size={0}>
           <Tooltip title="搜索数据库对象（Ctrl/⌘+P）">
-            <Button type="text" size="small" icon={<Search size={13} />} aria-label="搜索数据库对象" onClick={() => searchRef.current?.focus()} />
+            <WbToolButton ariaLabel="搜索数据库对象" icon={<Search size={13} />} onClick={() => searchRef.current?.focus()} />
           </Tooltip>
           <Tooltip title="刷新对象列表">
-            <Button type="text" size="small" icon={<RefreshCw size={13} />} onClick={onRefresh} />
+            <WbToolButton ariaLabel="刷新对象列表" icon={<RefreshCw size={13} />} onClick={onRefresh} />
           </Tooltip>
         </Space>
-      </div>
-      <div className="tree-filter-wrap">
-        <div className="tree-filter-shell">
-          <input
-            ref={searchRef}
-            className="tree-filter"
-            value={filter}
-            onChange={(event) => setFilter(event.target.value)}
-            placeholder="过滤表 / Schema…"
-            aria-label="过滤数据库对象"
-          />
-          <kbd className="tree-filter-kbd">⌘P</kbd>
-        </div>
-      </div>
-      {loading ? <Spin size="small" /> : (
-        <div className="tree-virtual-host" ref={treeHostRef}>
-          <Tree
-            virtual
-            height={treeHeight}
-            showIcon
-            blockNode
-        expandedKeys={expandedKeys}
-        onExpand={(keys) => setExpandedKeys(keys)}
-        selectedKeys={[]}
-        treeData={withFields(treeData)}
-        loadData={loadData}
-        onSelect={(keys) => onSelect(keys)}
-        titleRender={(node) => {
-          const key = String(node.key ?? "");
-          if (isFieldLeaf(key)) {
-            const field = fieldFor(key);
-            if (field) {
-              return (
-                <span className="tree-field">
-                  <span className="tree-field-name">{field.name}</span>
-                  <span className="tree-field-type">{field.dataType}</span>
-                  {field.primaryKey && <span className="tree-field-pk">PK</span>}
-                </span>
-              );
-            }
+      }
+      searchValue={filter}
+      onSearchChange={setFilter}
+      searchPlaceholder="过滤表 / Schema…"
+      searchSuffix={<kbd className="tree-filter-kbd">⌘P</kbd>}
+      searchInputRef={searchRef}
+      loading={loading}
+      treeData={withFields(treeData)}
+      expandedKeys={expandedKeys}
+      onExpand={(keys) => setExpandedKeys(keys)}
+      selectedKeys={[]}
+      onSelect={(keys) => onSelect(keys)}
+      loadData={loadData}
+      titleRender={(node) => {
+        const key = String(node.key ?? "");
+        if (isFieldLeaf(key)) {
+          const field = fieldFor(key);
+          if (field) {
+            return (
+              <span className="tree-field">
+                <span className="tree-field-name">{field.name}</span>
+                <span className="tree-field-type">{field.dataType}</span>
+                {field.primaryKey && <span className="tree-field-pk">PK</span>}
+              </span>
+            );
           }
-          const items = getContextMenuItems?.(node);
-          const title = typeof node.title === "function" ? node.title(node) : node.title;
-          return items?.length ? (
-            <Dropdown menu={{ items }} trigger={["contextMenu"]} destroyPopupOnHide>
-              <span className="tree-node-title" onContextMenu={(event) => event.preventDefault()}><span className="tree-node-title-text">{title}</span></span>
-            </Dropdown>
-          ) : (
-            <span className="tree-node-title"><span className="tree-node-title-text">{title}</span></span>
-          );
-        }}
-          />
-        </div>
-      )}
-      {error && <Text type="danger" className="tree-error">{error}</Text>}
-    </div>
+        }
+        const items = getContextMenuItems?.(node);
+        const title = typeof node.title === "function" ? node.title(node) : node.title;
+        return items?.length ? (
+          <Dropdown menu={{ items }} trigger={["contextMenu"]} destroyPopupOnHide>
+            <span className="tree-node-title" onContextMenu={(event) => event.preventDefault()}><span className="tree-node-title-text">{title}</span></span>
+          </Dropdown>
+        ) : (
+          <span className="tree-node-title"><span className="tree-node-title-text">{title}</span></span>
+        );
+      }}
+    />
   );
 }

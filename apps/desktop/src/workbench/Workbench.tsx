@@ -16,7 +16,7 @@ export function WbToolbarGroup({ children }: { children: ReactNode }) {
 }
 
 export function WbToolButton({
-  icon, label, tooltip, onClick, disabled, active, danger, className = "", loading,
+  icon, label, tooltip, onClick, disabled, active, danger, className = "", loading, ariaLabel,
 }: {
   icon?: ReactNode;
   label?: string;
@@ -27,10 +27,12 @@ export function WbToolButton({
   danger?: boolean;
   className?: string;
   loading?: boolean;
+  ariaLabel?: string;
 }) {
   const button = (
     <button
       type="button"
+      aria-label={ariaLabel}
       className={`wb-tool-btn${active ? " is-active" : ""}${danger ? " is-danger" : ""} ${className}`.trim()}
       onClick={onClick}
       disabled={disabled || loading}
@@ -66,6 +68,8 @@ export function WbDataTable<RecordType extends object>(props: TableProps<RecordT
 /* ---------------- Left tree sidebar ---------------- */
 export function WbTreeSidebar({
   treeData, expandedKeys, onExpand, selectedKeys, onSelect, loading, title, actions, height = 600,
+  className, headClassName, searchClassName, hostClassName, searchValue, onSearchChange,
+  searchPlaceholder, searchSuffix, searchInputRef, loadData, titleRender,
 }: {
   treeData: DataNode[];
   expandedKeys?: Key[];
@@ -76,14 +80,32 @@ export function WbTreeSidebar({
   title?: ReactNode;
   actions?: ReactNode;
   height?: number;
+  className?: string;
+  headClassName?: string;
+  searchClassName?: string;
+  hostClassName?: string;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  searchPlaceholder?: string;
+  searchSuffix?: ReactNode;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
+  loadData?: (node: DataNode) => Promise<void>;
+  titleRender?: (node: DataNode) => ReactNode;
 }) {
   return (
-    <aside className="wb-sidebar">
-      {title && <div className="wb-sidebar-head"><span>{title}</span>{actions}</div>}
-      <div className="wb-sidebar-search">
-        <input aria-label="过滤对象" placeholder="过滤对象…" />
+    <aside className={`wb-sidebar ${className ?? ""}`.trim()}>
+      {title && <div className={`wb-sidebar-head ${headClassName ?? ""}`.trim()}><span>{title}</span>{actions}</div>}
+      <div className={`wb-sidebar-search ${searchClassName ?? ""}`.trim()}>
+        <input
+          ref={searchInputRef}
+          aria-label="过滤对象"
+          placeholder={searchPlaceholder ?? "过滤对象…"}
+          value={searchValue}
+          onChange={(event) => onSearchChange?.(event.target.value)}
+        />
+        {searchSuffix}
       </div>
-      <div className="wb-tree-host">
+      <div className={`wb-tree-host ${hostClassName ?? ""}`.trim()}>
         {loading ? <div className="wb-tree-loading">加载中…</div> : (
           <Tree
             blockNode
@@ -95,6 +117,8 @@ export function WbTreeSidebar({
             onExpand={(keys) => onExpand?.(keys)}
             selectedKeys={selectedKeys}
             onSelect={(keys) => onSelect?.(keys)}
+            loadData={loadData}
+            titleRender={titleRender}
           />
         )}
       </div>
