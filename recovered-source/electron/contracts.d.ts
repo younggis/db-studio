@@ -144,6 +144,11 @@ export interface DbStudioApi {
     importGeoJson(id: string, database: string, collection: string, geometryField: string): Promise<{ path: string; insertedCount: number } | null>;
     exportGeoJson(id: string, database: string, collection: string, geometryField: string, filter?: Record<string, unknown>): Promise<{ path: string; featureCount: number } | null>;
   };
+  bi: {
+    list(): Promise<Array<{ id: string; title: string; type: string; connectionId: string; sql: string; xField: string; yFields: string[]; aggregation: string; createdAt: string }>>;
+    save(input: Record<string, unknown>): Promise<Array<{ id: string; title: string; type: string; connectionId: string; sql: string; xField: string; yFields: string[]; aggregation: string; createdAt: string }>>;
+    remove(id: string): Promise<Array<{ id: string; title: string; type: string; connectionId: string; sql: string; xField: string; yFields: string[]; aggregation: string; createdAt: string }>>;
+  };
   automation: {
     list(): Promise<Array<{
       id: string; name: string; type: "backup" | "query"; connectionId: string;

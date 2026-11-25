@@ -164,6 +164,9 @@ export declare const ipcArgSchemas: {
     readonly "mongo:aggregate": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodNumber], null>;
     readonly "mongo:delete-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
     readonly "mongo:replace-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
+    readonly "bi:list": z.ZodTuple<[], null>;
+    readonly "bi:save": z.ZodTuple<[z.ZodRecord<z.ZodString, z.ZodUnknown>], null>;
+    readonly "bi:remove": z.ZodTuple<[z.ZodString], null>;
     readonly "automation:list": z.ZodTuple<[], null>;
     readonly "automation:save": z.ZodTuple<[z.ZodRecord<z.ZodString, z.ZodUnknown>], null>;
     readonly "automation:remove": z.ZodTuple<[z.ZodString], null>;

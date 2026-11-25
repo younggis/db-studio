@@ -142,6 +142,7 @@ test("phase 3 launcher opens spatial index and layer health panels", async () =>
   await expect(page.getByRole("button", { name: "数据同步" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "表设计器" })).toBeEnabled();
   await expect(page.getByRole("button", { name: "自动化调度" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "BI 图表" })).toBeEnabled();
 });
 
 test("GIS exchange page has import/export segmented flow", async () => {

@@ -72,6 +72,11 @@ contextBridge.exposeInMainWorld("dbStudio", {
     importGeoJson: (id, database, collection, geometryField) => ipcRenderer.invoke("mongo:geo-import", id, database, collection, geometryField),
     exportGeoJson: (id, database, collection, geometryField, filter) => ipcRenderer.invoke("mongo:geo-export", id, database, collection, geometryField, filter),
   },
+  bi: {
+    list: () => ipcRenderer.invoke("bi:list"),
+    save: (input) => invoke("bi:save", input),
+    remove: (id) => invoke("bi:remove", id),
+  },
   automation: {
     list: () => ipcRenderer.invoke("automation:list"),
     save: (input) => invoke("automation:save", input),

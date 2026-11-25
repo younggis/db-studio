@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Button, Space, Tooltip } from "antd";
-import { Activity, AlarmClock, ArchiveRestore, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun, TableProperties } from "lucide-react";
+import { Activity, AlarmClock, ArchiveRestore, BarChart3, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun, TableProperties } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
 import LayerHealthPanel from "./LayerHealthPanel";
 import BackupPanel from "./BackupPanel";
@@ -12,10 +12,11 @@ import SchemaSyncPanel from "./SchemaSyncPanel";
 import DataSyncPanel from "./DataSyncPanel";
 import TableDesignerPanel from "./TableDesignerPanel";
 import AutomationPanel from "./AutomationPanel";
+import BiPanel from "./BiPanel";
 import type { DatabaseEngine } from "@db-studio/shared";
 
 interface ConnectionChoice { id: string; name: string; engine: DatabaseEngine }
-type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | "data-sync" | "table-designer" | "automation" | null;
+type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | "data-sync" | "table-designer" | "automation" | "bi" | null;
 
 function readSelectedName(): string | undefined {
   const card = document.querySelector(".connection-card.selected .connection-name b");
@@ -109,6 +110,9 @@ export default function Phase3Launcher() {
           <Tooltip title="定时备份与 SQL 任务">
             <Button type="text" size="small" aria-label="自动化调度" icon={<AlarmClock size={14} />} onClick={() => setPanel("automation")} />
           </Tooltip>
+          <Tooltip title="查询结果图表与仪表盘">
+            <Button type="text" size="small" aria-label="BI 图表" icon={<BarChart3 size={14} />} onClick={() => setPanel("bi")} />
+          </Tooltip>
         </Space>
       </div>
 
@@ -146,6 +150,7 @@ export default function Phase3Launcher() {
         activeId={activeId}
       />
       <AutomationPanel open={panel === "automation"} onClose={() => setPanel(null)} />
+      <BiPanel open={panel === "bi"} onClose={() => setPanel(null)} />
     </>
   );
 }

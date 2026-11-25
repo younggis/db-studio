@@ -20594,6 +20594,9 @@ var init_ipc_contracts = __esm({
       "mongo:aggregate": external_exports.tuple([identifier, identifier, identifier, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).max(1e3), external_exports.number().int().min(1).max(1e3)]),
       "mongo:delete-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4)]),
       "mongo:replace-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4), boundedText]),
+      "bi:list": external_exports.tuple([]),
+      "bi:save": external_exports.tuple([external_exports.record(external_exports.string(), external_exports.unknown())]),
+      "bi:remove": external_exports.tuple([identifier]),
       "automation:list": external_exports.tuple([]),
       "automation:save": external_exports.tuple([external_exports.record(external_exports.string(), external_exports.unknown())]),
       "automation:remove": external_exports.tuple([identifier]),
@@ -20687,6 +20690,11 @@ contextBridge.exposeInMainWorld("dbStudio", {
     export: (id, database, collection, filter) => ipcRenderer.invoke("mongo:export", id, database, collection, filter),
     importGeoJson: (id, database, collection, geometryField) => ipcRenderer.invoke("mongo:geo-import", id, database, collection, geometryField),
     exportGeoJson: (id, database, collection, geometryField, filter) => ipcRenderer.invoke("mongo:geo-export", id, database, collection, geometryField, filter)
+  },
+  bi: {
+    list: () => ipcRenderer.invoke("bi:list"),
+    save: (input2) => invoke("bi:save", input2),
+    remove: (id) => invoke("bi:remove", id)
   },
   automation: {
     list: () => ipcRenderer.invoke("automation:list"),

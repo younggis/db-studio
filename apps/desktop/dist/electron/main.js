@@ -14,6 +14,7 @@ import { copyFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/pr
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAsyncSerialQueue } from "./async-serial-queue.js";
+import { loadWidgets, saveWidgets, validateWidget } from "./bi-store.js";
 import { isJobDue, loadAutomationJobs, saveAutomationJobs, validateJob } from "./automation-store.js";
 import { finishAiOperation, handleAiCancellationRequest, registerAiOperation, throwIfAiOperationCancelled } from "./ai-operation-registry.js";
 import { assertConnectionStoreShape, backupAndResetUnreadableConnectionStore, ConnectionStoreUnreadableError } from "./connection-store-recovery.js";
@@ -43,6 +44,10 @@ const queryHistoryDpapiHeader = Buffer.concat([queryHistoryHeader, Buffer.from("
 const queryHistorySafeStorageHeader = Buffer.concat([queryHistoryHeader, Buffer.from("SAFE-STORAGE\0", "ascii")]);
 const connectionsPath = () => path.join(app.getPath("userData"), "connections.enc");
 let automationJobs = [];
+let biWidgets = [];
+async function initBi() {
+    biWidgets = await loadWidgets(app.getPath("userData"));
+}
 async function persistAutomation() {
     await saveAutomationJobs(app.getPath("userData"), automationJobs);
 }
@@ -1737,6 +1742,22 @@ function registerHandlers() {
         await writeFile(result.filePath, `${stringifyMongoJson(featureCollection)}\n`, "utf8");
         return { path: result.filePath, featureCount: featureCollection.features.length };
     });
+    ipcMain.handle("bi:list", async () => biWidgets);
+    ipcMain.handle("bi:save", async (_event, input) => {
+        const widget = validateWidget(input ?? {});
+        const index = biWidgets.findIndex((item) => item.id === widget.id);
+        if (index >= 0)
+            biWidgets[index] = widget;
+        else
+            biWidgets.push(widget);
+        await saveWidgets(app.getPath("userData"), biWidgets);
+        return biWidgets;
+    });
+    ipcMain.handle("bi:remove", async (_event, id) => {
+        biWidgets = biWidgets.filter((widget) => widget.id !== id);
+        await saveWidgets(app.getPath("userData"), biWidgets);
+        return biWidgets;
+    });
     ipcMain.handle("automation:list", async () => automationJobs);
     ipcMain.handle("automation:save", async (_event, input) => {
         const job = validateJob(input ?? {});
@@ -2119,6 +2140,7 @@ app.whenReady().then(async () => {
         shuttingDown = true;
         void sshTunnelManager.closeAll().catch(() => undefined).finally(() => app.quit());
     });
+    await initBi();
     await initAutomation();
     await createWindow();
     app.on("activate", () => {
