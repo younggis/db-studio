@@ -1,0 +1,27 @@
+/* Per-page migration overrides: retire legacy max-width/card padding once a
+   page opts into the Workbench shell. New pages should not need entries here. */
+
+.wb-app.mongo-page {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+.wb-app.mongo-page .wb-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wb-space-3);
+  padding: var(--wb-space-3);
+  overflow: auto;
+  background: var(--wb-bg-surface);
+}
+.wb-app.mongo-page .mongo-query-panel,
+.wb-app.mongo-page .mongo-results-panel {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  box-shadow: none;
+  background: var(--wb-bg-surface);
+}
+.wb-app.mongo-page .mongo-view-switch .ant-segmented-item-label {
+  font-size: var(--wb-font-size-sm);
+}

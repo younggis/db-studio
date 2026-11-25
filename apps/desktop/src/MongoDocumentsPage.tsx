@@ -15,6 +15,7 @@ import LazyDataTable from "./LazyDataTable";
 import MongoAiPanel, { type MongoQueryDraft } from "./MongoAiPanel";
 import JsonMiniEditor from "./JsonMiniEditor";
 import GisPreviewMap from "./GisPreviewMap";
+import { WbWorkbench, WbToolbar, WbDataTable, WbStatusBar } from "./workbench/Workbench";
 import type { MongoQueryMode } from "@db-studio/ai";
 
 const { Text } = Typography;
@@ -466,57 +467,46 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
   };
 
   return (
-    <section className="mongo-page">
-      <div className="mongo-topbar">
-        <div className="mongo-topbar-left">
-          <LabeledSelect
-            icon={<Database size={13} />}
-            label="Database:"
-            value={database}
-            options={databaseOptions}
-            placeholder={metaLoading ? "加载中…" : "选择数据库"}
-            loading={metaLoading}
-            className="mongo-db-select"
-            onChange={(value) => { setDatabase(value); setCollection(""); setDocuments([]); }}
-          />
-          <LabeledSelect
-            icon={<Layers3 size={13} />}
-            label="Collection:"
-            value={collection}
-            options={collections}
-            placeholder="选择集合"
-            loading={metaLoading}
-            className="mongo-coll-select"
-            onChange={(value) => { setCollection(value); setDocuments([]); }}
-          />
-          <Segmented
-            className="mongo-mode-switch"
-            value={mode}
-            onChange={(value) => setMode(value as MongoQueryMode)}
-            options={[{ value: "find", label: "Find" }, { value: "aggregate", label: "Aggregate" }]}
-          />
-        </div>
-        <div className="mongo-topbar-right">
-          <Tooltip title="支持 GeoJSON FeatureCollection 导入；Filter 可用 $geoWithin / $geoIntersects 等空间运算符。">
-            <Button type="text" size="small" icon={<Info size={14} />} aria-label="查询提示" className="mongo-info-btn" />
-          </Tooltip>
-          <Tooltip title="查看或创建 2dsphere 索引">
-            <span><Button icon={<ListTree size={14} />} disabled={!collection} onClick={() => setIndexesOpen(true)}>索引</Button></span>
-          </Tooltip>
-          <Button icon={<Braces size={14} />} onClick={() => setAiOpen(true)}>AI 助手</Button>
-          <Dropdown menu={{ items: importItems, onClick: ({ key }) => { if (key === "json") void importJson(); else void importGeoJson(); } }}>
-            <Button icon={<FileUp size={14} />} disabled={!collection}>导入 <ChevronDown size={12} /></Button>
-          </Dropdown>
-          <Dropdown menu={{ items: exportItems, onClick: ({ key }) => { if (key === "json") void exportJson(); else void exportGeoJson(); } }}>
-            <Button icon={<Download size={14} />} disabled={!collection}>导出 <ChevronDown size={12} /></Button>
-          </Dropdown>
-          <Button icon={<RefreshCw size={14} />} onClick={() => { void loadDatabases(); void loadCollections(); }}>刷新</Button>
-          <Button type="primary" className="mongo-primary" icon={<Play size={14} />} loading={busy} disabled={!collection} onClick={() => void (mode === "find" ? runFind(0) : runAggregate())}>
-            {mode === "find" ? "执行 Find" : "执行 Pipeline"}
-          </Button>
-        </div>
-      </div>
-
+    <WbWorkbench
+      className="mongo-page"
+      toolbar={
+        <WbToolbar className="mongo-topbar">
+          <div className="mongo-topbar-left">
+            <LabeledSelect icon={<Database size={13} />} label="Database:" value={database} options={databaseOptions}
+              placeholder={metaLoading ? "加载中…" : "选择数据库"} loading={metaLoading} className="mongo-db-select"
+              onChange={(value) => { setDatabase(value); setCollection(""); setDocuments([]); }} />
+            <LabeledSelect icon={<Layers3 size={13} />} label="Collection:" value={collection} options={collections}
+              placeholder="选择集合" loading={metaLoading} className="mongo-coll-select"
+              onChange={(value) => { setCollection(value); setDocuments([]); }} />
+            <Segmented className="mongo-mode-switch" value={mode} onChange={(value) => setMode(value as MongoQueryMode)}
+              options={[{ value: "find", label: "Find" }, { value: "aggregate", label: "Aggregate" }]} />
+          </div>
+          <div className="mongo-topbar-right">
+            <Tooltip title="支持 GeoJSON FeatureCollection 导入；Filter 可用 $geoWithin / $geoIntersects 等空间运算符。">
+              <Button type="text" size="small" icon={<Info size={14} />} aria-label="查询提示" className="mongo-info-btn" />
+            </Tooltip>
+            <Tooltip title="查看或创建 2dsphere 索引">
+              <span><Button icon={<ListTree size={14} />} disabled={!collection} onClick={() => setIndexesOpen(true)}>索引</Button></span>
+            </Tooltip>
+            <Button icon={<Braces size={14} />} onClick={() => setAiOpen(true)}>AI 助手</Button>
+            <Dropdown menu={{ items: importItems, onClick: ({ key }) => { if (key === "json") void importJson(); else void importGeoJson(); } }}>
+              <Button icon={<FileUp size={14} />} disabled={!collection}>导入 <ChevronDown size={12} /></Button>
+            </Dropdown>
+            <Dropdown menu={{ items: exportItems, onClick: ({ key }) => { if (key === "json") void exportJson(); else void exportGeoJson(); } }}>
+              <Button icon={<Download size={14} />} disabled={!collection}>导出 <ChevronDown size={12} /></Button>
+            </Dropdown>
+            <Button icon={<RefreshCw size={14} />} onClick={() => { void loadDatabases(); void loadCollections(); }}>刷新</Button>
+            <Button type="primary" className="mongo-primary" icon={<Play size={14} />} loading={busy} disabled={!collection}
+              onClick={() => void (mode === "find" ? runFind(0) : runAggregate())}>
+              {mode === "find" ? "执行 Find" : "执行 Pipeline"}
+            </Button>
+          </div>
+        </WbToolbar>
+      }
+      statusbar={
+        <WbStatusBar left={`MongoDB · ${database || "未选择数据库"} / ${collection || "未选择集合"}`} right={`${documents.length} 个文档`} />
+      }
+    >
       <section className="mongo-query-panel">
         {mode === "find" ? (
           <div className="mongo-editor-grid">
@@ -533,17 +523,12 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
         <div className="mongo-results-toolbar">
           <div className="mongo-results-title"><Search size={15} /> 查询结果 <Tag bordered={false}>{documents.length}</Tag></div>
           <div className="mongo-results-controls">
-            <Segmented
-              size="small"
-              className="mongo-view-switch"
-              value={viewMode}
-              onChange={(value) => setViewMode(value as ViewMode)}
+            <Segmented size="small" className="mongo-view-switch" value={viewMode} onChange={(value) => setViewMode(value as ViewMode)}
               options={[
                 { value: "tree", label: <span><Braces size={13} /> 树形视图</span> },
                 { value: "table", label: <span><Table2 size={13} /> 表格视图</span> },
                 { value: "map", label: <span><MapPin size={13} /> 空间地图</span> },
-              ]}
-            />
+              ]} />
             <span className="mongo-ctrl-divider" />
             {mode === "find" && <>
               <Text type="secondary" className="mongo-ctrl-label">跳过</Text>
@@ -568,34 +553,17 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
           <Button type="primary" className="mongo-primary" onClick={() => void create2dsphere()} loading={metaLoading}>创建 2dsphere</Button>
         </Space.Compact>
         {metaError !== undefined && <Alert showIcon type="error" message="读取索引失败" description={describeError(metaError, "未知错误")} />}
-        <Table size="small" rowKey="name" columns={indexColumns} dataSource={indexes} loading={metaLoading} pagination={false} />
+        <WbDataTable rowKey="name" columns={indexColumns} dataSource={indexes} loading={metaLoading} pagination={false} />
       </Drawer>
 
-      <Modal
-        title="编辑文档"
-        open={editingDoc !== null}
-        onCancel={() => setEditingDoc(null)}
-        onOk={() => void saveEdit()}
-        okText="保存修改"
-        cancelText="取消"
-        width={720}
-        destroyOnClose
-      >
+      <Modal title="编辑文档" open={editingDoc !== null} onCancel={() => setEditingDoc(null)} onOk={() => void saveEdit()}
+        okText="保存修改" cancelText="取消" width={720} destroyOnClose>
         <div className="mongo-edit-hint">文档以 EJSON 展示；_id 用于定位文档，保存时不会修改。修改前请确认字段值类型正确。</div>
         <JsonMiniEditor label="文档 JSON" value={editText} onChange={setEditText} expanded />
       </Modal>
 
-      <MongoAiPanel
-        open={aiOpen}
-        onClose={() => setAiOpen(false)}
-        onApply={applyAiQuery}
-        connectionId={connectionId}
-        database={database}
-        collection={collection}
-        mode={mode}
-        query={aiQuery}
-        error={queryError}
-      />
-    </section>
+      <MongoAiPanel open={aiOpen} onClose={() => setAiOpen(false)} onApply={applyAiQuery}
+        connectionId={connectionId} database={database} collection={collection} mode={mode} query={aiQuery} error={queryError} />
+    </WbWorkbench>
   );
 }

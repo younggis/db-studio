@@ -14,6 +14,7 @@ import "./mongo-page.css";
 import "./db-tools.css";
 import "./workbench-theme.css";
 import "./workbench/workbench.css";
+import "./workbench/page-migrations.css";
 import "./vendor/index-CLh2VPBN.js";
 
 // Phase3Launcher is loaded lazily after the App chunk has initialised so both

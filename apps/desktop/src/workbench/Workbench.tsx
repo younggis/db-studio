@@ -16,7 +16,7 @@ export function WbToolbarGroup({ children }: { children: ReactNode }) {
 }
 
 export function WbToolButton({
-  icon, label, tooltip, onClick, disabled, active, danger,
+  icon, label, tooltip, onClick, disabled, active, danger, className = "", loading,
 }: {
   icon?: ReactNode;
   label?: string;
@@ -25,14 +25,17 @@ export function WbToolButton({
   disabled?: boolean;
   active?: boolean;
   danger?: boolean;
+  className?: string;
+  loading?: boolean;
 }) {
   const button = (
     <button
       type="button"
-      className={`wb-tool-btn${active ? " is-active" : ""}${danger ? " is-danger" : ""}`}
+      className={`wb-tool-btn${active ? " is-active" : ""}${danger ? " is-danger" : ""} ${className}`.trim()}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
+      {loading ? <span className="wb-tool-loading">…</span> : icon}
       {icon}
       {label && <span>{label}</span>}
     </button>
@@ -158,16 +161,17 @@ export function WbStatusBar({ left, right }: { left?: ReactNode; right?: ReactNo
 
 /* ---------------- Page shell ---------------- */
 export function WbWorkbench({
-  toolbar, sidebar, children, inspector, statusbar,
+  toolbar, sidebar, children, inspector, statusbar, className = "",
 }: {
   toolbar?: ReactNode;
   sidebar?: ReactNode;
   children: ReactNode;
   inspector?: ReactNode;
   statusbar?: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className="wb-app">
+    <div className={`wb-app ${className}`.trim()}>
       {toolbar}
       <div className="wb-main">
         {sidebar}
