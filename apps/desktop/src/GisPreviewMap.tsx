@@ -230,23 +230,23 @@ export default function GisPreviewMap({ features, selectedExtent, coordinateRefe
             onPointerUp={handleUp}
             onPointerCancel={() => { dragRef.current = null; setDrag(null); }}
           >
-            <rect x="0" y="0" width={WIDTH} height={HEIGHT} rx="8" fill="#f6f9f8" />
+            <rect x="0" y="0" width={WIDTH} height={HEIGHT} rx="8" fill="var(--wb-bg-subtle)" />
             <path
               d={`M 0 ${HEIGHT / 4} H ${WIDTH} M 0 ${HEIGHT / 2} H ${WIDTH} M 0 ${HEIGHT * 3 / 4} H ${WIDTH} M ${WIDTH / 4} 0 V ${HEIGHT} M ${WIDTH / 2} 0 V ${HEIGHT} M ${WIDTH * 3 / 4} 0 V ${HEIGHT}`}
-              stroke="#e7eeeb"
+              stroke="var(--wb-border)"
               strokeWidth="1"
             />
             {shapes.map((shape, index) => {
               const points = shape.positions.map((point) => projection.toSvg(point));
               return shape.kind === "point"
                 ? points.map((point, pointIndex) => (
-                    <circle key={`${index}-${pointIndex}`} cx={point.x} cy={point.y} r="3.4" fill="#438477" stroke="#fff" strokeWidth="1.5" />
+                    <circle key={`${index}-${pointIndex}`} cx={point.x} cy={point.y} r="3.4" fill="var(--wb-brand)" stroke="var(--wb-bg-surface)" strokeWidth="1.5" />
                   ))
                 : <path
                     key={index}
                     d={points.map((point, pointIndex) => `${pointIndex === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ")}
                     fill="none"
-                    stroke="#438477"
+                    stroke="var(--wb-brand)"
                     strokeWidth="2"
                     strokeLinejoin="round"
                     strokeLinecap="round"
