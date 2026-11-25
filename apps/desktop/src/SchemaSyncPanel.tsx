@@ -93,7 +93,7 @@ export default function SchemaSyncPanel({ open, onClose, activeId }: SchemaSyncP
   const riskColor = (risk: Statement["risk"]) => risk === "high" ? "red" : risk === "medium" ? "orange" : "green";
 
   return (
-    <Drawer title="结构同步" width={860} open={open} onClose={onClose}>
+    <Drawer title="结构同步" width={860} open={open} onClose={onClose} rootClassName="wb-app">
       <div className="dbtools-sync-grid">
         <div className="dbtools-sync-col">
           <b>源（作为目标结构的基准）</b>

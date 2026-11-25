@@ -119,7 +119,7 @@ export default function DataSyncPanel({ open, onClose, activeId }: DataSyncPanel
     : [];
 
   return (
-    <Drawer title="数据同步" width={820} open={open} onClose={onClose}>
+    <Drawer title="数据同步" width={820} open={open} onClose={onClose} rootClassName="wb-app">
       <div className="dbtools-sync-grid">
         <div className="dbtools-sync-col">
           <b>源表</b>

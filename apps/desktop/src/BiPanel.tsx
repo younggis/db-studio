@@ -102,7 +102,7 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
   }
 
   return (
-    <Drawer title="BI 图表 / 仪表盘" width={960} open={open} onClose={onClose}>
+    <Drawer title="BI 图表 / 仪表盘" width={960} open={open} onClose={onClose} rootClassName="wb-app">
       <Tabs items={[
         {
           key: "design",

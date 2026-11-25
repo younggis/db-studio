@@ -116,7 +116,7 @@ export default function TableDesignerPanel({ open, onClose, activeId }: TableDes
   }
 
   return (
-    <Drawer title="表设计器" width={900} open={open} onClose={onClose}>
+    <Drawer title="表设计器" width={900} open={open} onClose={onClose} rootClassName="wb-app">
       <div className="dbtools-sync-grid">
         <div className="dbtools-sync-col">
           <b>连接与 Schema</b>
