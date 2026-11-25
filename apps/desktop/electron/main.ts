@@ -1953,7 +1953,9 @@ app.whenReady().then(async () => {
     registerHandlers();
     let shuttingDown = false;
     app.on("before-quit", (event) => {
-        for (const operation of activeGisOperations.values())
+        for (const operation of activeGisOperations.list())
+            operation.controller.abort();
+        for (const operation of activeAiOperations.list())
             operation.controller.abort();
         if (shuttingDown || (sshTunnelManager.activeCount === 0 && sshTunnelManager.pendingCount === 0))
             return;
