@@ -72,8 +72,13 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 - 业务面板：Mongo AI、空间索引诊断、图层体检、查询历史、SQL AI 助手
 - 弹窗：连接表单、对象搜索、表结构、表传输
 
+编译版 SQL 主工作区（`workbench/compiled-shell.css`）：由于 shell 位于编译 chunk，
+通过类名映射把 `shell/topbar/sidebar/workspace-head/statusbar/panel-toolbar/connection-card/query-table`
+全部对齐到 `wb-*` token。CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF`
+边框、24px 状态栏、26px 按钮。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
+
 仍保留原有 CSS 的部分：对象树（已有精确对齐契约与单测）、内部渲染原语
 （JsonMiniEditor / LazyDataTable / MiniChart / GisControls / GisPreviewMap）。
-后续逐页迁移时，这些组件通过 `.wb-app` 作用域自动继承 token，无需逐文件改动。
+这些组件通过 `.wb-app` 祖先作用域自动继承 token，无需逐文件改动。
 
 迁移原则与页面重构规则保持不变：所有新样式必须来自 `wb-*` 变量，禁止硬编码颜色/间距/字号。
