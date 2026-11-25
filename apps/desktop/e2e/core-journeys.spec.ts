@@ -61,11 +61,29 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   await page.locator(".connection-select").first().click();
   await expect(page.locator(".object-tree")).toBeVisible({ timeout: 20_000 });
   await expect(page.locator(".tree-node-title").first()).toBeVisible();
-  const icon = await page.locator(".ant-tree-iconEle").first().boundingBox();
-  const title = await page.locator(".tree-node-title").first().boundingBox();
-  expect(icon).not.toBeNull();
-  expect(title).not.toBeNull();
-  expect(Math.abs((icon!.y + icon!.height / 2) - (title!.y + title!.height / 2))).toBeLessThan(4);
+  // Compare the actual glyph boxes, not just the fixed slots: antd gives the
+  // title a 22px box with a 13.2px line-height, which previously pushed text
+  // ~4px above the icon centre even though the slots looked centred.
+  const glyphCenters = await page.evaluate(() => {
+    const center = (element: Element | null | undefined) => {
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return box.y + box.height / 2;
+    };
+    const nodes = Array.from(document.querySelectorAll(".object-tree .ant-tree-treenode"))
+      .filter((node) => node.querySelector(".tree-node-title-text"));
+    return nodes.slice(0, 8).map((node) => {
+      const slot = node.querySelector(".ant-tree-iconEle");
+      const visual = slot?.querySelector("svg") || slot?.querySelector(".tree-group-icon")
+        || slot?.querySelector(".tree-sub-icon") || slot?.firstElementChild;
+      const text = node.querySelector(".tree-node-title-text");
+      const a = center(visual);
+      const b = center(text);
+      return a === null || b === null ? null : Math.abs(a - b);
+    }).filter((value): value is number => value !== null);
+  });
+  expect(glyphCenters.length).toBeGreaterThan(0);
+  expect(Math.max(...glyphCenters)).toBeLessThan(1);
   // Alignment contract: fixed 16px arrow/icon slots, 28px rows, 6px gap, kbd badge.
   await expect(page.locator(".tree-filter-kbd")).toHaveText("⌘P");
   const metrics = await page.evaluate(() => {

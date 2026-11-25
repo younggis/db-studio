@@ -156,21 +156,35 @@
 .object-tree.object-tree .tree-group-icon,
 .object-tree.object-tree .tree-sub-icon {
   display: block !important;
-  width: 8px !important;
-  height: 8px !important;
+  width: 12px !important;
+  height: 12px !important;
   margin: 0 !important;
-  border-radius: 2px;
+  border-radius: 3px;
   background: #6f92ad;
 }
 .object-tree.object-tree .tree-sub-icon { background: #9bb4c4; }
 
-/* ---- text: leading-none so the glyph中线 matches the icon centre ---- */
+/* ---- text: centre the glyph box, not just the outer box ----
+   antd gives .ant-tree-title a 22px box while our line-height is 13.2px.
+   With a plain block the text sits at the TOP of that box, so the glyph
+   appears ~4px above the 14px icon whose centre is on the row midline.
+   Flex-centring the title (and an inner text span that keeps ellipsis)
+   puts the glyph centre exactly on the icon centre. */
 .object-tree.object-tree .ant-tree-title,
 .object-tree.object-tree .tree-node-title {
-  display: block !important;
+  display: inline-flex !important;
+  align-items: center !important;
   min-width: 0 !important;
+  max-width: 100% !important;
+  height: 22px !important;
   line-height: 1.2 !important;
   font-size: 11px !important;
+}
+.object-tree.object-tree .tree-node-title-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

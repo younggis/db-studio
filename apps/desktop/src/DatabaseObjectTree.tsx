@@ -215,10 +215,10 @@ export default function DatabaseObjectTree({
           const title = typeof node.title === "function" ? node.title(node) : node.title;
           return items?.length ? (
             <Dropdown menu={{ items }} trigger={["contextMenu"]} destroyPopupOnHide>
-              <span className="tree-node-title" onContextMenu={(event) => event.preventDefault()}>{title}</span>
+              <span className="tree-node-title" onContextMenu={(event) => event.preventDefault()}><span className="tree-node-title-text">{title}</span></span>
             </Dropdown>
           ) : (
-            <span className="tree-node-title">{title}</span>
+            <span className="tree-node-title"><span className="tree-node-title-text">{title}</span></span>
           );
         }}
       />}
