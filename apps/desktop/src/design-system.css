@@ -5,40 +5,40 @@
    behaviour stay untouched.
    ============================================================ */
 :root {
-  --ds-bg: #f1f5f9;
-  --ds-surface: #ffffff;
-  --ds-surface-2: #f8fafc;
-  --ds-sidebar: #f8fafc;
-  --ds-line: #e2e8f0;
-  --ds-line-strong: #cbd5e1;
-  --ds-ink: #0f172a;
-  --ds-ink-2: #475569;
-  --ds-ink-3: #94a3b8;
-  --ds-brand: #0f766e;
-  --ds-brand-hover: #115e59;
-  --ds-brand-soft: #ccfbf1;
-  --ds-hover: #f1f5f9;
-  --ds-selected: #e6f4f1;
+  --ds-bg: var(--wb-bg-surface);
+  --ds-surface: var(--wb-bg-surface);
+  --ds-surface-2: var(--wb-bg-subtle);
+  --ds-sidebar: var(--wb-bg-toolbar);
+  --ds-line: var(--wb-border);
+  --ds-line-strong: var(--wb-border-strong);
+  --ds-ink: var(--wb-text);
+  --ds-ink-2: var(--wb-text-secondary);
+  --ds-ink-3: var(--wb-text-muted);
+  --ds-brand: var(--wb-brand);
+  --ds-brand-hover: var(--wb-brand-hover);
+  --ds-brand-soft: var(--wb-brand-soft);
+  --ds-hover: var(--wb-bg-hover);
+  --ds-selected: var(--wb-bg-selected);
   --ds-shadow: 0 1px 2px rgba(15, 23, 42, .04), 0 4px 12px rgba(15, 23, 42, .04);
   --ds-radius: 8px;
   --ds-font: "Inter", "SF Pro Text", "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
   --ds-mono: "JetBrains Mono", "Cascadia Code", "SF Mono", Consolas, monospace;
 }
 [data-theme="dark"] {
-  --ds-bg: #0b1120;
-  --ds-surface: #0f172a;
-  --ds-surface-2: #111c2e;
-  --ds-sidebar: #0d1526;
-  --ds-line: #1e293b;
-  --ds-line-strong: #334155;
-  --ds-ink: #e2e8f0;
-  --ds-ink-2: #94a3b8;
-  --ds-ink-3: #64748b;
-  --ds-brand: #14b8a6;
-  --ds-brand-hover: #2dd4bf;
-  --ds-brand-soft: #134e4a;
-  --ds-hover: #1e293b;
-  --ds-selected: #134e4a;
+  --ds-bg: var(--wb-bg-surface);
+  --ds-surface: var(--wb-bg-surface);
+  --ds-surface-2: var(--wb-bg-subtle);
+  --ds-sidebar: var(--wb-bg-toolbar);
+  --ds-line: var(--wb-border);
+  --ds-line-strong: var(--wb-border-strong);
+  --ds-ink: var(--wb-text);
+  --ds-ink-2: var(--wb-text-secondary);
+  --ds-ink-3: var(--wb-text-muted);
+  --ds-brand: var(--wb-brand);
+  --ds-brand-hover: var(--wb-brand-hover);
+  --ds-brand-soft: var(--wb-brand-soft);
+  --ds-hover: var(--wb-bg-hover);
+  --ds-selected: var(--wb-bg-selected);
   --ds-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 12px rgba(0, 0, 0, .25);
 }
 
