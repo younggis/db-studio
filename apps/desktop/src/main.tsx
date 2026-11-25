@@ -6,6 +6,7 @@
 // a second QueryClientProvider around the compiled App.
 import "./vendor/index-DQQUtUzE.css";
 import "./phase3-launcher.css";
+import "./object-tree.css";
 import "./vendor/index-CLh2VPBN.js";
 
 // Phase3Launcher is loaded lazily after the App chunk has initialised so both

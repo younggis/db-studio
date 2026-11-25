@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Key } from "react";
 import { Button, Dropdown, Space, Spin, Tooltip, Tree, Typography } from "antd";
 import type { MenuProps } from "antd";
@@ -17,9 +17,8 @@ interface DatabaseObjectTreeProps {
   getContextMenuItems?: (node: DataNode) => MenuProps["items"];
 }
 
-// Node keys follow `${connectionId}:${schema}.${table}`; the Fields child key
-// appends `:fields`. We parse that to lazily load real column metadata.
 interface TableRef { connectionId: string; schema: string; table: string }
+interface FieldInfo { name: string; dataType: string; primaryKey: boolean; nullable: boolean }
 
 function parseTableRef(key: string): TableRef | undefined {
   const colon = key.indexOf(":");
@@ -31,9 +30,11 @@ function parseTableRef(key: string): TableRef | undefined {
   return { connectionId, schema: qualified.slice(0, dot), table: qualified.slice(dot + 1) };
 }
 
-// Navicat-style grouping: Tables group with each table exposing a real Fields
-// node (lazy-loaded). Subgroups without an IPC API (Indexes/Foreign Keys/etc.)
-// are intentionally omitted rather than shown as dead placeholders.
+function isFieldsNode(key: string) { return key.endsWith(":fields"); }
+function isFieldLeaf(key: string) { return key.includes(":fields:"); }
+
+// Navicat-style grouping: Tables group with a lazy Fields child. Subgroups
+// without an IPC API are intentionally omitted instead of shown as dead nodes.
 function navicatTransform(nodes: DataNode[]): DataNode[] {
   return nodes.map((node) => {
     if (!node.children?.length) return node;
@@ -72,12 +73,20 @@ export default function DatabaseObjectTree({
   onSelect,
   getContextMenuItems,
 }: DatabaseObjectTreeProps) {
-  const [fieldCache, setFieldCache] = useState<Record<string, string[]>>({});
+  const [fieldCache, setFieldCache] = useState<Record<string, FieldInfo[]>>({});
+  const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const treeData = navicatTransform(data);
+
+  // Default: expand only the connection(s), never the whole tree.
+  useEffect(() => {
+    if (data.length && !expandedKeys.length) {
+      setExpandedKeys(data.map((node) => node.key).filter((key): key is Key => key != null));
+    }
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadData = useCallback(async (node: DataNode) => {
     const key = String(node.key ?? "");
-    if (!key.endsWith(":fields")) return;
+    if (!isFieldsNode(key)) return;
     if (fieldCache[key]) return;
     const ref = parseTableRef(key);
     if (!ref) return;
@@ -85,23 +94,28 @@ export default function DatabaseObjectTree({
       const columns = await window.dbStudio.database.columns(ref.connectionId, ref.table, ref.schema);
       setFieldCache((current) => ({
         ...current,
-        [key]: columns.map((column) => `${column.name} · ${column.dataType}${column.primaryKey ? " (PK)" : ""}${column.nullable ? "" : " NOT NULL"}`),
+        [key]: columns.map((column) => ({
+          name: column.name,
+          dataType: column.dataType,
+          primaryKey: column.primaryKey,
+          nullable: column.nullable,
+        })),
       }));
     } catch {
-      setFieldCache((current) => ({ ...current, [key]: ["读取字段失败"] }));
+      setFieldCache((current) => ({ ...current, [key]: [] }));
     }
   }, [fieldCache]);
 
   const withFields = (nodes: DataNode[]): DataNode[] => nodes.map((node) => {
     const key = String(node.key ?? "");
-    if (key.endsWith(":fields") && fieldCache[key]) {
+    if (isFieldsNode(key) && fieldCache[key]) {
       return {
         ...node,
-        isLeaf: true,
+        isLeaf: fieldCache[key].length === 0,
         selectable: false,
-        children: fieldCache[key].map((label, index) => ({
+        children: fieldCache[key].map((field, index) => ({
           key: `${key}:${index}`,
-          title: label,
+          title: field.name,
           isLeaf: true,
           selectable: false,
         })),
@@ -109,6 +123,15 @@ export default function DatabaseObjectTree({
     }
     return node.children ? { ...node, children: withFields(node.children) } : node;
   });
+
+  // Look up field metadata for a leaf from its key (`...:fields:<index>`).
+  const fieldFor = (key: string): FieldInfo | undefined => {
+    const marker = key.lastIndexOf(":fields:");
+    if (marker < 0) return undefined;
+    const fieldsKey = key.slice(0, marker + 7);
+    const index = Number(key.slice(marker + 8));
+    return fieldCache[fieldsKey]?.[index];
+  };
 
   return (
     <div className="object-tree">
@@ -126,12 +149,26 @@ export default function DatabaseObjectTree({
       {loading ? <Spin size="small" /> : <Tree
         showIcon
         blockNode
-        defaultExpandAll
+        expandedKeys={expandedKeys}
+        onExpand={(keys) => setExpandedKeys(keys)}
         selectedKeys={[]}
         treeData={withFields(treeData)}
         loadData={loadData}
         onSelect={(keys) => onSelect(keys)}
         titleRender={(node) => {
+          const key = String(node.key ?? "");
+          if (isFieldLeaf(key)) {
+            const field = fieldFor(key);
+            if (field) {
+              return (
+                <span className="tree-field">
+                  <span className="tree-field-name">{field.name}</span>
+                  <span className="tree-field-type">{field.dataType}</span>
+                  {field.primaryKey && <span className="tree-field-pk">PK</span>}
+                </span>
+              );
+            }
+          }
           const items = getContextMenuItems?.(node);
           const title = typeof node.title === "function" ? node.title(node) : node.title;
           return items?.length ? (

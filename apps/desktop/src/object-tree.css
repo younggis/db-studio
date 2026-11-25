@@ -1,0 +1,13 @@
+/* Object tree: compact, lazy-expanded, fields visually subordinate to tables.
+   Higher specificity + !important wins over the vendor CSS loaded by the
+   compiled entry chunk (which also targets .object-tree .ant-tree-*). */
+.object-tree.object-tree .ant-tree-indent-unit{width:8px!important}
+.object-tree.object-tree .ant-tree-switcher{width:14px!important;line-height:20px!important}
+.object-tree.object-tree .ant-tree-treenode{min-height:20px!important;line-height:20px!important}
+.object-tree.object-tree .ant-tree-node-content-wrapper{min-height:20px!important;line-height:20px!important;padding:0 3px!important}
+.object-tree.object-tree .tree-group-icon,.object-tree.object-tree .tree-sub-icon{display:inline-block;width:10px;height:10px;margin-right:3px;border-radius:2px;background:#6f92ad;vertical-align:middle}
+.object-tree.object-tree .tree-sub-icon{background:#9bb4c4}
+.object-tree.object-tree .tree-field{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:20px}
+.object-tree.object-tree .tree-field-name{color:#2c3e50}
+.object-tree.object-tree .tree-field-type{color:#8a9aa8;font-size:10px}
+.object-tree.object-tree .tree-field-pk{color:#b8860b;font-size:10px;background:#fff8e6;padding:0 3px;border-radius:2px}

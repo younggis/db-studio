@@ -86,7 +86,11 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   const firstTable = page.locator(".ant-tree-treenode").filter({ hasText: "dbstudio_demo" }).first();
   if (await firstTable.count()) {
     await firstTable.locator(".ant-tree-switcher").click();
-    await expect(page.locator(".object-tree")).toContainText("Fields", { timeout: 10_000 });
+    const fieldsNode = page.locator(".ant-tree-treenode").filter({ hasText: "Fields" }).first();
+    await expect(fieldsNode).toBeVisible({ timeout: 10_000 });
+    await fieldsNode.locator(".ant-tree-switcher").click();
+    // Fields are rendered compactly with a separate type label and PK badge.
+    await expect(page.locator(".tree-field").first()).toBeVisible({ timeout: 10_000 });
   }
 });
 
