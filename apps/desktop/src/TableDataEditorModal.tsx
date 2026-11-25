@@ -240,7 +240,7 @@ export default function TableDataEditorModal({ connectionId, engine, table, onCl
   const readError = error;
 
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       title={<div className="modal-title"><div><b>表格数据</b><span>{`${table.schema}.${table.name} · ${engine}`}</span></div></div>}
       open
       onCancel={requestClose}

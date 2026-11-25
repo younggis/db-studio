@@ -151,7 +151,7 @@ export default function AiSettingsModal({ open, onClose, onSaved }: AiSettingsMo
   }
 
   return (
-    <Modal
+    <Modal rootClassName="wb-surface"
       open={open}
       onCancel={onClose}
       title={<span className="ai-settings-title"><Settings2 size={17} />AI 模型与隐私设置</span>}
