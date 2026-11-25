@@ -20542,7 +20542,7 @@ var init_ipc_contracts = __esm({
       "connections:test": external_exports.tuple([identifier]),
       "connections:list": external_exports.tuple([]),
       "database:query": external_exports.tuple([identifier, boundedText, parameters]),
-      "database:tables": external_exports.tuple([identifier, optionalIdentifier]),
+      "database:tables": external_exports.tuple([identifier, optionalIdentifier, external_exports.object({ limit: external_exports.number().int().min(0).max(5e3) }).optional()]),
       "database:columns": external_exports.tuple([identifier, identifier, optionalIdentifier]),
       "database:update-rows": external_exports.tuple([identifier, external_exports.object({
         schema: identifier,
@@ -20648,7 +20648,7 @@ contextBridge.exposeInMainWorld("dbStudio", {
   database: {
     databases: (id) => ipcRenderer.invoke("database:databases", id),
     schemas: (id) => ipcRenderer.invoke("database:schemas", id),
-    tables: (id, schema) => invoke("database:tables", id, schema),
+    tables: (id, schema, options) => invoke("database:tables", id, schema, options),
     columns: (id, table, schema) => invoke("database:columns", id, table, schema),
     query: (id, sql, parameters2) => invoke("database:query", id, sql, parameters2),
     updateRows: (id, input2) => invoke("database:update-rows", id, input2),

@@ -49,7 +49,7 @@ contextBridge.exposeInMainWorld("dbStudio", {
   database: {
     databases: (id) => ipcRenderer.invoke("database:databases", id),
     schemas: (id) => ipcRenderer.invoke("database:schemas", id),
-    tables: (id, schema) => invoke("database:tables", id, schema),
+    tables: (id, schema, options) => invoke("database:tables", id, schema, options),
     columns: (id, table, schema) => invoke("database:columns", id, table, schema),
     query: (id, sql, parameters) => invoke("database:query", id, sql, parameters),
     updateRows: (id, input) => invoke("database:update-rows", id, input),

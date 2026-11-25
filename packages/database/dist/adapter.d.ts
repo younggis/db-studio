@@ -32,6 +32,9 @@ export interface DatabaseAdapter {
     updateRows(statements: ParameterizedSqlStatement[]): Promise<QueryResult[]>;
     listDatabases(): Promise<string[]>;
     listSchemas(): Promise<string[]>;
+    listTables(schema?: string, options?: {
+        limit?: number;
+    }): Promise<TableInfo[]>;
     listTables(schema?: string): Promise<TableInfo[]>;
     getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
     getTableForeignKeys(table: string, schema?: string): Promise<TableForeignKeyInfo[]>;

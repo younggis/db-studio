@@ -23,6 +23,8 @@ describe("IPC argument contracts", () => {
   it("accepts valid arguments for representative channels", () => {
     expect(validateIpcArgs("connections:save", [validConnection])).toBeUndefined();
     expect(validateIpcArgs("database:query", ["conn-1", "SELECT 1", [1, "two"]])).toBeUndefined();
+    expect(validateIpcArgs("database:tables", ["conn-1", "public", { limit: 2000 }])).toBeUndefined();
+    expect(validateIpcArgs("database:tables", ["conn-1", "public"])).toBeUndefined();
     expect(validateIpcArgs("database:update-rows", ["conn-1", {
       schema: "public", table: "orders",
       changes: [{ primaryKeyValues: { id: 1 }, values: { name: "x" } }],

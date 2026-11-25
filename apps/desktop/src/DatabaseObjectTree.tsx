@@ -4,6 +4,7 @@ import { Button, Dropdown, Space, Spin, Tooltip, Tree, Typography } from "antd";
 import type { MenuProps } from "antd";
 import type { DataNode } from "antd/es/tree";
 import { RefreshCw, Search } from "lucide-react";
+import { groupTablesByParent } from "./tree-partition";
 
 const { Text } = Typography;
 
@@ -33,23 +34,50 @@ function parseTableRef(key: string): TableRef | undefined {
 function isFieldsNode(key: string) { return key.endsWith(":fields"); }
 function isFieldLeaf(key: string) { return key.includes(":fields:"); }
 
-// Navicat-style grouping: Tables group with a lazy Fields child. Subgroups
-// without an IPC API are intentionally omitted instead of shown as dead nodes.
-function navicatTransform(nodes: DataNode[]): DataNode[] {
+// Navicat-style grouping: Tables group with a lazy Fields child. Partition
+// children are folded under their parent table so a heavily partitioned table
+// does not produce thousands of sibling rows.
+interface PartitionedDataNode extends DataNode {
+  parentName?: string | null;
+}
+
+function tableNode(table: DataNode, extraChildren: DataNode[] = []): DataNode {
+  return {
+    ...table,
+    children: [
+      ...extraChildren,
+      {
+        key: `${String(table.key)}:fields`,
+        title: "Fields",
+        icon: <span className="tree-sub-icon" />,
+      },
+    ],
+  };
+}
+
+export function navicatTransform(nodes: DataNode[]): DataNode[] {
   return nodes.map((node) => {
     if (!node.children?.length) return node;
     return {
       ...node,
       children: node.children.map((schema) => {
         if (!schema.children?.length) return schema;
-        const tables = schema.children.map((table) => ({
-          ...table,
-          children: [{
-            key: `${String(table.key)}:fields`,
-            title: "Fields",
-            icon: <span className="tree-sub-icon" />,
-          }],
+        const tagged = (schema.children as PartitionedDataNode[]).map((node) => ({
+          key: String(node.key),
+          title: String(node.title),
+          parentName: node.parentName,
+          node,
         }));
+        const tables = groupTablesByParent(tagged).map((group) => {
+          const partitionNodes = group.partitions.map((child) => tableNode(child.node));
+          const extra = partitionNodes.length ? [{
+            key: `${group.key}:partitions`,
+            title: `分区 (${partitionNodes.length})`,
+            icon: <span className="tree-group-icon" />,
+            children: partitionNodes,
+          }] : [];
+          return tableNode(group.node, extra);
+        });
         return {
           ...schema,
           children: [{
@@ -77,7 +105,21 @@ export default function DatabaseObjectTree({
   const [expandedKeys, setExpandedKeys] = useState<Key[]>([]);
   const [filter, setFilter] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
+  const treeHostRef = useRef<HTMLDivElement>(null);
+  const [treeHeight, setTreeHeight] = useState(360);
   const rawTreeData = navicatTransform(data);
+
+  // Virtual scrolling needs an explicit height. Measure the available sidebar
+  // area instead of hard-coding it so splitter/layout changes stay correct.
+  useEffect(() => {
+    const host = treeHostRef.current;
+    if (!host) return;
+    const update = () => setTreeHeight(Math.max(160, host.clientHeight));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, [loading]);
 
   // Default: expand only the connection(s), never the whole tree.
   useEffect(() => {
@@ -188,9 +230,13 @@ export default function DatabaseObjectTree({
           <kbd className="tree-filter-kbd">⌘P</kbd>
         </div>
       </div>
-      {loading ? <Spin size="small" /> : <Tree
-        showIcon
-        blockNode
+      {loading ? <Spin size="small" /> : (
+        <div className="tree-virtual-host" ref={treeHostRef}>
+          <Tree
+            virtual
+            height={treeHeight}
+            showIcon
+            blockNode
         expandedKeys={expandedKeys}
         onExpand={(keys) => setExpandedKeys(keys)}
         selectedKeys={[]}
@@ -221,7 +267,9 @@ export default function DatabaseObjectTree({
             <span className="tree-node-title"><span className="tree-node-title-text">{title}</span></span>
           );
         }}
-      />}
+          />
+        </div>
+      )}
       {error && <Text type="danger" className="tree-error">{error}</Text>}
     </div>
   );

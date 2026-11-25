@@ -1378,7 +1378,7 @@ function registerHandlers() {
         return connection.engine === "mongodb" ? mongoFor(connection).listDatabases() : coreFor(connection).listDatabases();
     });
     ipcMain.handle("database:schemas", async (_event, id) => coreFor(await connectionFor(id)).listSchemas());
-    ipcMain.handle("database:tables", async (_event, id, schema) => coreFor(await connectionFor(id)).listTables(schema));
+    ipcMain.handle("database:tables", async (_event, id, schema, options) => coreFor(await connectionFor(id)).listTables(schema, options));
     ipcMain.handle("database:transfer-table", async (_event, sourceId, payload) => {
         const isRecord = (value) => Boolean(value && typeof value === "object" && !Array.isArray(value)
             && Object.getPrototypeOf(value) === Object.prototype);

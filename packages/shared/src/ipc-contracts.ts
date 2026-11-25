@@ -51,7 +51,7 @@ export const ipcArgSchemas = {
   "connections:test": z.tuple([identifier]),
   "connections:list": z.tuple([]),
   "database:query": z.tuple([identifier, boundedText, parameters]),
-  "database:tables": z.tuple([identifier, optionalIdentifier]),
+  "database:tables": z.tuple([identifier, optionalIdentifier, z.object({ limit: z.number().int().min(0).max(5_000) }).optional()]),
   "database:columns": z.tuple([identifier, identifier, optionalIdentifier]),
   "database:update-rows": z.tuple([identifier, z.object({
     schema: identifier,

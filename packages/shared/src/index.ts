@@ -68,6 +68,8 @@ export interface TableInfo {
   name: string;
   type: "table" | "view";
   comment?: string | null;
+  /** Parent table name when this table is a partition child. */
+  parentName?: string | null;
 }
 
 export interface ColumnInfo {

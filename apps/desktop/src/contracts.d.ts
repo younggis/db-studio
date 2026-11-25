@@ -98,7 +98,7 @@ export interface DbStudioApi {
   database: {
     databases(id: string): Promise<string[]>;
     schemas(id: string): Promise<string[]>;
-    tables(id: string, schema?: string): Promise<TableInfo[]>;
+    tables(id: string, schema?: string, options?: { limit?: number }): Promise<TableInfo[]>;
     columns(id: string, table: string, schema?: string): Promise<ColumnInfo[]>;
     query(id: string, sql: string, parameters?: unknown[]): Promise<QueryResult>;
     updateRows(id: string, input: { schema: string; table: string; changes: TableRowChange[] }): Promise<QueryResult[]>;

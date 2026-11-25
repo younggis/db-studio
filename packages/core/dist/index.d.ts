@@ -68,7 +68,9 @@ export declare class CoreService {
     listPostgresDatabases(): Promise<string[]>;
     listSchemas(): Promise<string[]>;
     listPostgresSchemas(): Promise<string[]>;
-    listTables(schema?: string): Promise<TableInfo[]>;
+    listTables(schema?: string, options?: {
+        limit?: number;
+    }): Promise<TableInfo[]>;
     getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
     getTableForeignKeys(table: string, schema?: string): Promise<TableForeignKeyInfo[]>;
     exportTable(table: string, schema?: string): Promise<QueryResult>;

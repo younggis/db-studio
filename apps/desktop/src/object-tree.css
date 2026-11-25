@@ -10,6 +10,12 @@
 /* Inline SVG has a baseline gap by default — kill it everywhere in the tree. */
 .object-tree svg { display: block !important; flex-shrink: 0 !important; }
 
+/* Reserve the sidebar's remaining height for the virtualised tree so only
+   visible rows are mounted into the DOM. */
+.object-tree.object-tree { display: flex; flex-direction: column; min-height: 0; flex: 1 1 auto; }
+.object-tree .tree-virtual-host { flex: 1 1 auto; min-height: 160px; overflow: hidden; }
+.object-tree .tree-virtual-host .ant-tree { background: transparent; }
+
 /* ---- header label ---- */
 .object-tree.object-tree .tree-label {
   display: flex !important;

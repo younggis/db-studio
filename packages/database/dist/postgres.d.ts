@@ -18,7 +18,9 @@ export declare class PostgresAdapter implements DatabaseAdapter {
     updateRows(statements: ParameterizedSqlStatement[]): Promise<QueryResult[]>;
     listDatabases(): Promise<string[]>;
     listSchemas(): Promise<string[]>;
-    listTables(schema?: string): Promise<TableInfo[]>;
+    listTables(schema?: string, options?: {
+        limit?: number;
+    }): Promise<TableInfo[]>;
     getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
     getTableForeignKeys(table: string, schema?: string): Promise<import("@db-studio/shared").TableForeignKeyInfo[]>;
     readTable(table: string, schema?: string): Promise<QueryResult>;

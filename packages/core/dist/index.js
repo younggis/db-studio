@@ -319,8 +319,8 @@ export class CoreService {
     async listPostgresSchemas() {
         return this.listSchemas();
     }
-    async listTables(schema) {
-        return this.withDatabase((adapter) => adapter.listTables(schema));
+    async listTables(schema, options) {
+        return this.withDatabase((adapter) => adapter.listTables(schema, options));
     }
     async getTableColumns(table, schema) {
         return this.withDatabase((adapter) => adapter.getTableColumns(table, schema));

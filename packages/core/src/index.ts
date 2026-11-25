@@ -411,8 +411,8 @@ export class CoreService {
     return this.listSchemas();
   }
 
-  async listTables(schema?: string): Promise<TableInfo[]> {
-    return this.withDatabase((adapter) => adapter.listTables(schema));
+  async listTables(schema?: string, options?: { limit?: number }): Promise<TableInfo[]> {
+    return this.withDatabase((adapter) => adapter.listTables(schema, options));
   }
 
   async getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]> {

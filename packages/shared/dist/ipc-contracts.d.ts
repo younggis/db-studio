@@ -86,7 +86,9 @@ export declare const ipcArgSchemas: {
     readonly "connections:test": z.ZodTuple<[z.ZodString], null>;
     readonly "connections:list": z.ZodTuple<[], null>;
     readonly "database:query": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodOptional<z.ZodArray<z.ZodUnknown>>], null>;
-    readonly "database:tables": z.ZodTuple<[z.ZodString, z.ZodOptional<z.ZodString>], null>;
+    readonly "database:tables": z.ZodTuple<[z.ZodString, z.ZodOptional<z.ZodString>, z.ZodOptional<z.ZodObject<{
+        limit: z.ZodNumber;
+    }, z.core.$strip>>], null>;
     readonly "database:columns": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodOptional<z.ZodString>], null>;
     readonly "database:update-rows": z.ZodTuple<[z.ZodString, z.ZodObject<{
         schema: z.ZodString;

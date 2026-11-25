@@ -151,20 +151,30 @@ export class PostgresAdapter implements DatabaseAdapter {
     return result.rows.map((row) => row.name);
   }
 
-  async listTables(schema = "public"): Promise<TableInfo[]> {
+  async listTables(schema = "public", options: { limit?: number } = {}): Promise<TableInfo[]> {
+    // Keep the catalog query bounded: schemas with heavily partitioned tables
+    // can expose thousands of BASE TABLE rows and stall the object browser.
+    const limit = Math.min(Math.max(Math.floor(options.limit ?? 0), 0), 5_000);
     const result = await this.pool.query<{
       schema: string;
       name: string;
       table_type: string;
       comment: string | null;
+      parent_name: string | null;
     }>(
       `SELECT t.table_schema AS schema, t.table_name AS name, t.table_type,
-         obj_description(c.oid, 'pg_class') AS comment
+         obj_description(c.oid, 'pg_class') AS comment,
+         CASE WHEN i.inhparent IS NOT NULL
+              THEN pn.nspname || '.' || pc.relname ELSE NULL END AS parent_name
        FROM information_schema.tables AS t
        LEFT JOIN pg_catalog.pg_namespace AS n ON n.nspname = t.table_schema
        LEFT JOIN pg_catalog.pg_class AS c ON c.relnamespace = n.oid AND c.relname = t.table_name
+       LEFT JOIN pg_catalog.pg_inherits AS i ON i.inhrelid = c.oid
+       LEFT JOIN pg_catalog.pg_class AS pc ON pc.oid = i.inhparent
+       LEFT JOIN pg_catalog.pg_namespace AS pn ON pn.oid = pc.relnamespace
        WHERE t.table_schema = $1 AND t.table_type IN ('BASE TABLE', 'VIEW')
-       ORDER BY t.table_name`,
+       ORDER BY COALESCE(pn.nspname || '.' || pc.relname, t.table_name), t.table_name
+       ${limit > 0 ? `LIMIT ${limit}` : ""}`,
       [schema],
     );
     return result.rows.map((row) => ({
@@ -172,6 +182,7 @@ export class PostgresAdapter implements DatabaseAdapter {
       name: row.name,
       type: row.table_type === "VIEW" ? "view" : "table",
       comment: row.comment,
+      parentName: row.parent_name,
     }));
   }
 
