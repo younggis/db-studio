@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import path from "node:path";
-import { PostgresAdapter, MariaDbAdapter, MySqlAdapter, SqliteAdapter, SqlServerAdapter, OracleAdapter, mariaDbConfigFromEnvironment, mysqlConfigFromEnvironment, postgresConfigFromEnvironment, sqlServerConfigFromEnvironment, oracleConfigFromEnvironment, oracleTransferFetchTypeHandler, sqliteConfigFromEnvironment, MongoDocumentAdapter, buildMongoGeoFilter, mongoConfigFromEnvironment, parseMongoJson, buildTableUpdateStatements, } from "@db-studio/database";
+import { PostgresAdapter, MariaDbAdapter, MySqlAdapter, SqliteAdapter, SqlServerAdapter, OracleAdapter, mariaDbConfigFromEnvironment, mysqlConfigFromEnvironment, postgresConfigFromEnvironment, sqlServerConfigFromEnvironment, oracleConfigFromEnvironment, oracleTransferFetchTypeHandler, sqliteConfigFromEnvironment, MongoDocumentAdapter, buildMongoGeoFilter, mongoConfigFromEnvironment, parseMongoJson, buildTableUpdateStatements, buildBackupSql, splitSqlStatements, } from "@db-studio/database";
 import { isQueryStreamCell, parseExcelWorkbook, parseTabularData, queryResultToXlsx } from "@db-studio/shared";
 import { convertTransferValue, spatialTypeOf, supportsSpatialTransfer } from "./table-transfer-conversion.js";
 import { GisOperationError, GdalService, } from "@db-studio/gis";
@@ -201,6 +201,7 @@ function isolatedGdalEnvironment(environment) {
     return Object.fromEntries(allowedKeys.flatMap((key) => inherited[key] === undefined ? [] : [[key, inherited[key]]]));
 }
 export { buildMongoGeoFilter, geoJsonToMongoDocuments, mongoDocumentsToGeoJson, parseMongoEjson, stringifyMongoJson } from "@db-studio/database";
+export * from "./schema-diff.js";
 export class CoreService {
     createDatabaseAdapter;
     environment;
@@ -327,6 +328,174 @@ export class CoreService {
     }
     async getTableForeignKeys(table, schema) {
         return this.withDatabase((adapter) => adapter.getTableForeignKeys(table, schema));
+    }
+    /** Precise column types for backup/DDL; catalog helpers often drop length/precision. */
+    async preciseColumns(adapter, schema, table) {
+        const base = await adapter.getTableColumns(table, schema);
+        const engine = this.engine;
+        try {
+            if (engine === "postgres") {
+                const result = await adapter.query(`SELECT a.attname AS name, pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type
+           FROM pg_catalog.pg_attribute a
+           JOIN pg_catalog.pg_class c ON c.oid = a.attrelid
+           JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+           WHERE n.nspname = $1 AND c.relname = $2 AND a.attnum > 0 AND NOT a.attisdropped
+           ORDER BY a.attnum`, [schema, table]);
+                const types = new Map(result.rows.map((row) => [String(row.name), String(row.data_type)]));
+                return base.map((column) => ({ ...column, dataType: types.get(column.name) ?? column.dataType }));
+            }
+            if (engine === "mysql" || engine === "mariadb") {
+                const result = await adapter.query(`SELECT COLUMN_NAME AS name, COLUMN_TYPE AS data_type
+           FROM information_schema.COLUMNS
+           WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+           ORDER BY ORDINAL_POSITION`, [schema, table]);
+                const types = new Map(result.rows.map((row) => [String(row.name), String(row.data_type)]));
+                return base.map((column) => ({ ...column, dataType: types.get(column.name) ?? column.dataType }));
+            }
+        }
+        catch {
+            return base;
+        }
+        return base;
+    }
+    async readIndexes(adapter, schema, table) {
+        const engine = this.engine;
+        try {
+            if (engine === "postgres") {
+                const result = await adapter.query(`SELECT i.relname AS name, ix.indisunique AS unique,
+                  array_agg(a.attname ORDER BY k.ord) AS columns
+           FROM pg_class t
+           JOIN pg_index ix ON t.oid = ix.indrelid
+           JOIN pg_class i ON i.oid = ix.indexrelid
+           JOIN unnest(ix.indkey) WITH ORDINALITY k(attnum, ord) ON TRUE
+           JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = k.attnum
+           JOIN pg_namespace n ON n.oid = t.relnamespace
+           WHERE n.nspname = $1 AND t.relname = $2 AND NOT ix.indisprimary
+           GROUP BY i.relname, ix.indisunique`, [schema, table]);
+                return result.rows.map((row) => ({
+                    name: String(row.name),
+                    unique: row.unique === true,
+                    columns: (Array.isArray(row.columns) ? row.columns : []).map(String),
+                }));
+            }
+            if (engine === "mysql" || engine === "mariadb") {
+                const result = await adapter.query(`SELECT INDEX_NAME AS name, NON_UNIQUE AS non_unique,
+                  GROUP_CONCAT(COLUMN_NAME ORDER BY SEQ_IN_INDEX) AS columns
+           FROM information_schema.STATISTICS
+           WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+           GROUP BY INDEX_NAME, NON_UNIQUE`, [schema, table]);
+                return result.rows
+                    .filter((row) => String(row.name) !== "PRIMARY")
+                    .map((row) => ({
+                    name: String(row.name),
+                    unique: row.non_unique === 0 || row.non_unique === "0",
+                    columns: String(row.columns ?? "").split(",").filter(Boolean),
+                }));
+            }
+        }
+        catch {
+            return [];
+        }
+        return [];
+    }
+    async createBackup(schema, options = {}) {
+        if (!schema.trim())
+            throw new Error("备份 Schema 不能为空。");
+        const engine = this.engine;
+        if (!engine || engine === "mongodb")
+            throw new Error("MongoDB 请使用集合导出工具。");
+        return this.withDatabase(async (adapter) => {
+            const tables = (await adapter.listTables(schema, { limit: 5_000 })).filter((table) => table.type === "table");
+            const backups = [];
+            let rowCount = 0;
+            for (const table of tables) {
+                const [columns, foreignKeys] = await Promise.all([
+                    this.preciseColumns(adapter, schema, table.name),
+                    adapter.getTableForeignKeys(table.name, schema).catch(() => []),
+                ]);
+                let rows = [];
+                if (options.includeData !== false) {
+                    const result = await adapter.readTable(table.name, schema);
+                    rows = result.rows;
+                }
+                rowCount += rows.length;
+                backups.push({ name: table.name, columns, foreignKeys, rows });
+            }
+            return {
+                sql: buildBackupSql(engine, schema, backups, { includeData: options.includeData !== false }),
+                tableCount: backups.length,
+                rowCount,
+            };
+        });
+    }
+    async restoreBackup(sql) {
+        const statements = splitSqlStatements(sql).filter((statement) => !/^--/.test(statement));
+        if (!statements.length)
+            throw new Error("备份文件中没有可执行的 SQL 语句。");
+        return this.withDatabase(async (adapter) => {
+            let applied = 0;
+            const failed = [];
+            for (const statement of statements) {
+                try {
+                    await adapter.query(statement);
+                    applied += 1;
+                }
+                catch (error) {
+                    failed.push({ sql: statement.slice(0, 200), error: error instanceof Error ? error.message : String(error) });
+                }
+            }
+            return { applied, failed };
+        });
+    }
+    async readSchemaSnapshot(schema) {
+        if (!schema.trim())
+            throw new Error("Schema 不能为空。");
+        const engine = this.engine;
+        if (!engine || engine === "mongodb")
+            throw new Error("MongoDB 不支持结构同步。");
+        return this.withDatabase(async (adapter) => {
+            const tables = (await adapter.listTables(schema, { limit: 5_000 })).filter((table) => table.type === "table");
+            const snapshotTables = [];
+            for (const table of tables) {
+                const [columns, foreignKeys, indexes] = await Promise.all([
+                    this.preciseColumns(adapter, schema, table.name),
+                    adapter.getTableForeignKeys(table.name, schema).catch(() => []),
+                    this.readIndexes(adapter, schema, table.name),
+                ]);
+                snapshotTables.push({
+                    name: table.name,
+                    columns: columns.map((column) => ({
+                        name: column.name,
+                        dataType: column.dataType,
+                        nullable: column.nullable,
+                        defaultValue: column.defaultValue,
+                        primaryKey: column.primaryKey,
+                        ordinalPosition: column.ordinalPosition,
+                    })),
+                    foreignKeys: foreignKeys.map((fk) => ({ ...fk })),
+                    indexes,
+                });
+            }
+            return { engine, schema, tables: snapshotTables };
+        });
+    }
+    async applySchemaStatements(statements) {
+        if (!statements.length)
+            return { applied: 0, failed: [] };
+        return this.withDatabase(async (adapter) => {
+            let applied = 0;
+            const failed = [];
+            for (const statement of statements) {
+                try {
+                    await adapter.query(statement.sql);
+                    applied += 1;
+                }
+                catch (error) {
+                    failed.push({ sql: statement.sql.slice(0, 200), error: error instanceof Error ? error.message : String(error) });
+                }
+            }
+            return { applied, failed };
+        });
     }
     async exportTable(table, schema) {
         if (!table.trim())

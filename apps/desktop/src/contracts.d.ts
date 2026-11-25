@@ -144,6 +144,22 @@ export interface DbStudioApi {
     importGeoJson(id: string, database: string, collection: string, geometryField: string): Promise<{ path: string; insertedCount: number } | null>;
     exportGeoJson(id: string, database: string, collection: string, geometryField: string, filter?: Record<string, unknown>): Promise<{ path: string; featureCount: number } | null>;
   };
+  backup: {
+    create(connectionId: string, schema: string, options?: { includeData?: boolean }): Promise<{ path: string; tableCount: number; rowCount: number } | null>;
+    restore(connectionId: string, sql: string): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }>;
+  };
+  sync: {
+    preview(sourceId: string, sourceSchema: string, targetId: string, targetSchema: string, options?: { includeDrops?: boolean }): Promise<Array<{
+      id: string;
+      kind: string;
+      table: string;
+      reason: string;
+      sql: string;
+      risk: "low" | "medium" | "high";
+      selected: boolean;
+    }>>;
+    apply(targetId: string, statements: Array<{ sql: string }>): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }>;
+  };
   gis: {
     inspect(file: string, options?: GisInputOptions): Promise<GisDatasetInfo>;
     preview(file: string, options?: GisInputOptions & { sourceLayer?: string; limit?: number }): Promise<GisAttributePreview>;

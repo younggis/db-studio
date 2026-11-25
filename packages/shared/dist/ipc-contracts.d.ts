@@ -164,6 +164,16 @@ export declare const ipcArgSchemas: {
     readonly "mongo:aggregate": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodNumber], null>;
     readonly "mongo:delete-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
     readonly "mongo:replace-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
+    readonly "backup:create": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodOptional<z.ZodObject<{
+        includeData: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>], null>;
+    readonly "backup:restore": z.ZodTuple<[z.ZodString, z.ZodString], null>;
+    readonly "sync:preview": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodObject<{
+        includeDrops: z.ZodOptional<z.ZodBoolean>;
+    }, z.core.$strip>>], null>;
+    readonly "sync:apply": z.ZodTuple<[z.ZodString, z.ZodArray<z.ZodObject<{
+        sql: z.ZodString;
+    }, z.core.$strip>>], null>;
     readonly "gis:import": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodRecord<z.ZodString, z.ZodUnknown>, z.ZodOptional<z.ZodString>], null>;
     readonly "gis:export": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodOptional<z.ZodString>], null>;
 };

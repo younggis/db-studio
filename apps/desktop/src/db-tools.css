@@ -1,0 +1,11 @@
+/* Backup/restore and structure sync panels. */
+.dbtools-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.dbtools-row { display: flex; align-items: center; gap: 12px; }
+.dbtools-label { width: 72px; font-size: 12px; color: var(--ds-ink-3); }
+.dbtools-actions { display: flex; align-items: center; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+.dbtools-hint { font-size: 11px; color: var(--ds-ink-3); line-height: 1.6; }
+.dbtools-error-list { max-height: 140px; overflow: auto; font-size: 11px; line-height: 1.5; }
+.dbtools-sync-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.dbtools-sync-col { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+.dbtools-sync-col b { color: var(--ds-ink-2); }
+.dbtools-sync-col .ant-select { width: 100%; }

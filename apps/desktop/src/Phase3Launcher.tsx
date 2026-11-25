@@ -4,13 +4,15 @@
 import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Button, Space, Tooltip } from "antd";
-import { Activity, Moon, ScanSearch, Sun } from "lucide-react";
+import { Activity, ArchiveRestore, GitCompareArrows, Moon, ScanSearch, Sun } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
 import LayerHealthPanel from "./LayerHealthPanel";
+import BackupPanel from "./BackupPanel";
+import SchemaSyncPanel from "./SchemaSyncPanel";
 import type { DatabaseEngine } from "@db-studio/shared";
 
 interface ConnectionChoice { id: string; name: string; engine: DatabaseEngine }
-type Panel = "spatial-index" | "layer-health" | null;
+type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | null;
 
 function readSelectedName(): string | undefined {
   const card = document.querySelector(".connection-card.selected .connection-name b");
@@ -89,6 +91,12 @@ export default function Phase3Launcher() {
           <Tooltip title="选择矢量文件并做导入前体检">
             <Button type="text" size="small" aria-label="图层体检" icon={<Activity size={14} />} onClick={() => void openLayerHealth()} />
           </Tooltip>
+          <Tooltip title="逻辑备份与 SQL 恢复">
+            <Button type="text" size="small" aria-label="备份恢复" icon={<ArchiveRestore size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("backup")} />
+          </Tooltip>
+          <Tooltip title="对比两个 Schema 的结构差异并同步">
+            <Button type="text" size="small" aria-label="结构同步" icon={<GitCompareArrows size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("schema-sync")} />
+          </Tooltip>
         </Space>
       </div>
 
@@ -103,6 +111,17 @@ export default function Phase3Launcher() {
         open={panel === "layer-health"}
         onClose={() => setPanel(null)}
         filePath={vectorPath}
+      />
+      <BackupPanel
+        open={panel === "backup"}
+        onClose={() => setPanel(null)}
+        connectionId={activeId}
+        connectionName={selected?.name}
+      />
+      <SchemaSyncPanel
+        open={panel === "schema-sync"}
+        onClose={() => setPanel(null)}
+        activeId={activeId}
       />
     </>
   );

@@ -20594,6 +20594,10 @@ var init_ipc_contracts = __esm({
       "mongo:aggregate": external_exports.tuple([identifier, identifier, identifier, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).max(1e3), external_exports.number().int().min(1).max(1e3)]),
       "mongo:delete-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4)]),
       "mongo:replace-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4), boundedText]),
+      "backup:create": external_exports.tuple([identifier, identifier, external_exports.object({ includeData: external_exports.boolean().optional() }).optional()]),
+      "backup:restore": external_exports.tuple([identifier, external_exports.string().min(1).max(5e7)]),
+      "sync:preview": external_exports.tuple([identifier, identifier, identifier, identifier, external_exports.object({ includeDrops: external_exports.boolean().optional() }).optional()]),
+      "sync:apply": external_exports.tuple([identifier, external_exports.array(external_exports.object({ sql: external_exports.string().min(1).max(1e5) })).max(500)]),
       "gis:import": external_exports.tuple([identifier, external_exports.string().min(1).max(4096), identifier, external_exports.record(external_exports.string(), external_exports.unknown()), identifier.optional()]),
       "gis:export": external_exports.tuple([identifier, identifier, external_exports.string().min(1).max(4096), external_exports.record(external_exports.string(), external_exports.unknown()).optional(), identifier.optional()])
     };
@@ -20670,6 +20674,14 @@ contextBridge.exposeInMainWorld("dbStudio", {
     export: (id, database, collection, filter) => ipcRenderer.invoke("mongo:export", id, database, collection, filter),
     importGeoJson: (id, database, collection, geometryField) => ipcRenderer.invoke("mongo:geo-import", id, database, collection, geometryField),
     exportGeoJson: (id, database, collection, geometryField, filter) => ipcRenderer.invoke("mongo:geo-export", id, database, collection, geometryField, filter)
+  },
+  backup: {
+    create: (connectionId, schema, options) => invoke("backup:create", connectionId, schema, options),
+    restore: (connectionId, sql) => invoke("backup:restore", connectionId, sql)
+  },
+  sync: {
+    preview: (sourceId, sourceSchema, targetId, targetSchema, options) => invoke("sync:preview", sourceId, sourceSchema, targetId, targetSchema, options),
+    apply: (targetId, statements) => invoke("sync:apply", targetId, statements)
   },
   gis: {
     inspect: (file2, options) => ipcRenderer.invoke("gis:inspect", file2, options),

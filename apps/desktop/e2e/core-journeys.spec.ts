@@ -137,6 +137,8 @@ test("phase 3 launcher opens spatial index and layer health panels", async () =>
   await expect(page.locator(".ant-drawer-title")).toContainText("空间索引诊断", { timeout: 10_000 });
   await page.locator(".ant-drawer-close").first().click();
   await expect(page.getByRole("button", { name: "图层体检" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "备份恢复" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "结构同步" })).toBeEnabled();
 });
 
 test("GIS exchange page has import/export segmented flow", async () => {

@@ -11,6 +11,7 @@ import "./design-system.css";
 import "./gis-layout-fix.css";
 import "./gis-page.css";
 import "./mongo-page.css";
+import "./db-tools.css";
 import "./vendor/index-CLh2VPBN.js";
 
 // Phase3Launcher is loaded lazily after the App chunk has initialised so both

@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
 import { applyPostgisSpatialMetadata, createEmbedding, emptySchemaIndex, findSchemaIndexTableCoverageDifferences, findStaleSchemaIndexTableKeys, isSchemaIndexSnapshot, loadPostgisSchemaMetadata, loadSchemaCandidateMetadata, rankSchemaCandidatesByRerank, replaceSchemaIndexChunks, rerank, runMongoAssistant, runSqlAssistant, schemaIndexScope, schemaModelFingerprint, schemaTableDocument, schemaTableDocumentChunks, searchSchemaIndex, selectRelevantTables, testChatModel, testEmbeddingModel, testRerankModel } from "@db-studio/ai";
 import { schemaTableKey } from "@db-studio/shared/schema-table-key";
-import { CoreService, GisOperationError, MongoDocumentService, OperationRegistry, stringifyMongoJson } from "@db-studio/core";
+import { CoreService, GisOperationError, MongoDocumentService, OperationRegistry, diffSchemaSnapshots, stringifyMongoJson } from "@db-studio/core";
 import { SshTunnelManager, validateSshTunnelConfig } from "@db-studio/database";
 import { parseExcelWorkbook, parseTabularData, queryResultToCsv, queryResultToXlsx } from "@db-studio/shared";
 import { appendQueryHistory, clearQueryHistory, createEmptyQueryHistorySnapshot, normalizeQueryHistorySnapshot, removeQueryFavorite, upsertQueryFavorite, } from "@db-studio/shared";
@@ -1697,6 +1697,42 @@ function registerHandlers() {
         const featureCollection = await mongoFor(await connectionFor(id)).exportGeoJson(database, collection, { filter, limit: 100_000 }, geometryField);
         await writeFile(result.filePath, `${stringifyMongoJson(featureCollection)}\n`, "utf8");
         return { path: result.filePath, featureCount: featureCollection.features.length };
+    });
+    ipcMain.handle("backup:create", async (_event, id, schema, options) => {
+        const connection = await connectionFor(id);
+        if (connection.engine === "mongodb")
+            throw new Error("MongoDB 请使用集合导出工具进行备份。");
+        const result = await coreFor(connection).createBackup(schema, options ?? {});
+        const save = await dialog.showSaveDialog({
+            defaultPath: `${connection.name}-${schema}-backup.sql`,
+            filters: [{ name: "SQL 备份", extensions: ["sql"] }],
+        });
+        if (save.canceled || !save.filePath)
+            return null;
+        await writeFile(save.filePath, result.sql, "utf8");
+        return { path: save.filePath, tableCount: result.tableCount, rowCount: result.rowCount };
+    });
+    ipcMain.handle("backup:restore", async (_event, id, sql) => {
+        const connection = await connectionFor(id);
+        if (connection.engine === "mongodb")
+            throw new Error("MongoDB 不支持 SQL 备份恢复。");
+        return coreFor(connection).restoreBackup(sql);
+    });
+    ipcMain.handle("sync:preview", async (_event, sourceId, sourceSchema, targetId, targetSchema, options) => {
+        const [sourceConnection, targetConnection] = await Promise.all([connectionFor(sourceId), connectionFor(targetId)]);
+        if (sourceConnection.engine === "mongodb" || targetConnection.engine === "mongodb")
+            throw new Error("MongoDB 不支持结构同步。");
+        const [source, target] = await Promise.all([
+            coreFor(sourceConnection).readSchemaSnapshot(sourceSchema),
+            coreFor(targetConnection).readSchemaSnapshot(targetSchema),
+        ]);
+        return diffSchemaSnapshots(source, target, options ?? {});
+    });
+    ipcMain.handle("sync:apply", async (_event, id, statements) => {
+        const connection = await connectionFor(id);
+        if (connection.engine === "mongodb")
+            throw new Error("MongoDB 不支持结构同步。");
+        return coreFor(connection).applySchemaStatements(statements);
     });
     ipcMain.handle("gis:inspect", async (_event, file, options = {}) => CoreService.fromEnvironment().inspectGisFile(file, options));
     ipcMain.handle("gis:preview", async (_event, file, options = {}) => CoreService.fromEnvironment().previewGisAttributes(file, options));

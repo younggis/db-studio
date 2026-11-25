@@ -77,7 +77,7 @@ export interface DatabaseAdapter {
   updateRows(statements: ParameterizedSqlStatement[]): Promise<QueryResult[]>;
   listDatabases(): Promise<string[]>;
   listSchemas(): Promise<string[]>;
-  listTables(schema?: string, options?: { limit?: number }): Promise<TableInfo[]>;  listTables(schema?: string): Promise<TableInfo[]>;
+  listTables(schema?: string, options?: { limit?: number }): Promise<TableInfo[]>;
   getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
   getTableForeignKeys(table: string, schema?: string): Promise<TableForeignKeyInfo[]>;
   readTable(table: string, schema?: string): Promise<QueryResult>;
@@ -150,7 +150,7 @@ export function assertSingleRowAffected(rowCount: number): void {
 
 const READ_ONLY_DATA_TYPE = /(?:array|binary|blob|bytea|clob|geography|geometry|image|json|large\s+object|object|raster|raw|variant|xml)/i;
 
-function quoteIdentifier(engine: DatabaseEngine, identifier: string): string {
+export function quoteIdentifier(engine: DatabaseEngine, identifier: string): string {
   if (engine === "mysql" || engine === "mariadb") return `\`${identifier.replaceAll("`", "``")}\``;
   if (engine === "sqlserver") return "[" + identifier.replaceAll("]", "]]") + "]";
   return `"${identifier.replaceAll('"', '""')}"`;

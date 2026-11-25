@@ -10,7 +10,9 @@ export { SqlServerAdapter, sqlServerConfigFromEnvironment } from "./sqlserver.js
 export type { SqlServerConnectionConfig } from "./sqlserver.js";
 export { OracleAdapter, normalizeWkbForOracleSdo, oracleConfigFromEnvironment, oracleTransferFetchTypeHandler } from "./oracle.js";
 export type { OracleConnectionConfig, OracleQueryStreamOptions, OracleSdoWkbValue } from "./oracle.js";
-export { buildTableTransferPageQuery, buildTableUpdateStatements } from "./adapter.js";
+export { buildTableTransferPageQuery, buildTableUpdateStatements, quoteIdentifier } from "./adapter.js";
+export { buildBackupSql, buildCreateTableSql, buildInsertSql, splitSqlStatements, sqlLiteral, } from "./logical-backup.js";
+export type { BackupOptions, BackupTable } from "./logical-backup.js";
 export type { DatabaseAdapter, ImportColumnType, ImportTableColumn } from "./adapter.js";
 export { SshTunnelManager, fingerprintFromSsh2HostHash, normalizeSshFingerprint, validateSshTunnelConfig, } from "./ssh-tunnel.js";
 export type { SshAuthenticationMethod, SshTunnelConfig, SshTunnelEndpoint, SshTunnelTarget } from "./ssh-tunnel.js";

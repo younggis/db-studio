@@ -35,7 +35,6 @@ export interface DatabaseAdapter {
     listTables(schema?: string, options?: {
         limit?: number;
     }): Promise<TableInfo[]>;
-    listTables(schema?: string): Promise<TableInfo[]>;
     getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
     getTableForeignKeys(table: string, schema?: string): Promise<TableForeignKeyInfo[]>;
     readTable(table: string, schema?: string): Promise<QueryResult>;
@@ -48,6 +47,7 @@ export interface DatabaseAdapter {
 export declare function buildCreateTableStatement(engine: DatabaseEngine, table: string, columns: ImportTableColumn[], schema: string): string;
 export declare function validateUpdateStatements(input: ParameterizedSqlStatement[]): ParameterizedSqlStatement[];
 export declare function assertSingleRowAffected(rowCount: number): void;
+export declare function quoteIdentifier(engine: DatabaseEngine, identifier: string): string;
 export declare function buildTableTransferPageQuery(engine: DatabaseEngine, schema: string, table: string, columns: string[], primaryKeys: string[], cursor: unknown[] | undefined, limit: number, options?: TableTransferReadOptions): {
     sql: string;
     parameters: unknown[];

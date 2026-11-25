@@ -103,6 +103,10 @@ export const ipcArgSchemas = {
   "mongo:aggregate": z.tuple([identifier, identifier, identifier, z.array(z.record(z.string(), z.unknown())).max(1000), z.number().int().min(1).max(1000)]),
   "mongo:delete-document": z.tuple([identifier, identifier, identifier, z.string().min(1).max(20_000)]),
   "mongo:replace-document": z.tuple([identifier, identifier, identifier, z.string().min(1).max(20_000), boundedText]),
+  "backup:create": z.tuple([identifier, identifier, z.object({ includeData: z.boolean().optional() }).optional()]),
+  "backup:restore": z.tuple([identifier, z.string().min(1).max(50_000_000)]),
+  "sync:preview": z.tuple([identifier, identifier, identifier, identifier, z.object({ includeDrops: z.boolean().optional() }).optional()]),
+  "sync:apply": z.tuple([identifier, z.array(z.object({ sql: z.string().min(1).max(100_000) })).max(500)]),
   "gis:import": z.tuple([identifier, z.string().min(1).max(4096), identifier, z.record(z.string(), z.unknown()), identifier.optional()]),
   "gis:export": z.tuple([identifier, identifier, z.string().min(1).max(4096), z.record(z.string(), z.unknown()).optional(), identifier.optional()]),
 } as const;

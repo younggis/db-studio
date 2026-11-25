@@ -80,7 +80,7 @@ export function assertSingleRowAffected(rowCount) {
     }
 }
 const READ_ONLY_DATA_TYPE = /(?:array|binary|blob|bytea|clob|geography|geometry|image|json|large\s+object|object|raster|raw|variant|xml)/i;
-function quoteIdentifier(engine, identifier) {
+export function quoteIdentifier(engine, identifier) {
     if (engine === "mysql" || engine === "mariadb")
         return `\`${identifier.replaceAll("`", "``")}\``;
     if (engine === "sqlserver")

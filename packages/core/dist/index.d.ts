@@ -36,6 +36,8 @@ export interface GisSqliteImportReport extends GisOperationReport {
     table: string;
 }
 export { buildMongoGeoFilter, geoJsonToMongoDocuments, mongoDocumentsToGeoJson, parseMongoEjson, stringifyMongoJson } from "@db-studio/database";
+export * from "./schema-diff.js";
+import type { SchemaSnapshot, SchemaStatement } from "./schema-diff.js";
 export declare class CoreService {
     private readonly createDatabaseAdapter;
     private readonly environment;
@@ -73,6 +75,31 @@ export declare class CoreService {
     }): Promise<TableInfo[]>;
     getTableColumns(table: string, schema?: string): Promise<ColumnInfo[]>;
     getTableForeignKeys(table: string, schema?: string): Promise<TableForeignKeyInfo[]>;
+    /** Precise column types for backup/DDL; catalog helpers often drop length/precision. */
+    private preciseColumns;
+    private readIndexes;
+    createBackup(schema: string, options?: {
+        includeData?: boolean;
+    }): Promise<{
+        sql: string;
+        tableCount: number;
+        rowCount: number;
+    }>;
+    restoreBackup(sql: string): Promise<{
+        applied: number;
+        failed: Array<{
+            sql: string;
+            error: string;
+        }>;
+    }>;
+    readSchemaSnapshot(schema: string): Promise<SchemaSnapshot>;
+    applySchemaStatements(statements: SchemaStatement[]): Promise<{
+        applied: number;
+        failed: Array<{
+            sql: string;
+            error: string;
+        }>;
+    }>;
     exportTable(table: string, schema?: string): Promise<QueryResult>;
     exportTableWorkbook(table: string, schema?: string): Promise<Uint8Array>;
     importRows(table: string, data: TabularData, schema?: string): Promise<{
