@@ -105,3 +105,46 @@
   box-shadow: none !important;
   border: 1px solid var(--wb-border);
 }
+
+/* Non-page surfaces (drawers/modals/popovers): tokens only, no layout shell. */
+.wb-surface,
+.wb-surface * { box-sizing: border-box; }
+.wb-surface {
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+  line-height: var(--wb-line-height);
+  color: var(--wb-text);
+}
+.wb-surface button,
+.wb-surface input,
+.wb-surface select,
+.wb-surface textarea,
+.wb-surface .ant-btn,
+.wb-surface .ant-input,
+.wb-surface .ant-select-selector {
+  font-family: inherit;
+  font-size: var(--wb-font-size);
+  line-height: var(--wb-line-height);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+}
+.wb-surface .ant-btn { height: var(--wb-control-h); padding: 0 var(--wb-space-2); }
+.wb-surface .ant-input,
+.wb-surface .ant-select-selector { min-height: var(--wb-control-h); }
+.wb-surface .ant-drawer-content,
+.wb-surface .ant-modal-content {
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--wb-border);
+}
+
+/* ------------------------------------------------------------------ */
+/* Surface scoping without JSX changes: legacy drawers/modals that are
+   not yet migrated opt into the token reset by class or by their own
+   root class. New code should add wb-surface explicitly.              */
+/*
+ * selector where surfaces are scoped: the rules above already cover
+ * .wb-app / .wb-surface. Nothing else is required for un-migrated
+ * components; they keep their existing styles until their page is
+ * refactored one by one with the shared components.
+ */
