@@ -1,0 +1,16 @@
+/* Fix: map preview kept growing after loading a vector file.
+   Root cause: grid/flex items default to min-width:auto, so the SVG's intrinsic
+   width (from viewBox) expands the 1fr column, which in turn makes the
+   width:100% SVG wider — a positive feedback loop. Forcing min-width:0 on the
+   tracks and constraining the SVG stops it. */
+.gis-workspace, .gis-top-grid, .gis-action-grid { min-width: 0 !important; overflow-x: hidden !important; }
+.gis-workspace > * { max-width: 100% !important; min-width: 0 !important; }
+.gis-top-grid > *, .gis-action-grid > * { min-width: 0 !important; max-width: 100% !important; }
+.gis-workspace .gis-card { min-width: 0 !important; }
+.gis-card .ant-card-body { min-width: 0 !important; overflow-x: hidden; }
+.gis-map-preview { min-width: 0 !important; width: 100% !important; overflow: hidden !important; }
+.gis-map-preview-svg { width: 100% !important; max-width: 100% !important; display: block; }
+.gis-map-preview-heading, .gis-map-preview-note { min-width: 0 !important; overflow: hidden; }
+.gis-map-preview-heading > div { min-width: 0 !important; }
+/* Prevent long text from forcing track growth */
+.gis-workspace .ant-select, .gis-workspace .ant-input, .gis-workspace .ant-input-group-wrapper { max-width: 100% !important; min-width: 0 !important; }
