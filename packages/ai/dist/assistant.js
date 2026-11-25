@@ -1,3 +1,4 @@
+import { normalizeAdvisoryList } from "./advisory-list.js";
 import { schemaTableKey } from "@db-studio/shared/schema-table-key";
 import { createChatCompletion } from "./provider.js";
 import { validateSql } from "./sql-validator.js";
@@ -39,21 +40,8 @@ function stringField(value, label, max) {
         throw new Error(label + " 缺失或超过长度限制。");
     return value;
 }
-function stringArray(value, label, maxItems = 30) {
-    if (value === undefined || value === null)
-        return [];
-    // These are advisory fields. Some OpenAI-compatible models return a single
-    // string despite JSON-mode instructions; preserve it as one bounded item
-    // rather than rejecting an otherwise safe, validated SQL draft.
-    if (typeof value === "string") {
-        if (value.length > 300)
-            throw new Error(label + " 格式无效。");
-        return value.trim() ? [value] : [];
-    }
-    if (!Array.isArray(value) || value.length > maxItems || value.some((item) => typeof item !== "string" || item.length > 300)) {
-        throw new Error(label + " 格式无效。");
-    }
-    return value;
+function stringArray(value, _label, maxItems = 30) {
+    return normalizeAdvisoryList(value, { maxItems, maxChars: 300 });
 }
 function parseResult(content, task) {
     let raw;

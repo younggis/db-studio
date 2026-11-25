@@ -1,0 +1,1 @@
+{"version":3,"file":"advisory-list.d.ts","sourceRoot":"","sources":["../src/advisory-list.ts"],"names":[],"mappings":"AAMA,MAAM,WAAW,mBAAmB;IAClC,QAAQ,CAAC,EAAE,MAAM,CAAC;IAClB,QAAQ,CAAC,EAAE,MAAM,CAAC;CACnB;AAuBD,wBAAgB,qBAAqB,CAAC,KAAK,EAAE,OAAO,EAAE,OAAO,GAAE,mBAAwB,GAAG,MAAM,EAAE,CAYjG"}

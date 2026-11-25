@@ -1,4 +1,5 @@
 import type { ChatModelConfig, SchemaTable, SqlAssistResult, SqlAssistantContext, SqlAssistantRequest, SqlAssistantTask, SqlValidationResult } from "./types.js";
+import { normalizeAdvisoryList } from "./advisory-list.js";
 import { schemaTableKey } from "@db-studio/shared/schema-table-key";
 import { createChatCompletion } from "./provider.js";
 import { validateSql } from "./sql-validator.js";
@@ -44,19 +45,8 @@ function stringField(value: unknown, label: string, max: number): string {
   return value;
 }
 
-function stringArray(value: unknown, label: string, maxItems = 30): string[] {
-  if (value === undefined || value === null) return [];
-  // These are advisory fields. Some OpenAI-compatible models return a single
-  // string despite JSON-mode instructions; preserve it as one bounded item
-  // rather than rejecting an otherwise safe, validated SQL draft.
-  if (typeof value === "string") {
-    if (value.length > 300) throw new Error(label + " 格式无效。");
-    return value.trim() ? [value] : [];
-  }
-  if (!Array.isArray(value) || value.length > maxItems || value.some((item) => typeof item !== "string" || item.length > 300)) {
-    throw new Error(label + " 格式无效。");
-  }
-  return value as string[];
+function stringArray(value: unknown, _label: string, maxItems = 30): string[] {
+  return normalizeAdvisoryList(value, { maxItems, maxChars: 300 });
 }
 
 function parseResult(content: string, task: SqlAssistantTask): SqlAssistResult {

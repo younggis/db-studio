@@ -1,4 +1,5 @@
 import { createChatCompletion } from "./provider.js";
+import { normalizeAdvisoryList } from "./advisory-list.js";
 import type { ChatModelConfig, MongoAssistantRequest, MongoAssistantResult } from "./types.js";
 
 const MAX_RESPONSE = 32_000;
@@ -33,12 +34,8 @@ function jsonObject(value: unknown, label: string): Record<string, unknown> {
   return value;
 }
 
-function stringList(value: unknown, label: string): string[] {
-  if (value === undefined) return [];
-  if (!Array.isArray(value) || value.length > 30 || value.some((item) => typeof item !== "string" || item.length > 1_000)) {
-    throw new Error(`${label}格式无效。`);
-  }
-  return value.map((item) => (item as string).trim()).filter(Boolean);
+function stringList(value: unknown, _label: string): string[] {
+  return normalizeAdvisoryList(value, { maxItems: 30, maxChars: 1_000 });
 }
 
 function parseJsonObject(text: string): Record<string, unknown> {

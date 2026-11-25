@@ -1,4 +1,5 @@
 import { createChatCompletion } from "./provider.js";
+import { normalizeAdvisoryList } from "./advisory-list.js";
 const MAX_RESPONSE = 32_000;
 const MAX_DEPTH = 24;
 const MAX_NODES = 6_000;
@@ -31,13 +32,8 @@ function jsonObject(value, label) {
         throw new Error(`${label}必须是 JSON 对象。`);
     return value;
 }
-function stringList(value, label) {
-    if (value === undefined)
-        return [];
-    if (!Array.isArray(value) || value.length > 30 || value.some((item) => typeof item !== "string" || item.length > 1_000)) {
-        throw new Error(`${label}格式无效。`);
-    }
-    return value.map((item) => item.trim()).filter(Boolean);
+function stringList(value, _label) {
+    return normalizeAdvisoryList(value, { maxItems: 30, maxChars: 1_000 });
 }
 function parseJsonObject(text) {
     const trimmed = text.trim();
