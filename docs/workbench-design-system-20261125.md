@@ -77,8 +77,15 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 全部对齐到 `wb-*` token。CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF`
 边框、24px 状态栏、26px 按钮。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
 
-仍保留原有 CSS 的部分：对象树（已有精确对齐契约与单测）、内部渲染原语
-（JsonMiniEditor / LazyDataTable / MiniChart / GisControls / GisPreviewMap）。
-这些组件通过 `.wb-app` 祖先作用域自动继承 token，无需逐文件改动。
+共享组件的真实消费（源码扫描确认八个组件全部被使用）：
+- `WbWorkbench` / `WbToolbar` / `WbStatusBar`：MongoDB 文档页、GIS 数据交换页
+- `WbToolButton`：工具启动器 9 个动作、BI 面板操作、MongoDB 页、对象树搜索/刷新
+- `WbDataTable`：MongoDB 索引检查器
+- `WbTreeSidebar`：对象浏览器（传入原 class 名与搜索槽，E2E 几何/选择器不变）
+- `WbTabContainer`：BI 面板（图表设计 / 仪表盘）
+- `WbInspector`：MongoDB 索引检查器（替代原 Modal Drawer）
+
+内部渲染原语（JsonMiniEditor / LazyDataTable / MiniChart / GisControls / GisPreviewMap）
+通过 `.wb-app` 祖先作用域自动继承 token，无需逐文件改动。
 
 迁移原则与页面重构规则保持不变：所有新样式必须来自 `wb-*` 变量，禁止硬编码颜色/间距/字号。
