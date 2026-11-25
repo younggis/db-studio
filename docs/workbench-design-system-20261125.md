@@ -59,6 +59,21 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 4. 树/标签/属性面板分别用 `WbTreeSidebar` / `WbTabContainer` / `WbInspector`。
 5. 任何新颜色、间距、圆角都必须先加入 `workbench-theme.css` 再使用。
 
-## 4. 状态
+## 4. 迁移状态
 
-基础层已完成并通过 typecheck/build。**尚未重构任何具体页面**；等待逐个提供页面代码后按上述规则迁移。
+基础层已完成并通过 `pnpm test` / `typecheck` / `build` / `test:e2e`（6/6）。
+
+已迁移页面（接入 WbWorkbench 骨架 + WbToolbar + WbStatusBar）：
+- `MongoDocumentsPage.tsx`（MongoDB 文档）：工具栏与状态栏、索引表改用 `WbDataTable`
+- `GisExchangePage.tsx`（GIS 数据交换）：标题与模式切换收拢进工具栏、状态栏
+
+已纳入全局 token 作用域的面板/弹窗（`wb-surface` / `wb-app`）：
+- 工具抽屉：备份恢复、结构同步、数据同步、表设计器、自动化调度、BI 图表
+- 业务面板：Mongo AI、空间索引诊断、图层体检、查询历史、SQL AI 助手
+- 弹窗：连接表单、对象搜索、表结构、表传输
+
+仍保留原有 CSS 的部分：对象树（已有精确对齐契约与单测）、内部渲染原语
+（JsonMiniEditor / LazyDataTable / MiniChart / GisControls / GisPreviewMap）。
+后续逐页迁移时，这些组件通过 `.wb-app` 作用域自动继承 token，无需逐文件改动。
+
+迁移原则与页面重构规则保持不变：所有新样式必须来自 `wb-*` 变量，禁止硬编码颜色/间距/字号。
