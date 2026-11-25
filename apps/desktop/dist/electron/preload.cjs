@@ -20594,6 +20594,17 @@ var init_ipc_contracts = __esm({
       "mongo:aggregate": external_exports.tuple([identifier, identifier, identifier, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).max(1e3), external_exports.number().int().min(1).max(1e3)]),
       "mongo:delete-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4)]),
       "mongo:replace-document": external_exports.tuple([identifier, identifier, identifier, external_exports.string().min(1).max(2e4), boundedText]),
+      "automation:list": external_exports.tuple([]),
+      "automation:save": external_exports.tuple([external_exports.record(external_exports.string(), external_exports.unknown())]),
+      "automation:remove": external_exports.tuple([identifier]),
+      "automation:run": external_exports.tuple([identifier]),
+      "designer:preview": external_exports.tuple([identifier, identifier, external_exports.enum(["create", "alter"]), external_exports.object({
+        name: external_exports.string().min(1).max(256),
+        columns: external_exports.array(external_exports.object({ name: external_exports.string().min(1).max(256), dataType: external_exports.string().min(1).max(200), nullable: external_exports.boolean(), defaultValue: external_exports.string().max(500).nullable(), primaryKey: external_exports.boolean() })).min(1).max(200),
+        indexes: external_exports.array(external_exports.object({ name: external_exports.string().min(1).max(256), columns: external_exports.array(external_exports.string().max(256)).min(1).max(32), unique: external_exports.boolean() })).max(100),
+        foreignKeys: external_exports.array(external_exports.object({ name: external_exports.string().min(1).max(256), columns: external_exports.array(external_exports.string().max(256)).min(1).max(32), referencedSchema: external_exports.string().max(256).optional(), referencedTable: external_exports.string().min(1).max(256), referencedColumns: external_exports.array(external_exports.string().max(256)).min(1).max(32) })).max(100)
+      })]),
+      "designer:apply": external_exports.tuple([identifier, external_exports.array(external_exports.object({ sql: external_exports.string().min(1).max(1e5) })).max(500)]),
       "backup:create": external_exports.tuple([identifier, identifier, external_exports.object({ includeData: external_exports.boolean().optional() }).optional()]),
       "backup:restore": external_exports.tuple([identifier, external_exports.string().min(1).max(5e7)]),
       "sync:preview": external_exports.tuple([identifier, identifier, identifier, identifier, external_exports.object({ includeDrops: external_exports.boolean().optional() }).optional()]),
@@ -20676,6 +20687,16 @@ contextBridge.exposeInMainWorld("dbStudio", {
     export: (id, database, collection, filter) => ipcRenderer.invoke("mongo:export", id, database, collection, filter),
     importGeoJson: (id, database, collection, geometryField) => ipcRenderer.invoke("mongo:geo-import", id, database, collection, geometryField),
     exportGeoJson: (id, database, collection, geometryField, filter) => ipcRenderer.invoke("mongo:geo-export", id, database, collection, geometryField, filter)
+  },
+  automation: {
+    list: () => ipcRenderer.invoke("automation:list"),
+    save: (input2) => invoke("automation:save", input2),
+    remove: (id) => invoke("automation:remove", id),
+    run: (id) => invoke("automation:run", id)
+  },
+  designer: {
+    preview: (connectionId, schema, mode, table) => invoke("designer:preview", connectionId, schema, mode, table),
+    apply: (connectionId, statements) => invoke("designer:apply", connectionId, statements)
   },
   backup: {
     create: (connectionId, schema, options) => invoke("backup:create", connectionId, schema, options),

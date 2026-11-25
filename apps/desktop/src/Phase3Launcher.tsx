@@ -4,16 +4,18 @@
 import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Button, Space, Tooltip } from "antd";
-import { Activity, ArchiveRestore, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun } from "lucide-react";
+import { Activity, AlarmClock, ArchiveRestore, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun, TableProperties } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
 import LayerHealthPanel from "./LayerHealthPanel";
 import BackupPanel from "./BackupPanel";
 import SchemaSyncPanel from "./SchemaSyncPanel";
 import DataSyncPanel from "./DataSyncPanel";
+import TableDesignerPanel from "./TableDesignerPanel";
+import AutomationPanel from "./AutomationPanel";
 import type { DatabaseEngine } from "@db-studio/shared";
 
 interface ConnectionChoice { id: string; name: string; engine: DatabaseEngine }
-type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | "data-sync" | null;
+type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | "data-sync" | "table-designer" | "automation" | null;
 
 function readSelectedName(): string | undefined {
   const card = document.querySelector(".connection-card.selected .connection-name b");
@@ -101,6 +103,12 @@ export default function Phase3Launcher() {
           <Tooltip title="跨库同步表数据（替换或追加）">
             <Button type="text" size="small" aria-label="数据同步" icon={<DatabaseZap size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("data-sync")} />
           </Tooltip>
+          <Tooltip title="可视化建表与改表 DDL">
+            <Button type="text" size="small" aria-label="表设计器" icon={<TableProperties size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("table-designer")} />
+          </Tooltip>
+          <Tooltip title="定时备份与 SQL 任务">
+            <Button type="text" size="small" aria-label="自动化调度" icon={<AlarmClock size={14} />} onClick={() => setPanel("automation")} />
+          </Tooltip>
         </Space>
       </div>
 
@@ -132,6 +140,12 @@ export default function Phase3Launcher() {
         onClose={() => setPanel(null)}
         activeId={activeId}
       />
+      <TableDesignerPanel
+        open={panel === "table-designer"}
+        onClose={() => setPanel(null)}
+        activeId={activeId}
+      />
+      <AutomationPanel open={panel === "automation"} onClose={() => setPanel(null)} />
     </>
   );
 }

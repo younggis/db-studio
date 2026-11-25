@@ -144,6 +144,26 @@ export interface DbStudioApi {
     importGeoJson(id: string, database: string, collection: string, geometryField: string): Promise<{ path: string; insertedCount: number } | null>;
     exportGeoJson(id: string, database: string, collection: string, geometryField: string, filter?: Record<string, unknown>): Promise<{ path: string; featureCount: number } | null>;
   };
+  automation: {
+    list(): Promise<Array<{
+      id: string; name: string; type: "backup" | "query"; connectionId: string;
+      schema?: string; sql?: string; outputPath?: string; includeData?: boolean;
+      intervalMinutes: number; enabled: boolean; createdAt: string;
+      lastRunAt?: string; lastStatus?: "success" | "failed"; lastError?: string;
+    }>>;
+    save(input: Record<string, unknown>): Promise<Array<{ id: string; name: string; type: "backup" | "query"; connectionId: string; schema?: string; sql?: string; outputPath?: string; includeData?: boolean; intervalMinutes: number; enabled: boolean; createdAt: string; lastRunAt?: string; lastStatus?: "success" | "failed"; lastError?: string }>>;
+    remove(id: string): Promise<Array<{ id: string; name: string; type: "backup" | "query"; connectionId: string; schema?: string; sql?: string; outputPath?: string; includeData?: boolean; intervalMinutes: number; enabled: boolean; createdAt: string; lastRunAt?: string; lastStatus?: "success" | "failed"; lastError?: string }>>;
+    run(id: string): Promise<Record<string, unknown>>;
+  };
+  designer: {
+    preview(connectionId: string, schema: string, mode: "create" | "alter", table: {
+      name: string;
+      columns: Array<{ name: string; dataType: string; nullable: boolean; defaultValue: string | null; primaryKey: boolean }>;
+      indexes: Array<{ name: string; columns: string[]; unique: boolean }>;
+      foreignKeys: Array<{ name: string; columns: string[]; referencedSchema?: string; referencedTable: string; referencedColumns: string[] }>;
+    }): Promise<string[]>;
+    apply(connectionId: string, statements: Array<{ sql: string }>): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }>;
+  };
   backup: {
     create(connectionId: string, schema: string, options?: { includeData?: boolean }): Promise<{ path: string; tableCount: number; rowCount: number } | null>;
     restore(connectionId: string, sql: string): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }>;

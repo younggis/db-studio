@@ -270,6 +270,7 @@ function isolatedGdalEnvironment(environment: NodeJS.ProcessEnv): NodeJS.Process
 export { buildMongoGeoFilter, geoJsonToMongoDocuments, mongoDocumentsToGeoJson, parseMongoEjson, stringifyMongoJson } from "@db-studio/database";
 
 export * from "./schema-diff.js";
+export * from "./table-designer.js";
 import type { SchemaSnapshot, SchemaStatement } from "./schema-diff.js";
 
 export class CoreService {

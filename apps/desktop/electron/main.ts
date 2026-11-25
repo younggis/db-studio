@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync } from "node:fs";
 import { applyPostgisSpatialMetadata, createEmbedding, emptySchemaIndex, findSchemaIndexTableCoverageDifferences, findStaleSchemaIndexTableKeys, isSchemaIndexSnapshot, loadPostgisSchemaMetadata, loadSchemaCandidateMetadata, rankSchemaCandidatesByRerank, replaceSchemaIndexChunks, rerank, runMongoAssistant, runSqlAssistant, schemaIndexScope, schemaModelFingerprint, schemaTableDocument, schemaTableDocumentChunks, searchSchemaIndex, selectRelevantTables, testChatModel, testEmbeddingModel, testRerankModel } from "@db-studio/ai";
 import { schemaTableKey } from "@db-studio/shared/schema-table-key";
-import { CoreService, GisOperationError, MongoDocumentService, OperationRegistry, diffSchemaSnapshots, stringifyMongoJson } from "@db-studio/core";
+import { CoreService, GisOperationError, MongoDocumentService, OperationRegistry, buildDesignerSql, diffSchemaSnapshots, stringifyMongoJson } from "@db-studio/core";
 import { SshTunnelManager, validateSshTunnelConfig } from "@db-studio/database";
 import { parseExcelWorkbook, parseTabularData, queryResultToCsv, queryResultToXlsx } from "@db-studio/shared";
 import { appendQueryHistory, clearQueryHistory, createEmptyQueryHistorySnapshot, normalizeQueryHistorySnapshot, removeQueryFavorite, upsertQueryFavorite, } from "@db-studio/shared";
@@ -14,6 +14,7 @@ import { copyFile, mkdir, readFile, rename, unlink, writeFile } from "node:fs/pr
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createAsyncSerialQueue } from "./async-serial-queue.js";
+import { isJobDue, loadAutomationJobs, saveAutomationJobs, validateJob, type AutomationJob } from "./automation-store.js";
 import { finishAiOperation, handleAiCancellationRequest, registerAiOperation, throwIfAiOperationCancelled } from "./ai-operation-registry.js";
 import { assertConnectionStoreShape, backupAndResetUnreadableConnectionStore, ConnectionStoreUnreadableError } from "./connection-store-recovery.js";
 import { commitConnectionRemoval } from "./connection-store-mutations.js";
@@ -41,6 +42,46 @@ const queryHistoryHeader = Buffer.from("DBSTUDIO\0QUERY-HISTORY\0V1\0", "utf8");
 const queryHistoryDpapiHeader = Buffer.concat([queryHistoryHeader, Buffer.from("DPAPI\0", "ascii")]);
 const queryHistorySafeStorageHeader = Buffer.concat([queryHistoryHeader, Buffer.from("SAFE-STORAGE\0", "ascii")]);
 const connectionsPath = () => path.join(app.getPath("userData"), "connections.enc");
+let automationJobs: AutomationJob[] = [];
+
+async function persistAutomation(): Promise<void> {
+    await saveAutomationJobs(app.getPath("userData"), automationJobs);
+}
+
+async function executeAutomationJob(job: AutomationJob): Promise<void> {
+    try {
+        const connection = await connectionFor(job.connectionId);
+        const core = coreFor(connection);
+        if (job.type === "backup") {
+            const result = await core.createBackup(job.schema ?? "", { includeData: job.includeData !== false });
+            const safeName = job.name.replace(/[^\w\u4e00-\u9fa5-]+/g, "_");
+            const target = job.outputPath || path.join(app.getPath("userData"), "backups", safeName + "-" + new Date().toISOString().slice(0, 10) + ".sql");
+            await mkdir(path.dirname(target), { recursive: true });
+            await writeFile(target, result.sql, "utf8");
+        } else {
+            await core.query(job.sql ?? "");
+        }
+        job.lastStatus = "success";
+        job.lastError = undefined;
+    } catch (error) {
+        job.lastStatus = "failed";
+        job.lastError = String(error instanceof Error ? error.message : error).slice(0, 500);
+    }
+    job.lastRunAt = new Date().toISOString();
+    await persistAutomation();
+}
+
+async function runDueAutomationJobs(): Promise<void> {
+    const now = Date.now();
+    const due = automationJobs.filter((job) => isJobDue(job, now));
+    for (const job of due) await executeAutomationJob(job);
+}
+
+async function initAutomation(): Promise<void> {
+    automationJobs = await loadAutomationJobs(app.getPath("userData"));
+    setInterval(() => { void runDueAutomationJobs(); }, 30_000);
+}
+
 const aiSettingsPath = () => path.join(app.getPath("userData"), "ai-models.enc");
 const aiSchemaIndexPath = () => path.join(app.getPath("userData"), "ai-schema-index.enc");
 const queryHistoryPath = () => path.join(app.getPath("userData"), "query-history.enc");
@@ -1698,6 +1739,40 @@ function registerHandlers() {
         await writeFile(result.filePath, `${stringifyMongoJson(featureCollection)}\n`, "utf8");
         return { path: result.filePath, featureCount: featureCollection.features.length };
     });
+    ipcMain.handle("automation:list", async () => automationJobs);
+    ipcMain.handle("automation:save", async (_event, input) => {
+        const job = validateJob(input ?? {});
+        const index = automationJobs.findIndex((item) => item.id === job.id);
+        if (index >= 0) automationJobs[index] = job; else automationJobs.push(job);
+        await persistAutomation();
+        return automationJobs;
+    });
+    ipcMain.handle("automation:remove", async (_event, id) => {
+        automationJobs = automationJobs.filter((job) => job.id !== id);
+        await persistAutomation();
+        return automationJobs;
+    });
+    ipcMain.handle("automation:run", async (_event, id) => {
+        const job = automationJobs.find((item) => item.id === id);
+        if (!job) throw new Error("任务不存在。");
+        await executeAutomationJob(job);
+        return job;
+    });
+    ipcMain.handle("designer:preview", async (_event, id, schema, mode, table) => {
+        const connection = await connectionFor(id);
+        if (connection.engine === "mongodb")
+            throw new Error("MongoDB 不支持关系表设计器。");
+        let existing: string[] = [];
+        if (mode === "alter")
+            existing = (await coreFor(connection).getTableColumns(table.name, schema)).map((column) => column.name);
+        return buildDesignerSql(connection.engine, schema, mode, table, existing);
+    });
+    ipcMain.handle("designer:apply", async (_event, id, statements) => {
+        const connection = await connectionFor(id);
+        if (connection.engine === "mongodb")
+            throw new Error("MongoDB 不支持关系表设计器。");
+        return coreFor(connection).applySchemaStatements(statements);
+    });
     ipcMain.handle("backup:create", async (_event, id, schema, options) => {
         const connection = await connectionFor(id);
         if (connection.engine === "mongodb")
@@ -2037,6 +2112,7 @@ app.whenReady().then(async () => {
         shuttingDown = true;
         void sshTunnelManager.closeAll().catch(() => undefined).finally(() => app.quit());
     });
+    await initAutomation();
     await createWindow();
     app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0)
         void createWindow(); });

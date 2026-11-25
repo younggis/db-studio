@@ -164,6 +164,38 @@ export declare const ipcArgSchemas: {
     readonly "mongo:aggregate": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodArray<z.ZodRecord<z.ZodString, z.ZodUnknown>>, z.ZodNumber], null>;
     readonly "mongo:delete-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
     readonly "mongo:replace-document": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
+    readonly "automation:list": z.ZodTuple<[], null>;
+    readonly "automation:save": z.ZodTuple<[z.ZodRecord<z.ZodString, z.ZodUnknown>], null>;
+    readonly "automation:remove": z.ZodTuple<[z.ZodString], null>;
+    readonly "automation:run": z.ZodTuple<[z.ZodString], null>;
+    readonly "designer:preview": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodEnum<{
+        alter: "alter";
+        create: "create";
+    }>, z.ZodObject<{
+        name: z.ZodString;
+        columns: z.ZodArray<z.ZodObject<{
+            name: z.ZodString;
+            dataType: z.ZodString;
+            nullable: z.ZodBoolean;
+            defaultValue: z.ZodNullable<z.ZodString>;
+            primaryKey: z.ZodBoolean;
+        }, z.core.$strip>>;
+        indexes: z.ZodArray<z.ZodObject<{
+            name: z.ZodString;
+            columns: z.ZodArray<z.ZodString>;
+            unique: z.ZodBoolean;
+        }, z.core.$strip>>;
+        foreignKeys: z.ZodArray<z.ZodObject<{
+            name: z.ZodString;
+            columns: z.ZodArray<z.ZodString>;
+            referencedSchema: z.ZodOptional<z.ZodString>;
+            referencedTable: z.ZodString;
+            referencedColumns: z.ZodArray<z.ZodString>;
+        }, z.core.$strip>>;
+    }, z.core.$strip>], null>;
+    readonly "designer:apply": z.ZodTuple<[z.ZodString, z.ZodArray<z.ZodObject<{
+        sql: z.ZodString;
+    }, z.core.$strip>>], null>;
     readonly "backup:create": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodOptional<z.ZodObject<{
         includeData: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strip>>], null>;
