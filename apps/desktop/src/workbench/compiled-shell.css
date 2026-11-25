@@ -1,0 +1,132 @@
+/* Compile-shell token alignment.
+   The SQL editor shell lives in a compiled chunk, so we align its chrome to
+   the global wb-* tokens through class selectors only. E2E-critical geometry
+   (.object-tree rows/slots, topbar height) is intentionally left untouched. */
+
+.shell {
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+  line-height: var(--wb-line-height);
+  color: var(--wb-text);
+  background: var(--wb-bg-surface);
+}
+.main-frame, .workspace { background: var(--wb-bg-surface); }
+
+.topbar {
+  background: var(--wb-bg-toolbar) !important;
+  border-bottom: 1px solid var(--wb-border) !important;
+  color: var(--wb-text) !important;
+}
+.topbar .brand-lockup strong { color: var(--wb-text); font-size: var(--wb-font-size); }
+.topbar .brand-lockup span { color: var(--wb-text-muted); font-size: 9px; }
+.topbar .breadcrumb { color: var(--wb-text-secondary); font-size: var(--wb-font-size); }
+.topbar-divider { background: var(--wb-border) !important; }
+.topbar-actions, .head-actions { gap: var(--wb-space-1); }
+
+.sidebar {
+  background: var(--wb-bg-toolbar) !important;
+  border-right: 1px solid var(--wb-border) !important;
+  color: var(--wb-text);
+}
+.sidebar-heading, .tree-label {
+  color: var(--wb-text-secondary) !important;
+  font-size: var(--wb-font-size-sm) !important;
+}
+.sidebar-bottom, .status-host { border-top: 1px solid var(--wb-border) !important; }
+.runtime-chip {
+  background: var(--wb-bg-surface) !important;
+  border: 1px solid var(--wb-border) !important;
+  color: var(--wb-text-muted) !important;
+  border-radius: var(--wb-radius) !important;
+}
+.runtime-dot { background: var(--wb-success) !important; }
+.sidebar-footer { color: var(--wb-text-muted) !important; font-size: var(--wb-font-size-sm) !important; }
+
+.connection-list { gap: var(--wb-space-1); }
+.connection-card {
+  border: 1px solid var(--wb-border) !important;
+  border-radius: var(--wb-radius) !important;
+  background: var(--wb-bg-surface) !important;
+  color: var(--wb-text);
+}
+.connection-card:hover { background: var(--wb-bg-hover) !important; }
+.connection-card.selected {
+  background: var(--wb-bg-selected) !important;
+  border-color: var(--wb-brand) !important;
+  color: var(--wb-brand) !important;
+}
+.connection-name b { font-size: var(--wb-font-size); }
+.db-icon { color: var(--wb-text-secondary) !important; }
+.db-icon.active { color: var(--wb-brand) !important; }
+
+.workspace-head {
+  background: var(--wb-bg-toolbar);
+  border-bottom: 1px solid var(--wb-border);
+}
+.page-title { color: var(--wb-text); font-size: 13px; }
+.page-title small { color: var(--wb-text-muted); font-size: var(--wb-font-size-sm); }
+.title-icon { color: var(--wb-brand) !important; }
+
+.statusbar {
+  height: var(--wb-statusbar-h);
+  background: var(--wb-bg-toolbar);
+  border-top: 1px solid var(--wb-border);
+  color: var(--wb-text-secondary);
+  font-size: var(--wb-font-size-sm);
+}
+.status-left, .status-right, .status-ready, .environment-dot, .env-label,
+.connected-indicator, .status-separator, .status-spacer { font-size: var(--wb-font-size-sm); }
+.environment-dot { background: var(--wb-success) !important; }
+.status-ready { color: var(--wb-success) !important; }
+
+.panel-toolbar,
+.results-toolbar,
+.results-toolbar-right {
+  background: var(--wb-bg-toolbar);
+  border-bottom: 1px solid var(--wb-border);
+  color: var(--wb-text);
+}
+.results-panel, .editor-panel {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-bg-surface);
+}
+.results-title, .results-meta, .editor-status { color: var(--wb-text-secondary); font-size: var(--wb-font-size-sm); }
+.toolbar-separator, .pane-splitter { background: var(--wb-border) !important; }
+.query-failure { color: var(--wb-danger); }
+.document-tab {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius) var(--wb-radius) 0 0;
+  background: var(--wb-bg-toolbar);
+}
+
+/* Compact controls across the compiled shell (migrated pages opt out). */
+.shell .ant-btn:not(.mongo-primary) {
+  height: var(--wb-control-h);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+  font-size: var(--wb-font-size);
+}
+.shell .ant-input,
+.shell .ant-select-selector {
+  min-height: var(--wb-control-h);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+  font-size: var(--wb-font-size);
+}
+.shell .ant-tag { border-radius: var(--wb-radius-sm) !important; font-size: var(--wb-font-size-sm); }
+
+/* Data grid: zebra + hairline + monospaced numeric/code values. */
+.query-table .ant-table-thead > tr > th {
+  background: var(--wb-bg-toolbar);
+  border-color: var(--wb-border);
+  font-size: var(--wb-font-size-sm);
+}
+.query-table .ant-table-tbody > tr > td {
+  border-color: var(--wb-border);
+  font-size: var(--wb-font-size);
+}
+.query-table .ant-table-tbody > tr:nth-child(even) > td { background: var(--wb-bg-subtle); }
+.query-table .ant-table-tbody > tr:hover > td { background: var(--wb-bg-hover) !important; }
+.result-column, .numeric-value { font-family: var(--wb-font-mono); }
+.numeric-value { text-align: right; font-variant-numeric: tabular-nums; }
