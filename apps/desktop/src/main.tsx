@@ -22,3 +22,4 @@ import "./vendor/index-CLh2VPBN.js";
 // roots use the same bundled React instance.
 void import("./Phase3Launcher").then(({ mountPhase3Launcher }) => mountPhase3Launcher());
 void import("./GisPageOverlay").then(({ mountGisPageOverlay }) => mountGisPageOverlay());
+void import("./CompiledWorkbenchBridge").then(({ mountCompiledWorkbenchBridge }) => mountCompiledWorkbenchBridge());
