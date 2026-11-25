@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import path from "node:path";
-import { PostgresAdapter, MariaDbAdapter, MySqlAdapter, SqliteAdapter, SqlServerAdapter, OracleAdapter, mariaDbConfigFromEnvironment, mysqlConfigFromEnvironment, postgresConfigFromEnvironment, sqlServerConfigFromEnvironment, oracleConfigFromEnvironment, oracleTransferFetchTypeHandler, sqliteConfigFromEnvironment, MongoDocumentAdapter, buildMongoGeoFilter, mongoConfigFromEnvironment, parseMongoJson, buildTableUpdateStatements, buildBackupSql, splitSqlStatements, } from "@db-studio/database";
+import { PostgresAdapter, MariaDbAdapter, MySqlAdapter, SqliteAdapter, SqlServerAdapter, OracleAdapter, mariaDbConfigFromEnvironment, mysqlConfigFromEnvironment, postgresConfigFromEnvironment, sqlServerConfigFromEnvironment, oracleConfigFromEnvironment, oracleTransferFetchTypeHandler, sqliteConfigFromEnvironment, MongoDocumentAdapter, buildMongoGeoFilter, mongoConfigFromEnvironment, parseMongoJson, buildTableUpdateStatements, buildBackupSql, splitSqlStatements, quoteIdentifier, } from "@db-studio/database";
 import { isQueryStreamCell, parseExcelWorkbook, parseTabularData, queryResultToXlsx } from "@db-studio/shared";
 import { convertTransferValue, spatialTypeOf, supportsSpatialTransfer } from "./table-transfer-conversion.js";
 import { GisOperationError, GdalService, } from "@db-studio/gis";
@@ -479,6 +479,20 @@ export class CoreService {
             return { engine, schema, tables: snapshotTables };
         });
     }
+    async tableSnapshot(schema, table) {
+        if (!schema.trim() || !table.trim())
+            throw new Error("Schema 与表名不能为空。");
+        const engine = this.engine ?? "postgres";
+        return this.withDatabase(async (adapter) => {
+            const columns = await this.preciseColumns(adapter, schema, table);
+            const qualified = schema ? `${quoteIdentifier(engine, schema)}.${quoteIdentifier(engine, table)}` : quoteIdentifier(engine, table);
+            const result = await adapter.query(`SELECT COUNT(*) AS total FROM ${qualified}`);
+            return {
+                rowCount: Number(result.rows[0]?.total ?? 0),
+                columns: columns.map((column) => ({ name: column.name, dataType: column.dataType, primaryKey: column.primaryKey })),
+            };
+        });
+    }
     async applySchemaStatements(statements) {
         if (!statements.length)
             return { applied: 0, failed: [] };
@@ -596,6 +610,11 @@ export class CoreService {
                 .find((item) => item.name === targetTable && item.type === "table");
             if (!targetObject)
                 throw new Error(`Destination '${targetTable}' was not found or is not a base table.`);
+            if (options.mode === "replace") {
+                const quote = (name) => quoteIdentifier(destination.engine ?? "postgres", name);
+                const qualified = targetSchema ? `${quote(targetSchema)}.${quote(targetTable)}` : quote(targetTable);
+                await targetAdapter.query(`DELETE FROM ${qualified}`);
+            }
             const sourceColumns = (await sourceAdapter.getTableColumns(sourceTable, sourceSchema))
                 .sort((left, right) => left.ordinalPosition - right.ordinalPosition);
             if (!sourceColumns.length)

@@ -1728,6 +1728,25 @@ function registerHandlers() {
         ]);
         return diffSchemaSnapshots(source, target, options ?? {});
     });
+    ipcMain.handle("sync:data-preview", async (_event, sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable) => {
+        const [sourceConnection, targetConnection] = await Promise.all([connectionFor(sourceId), connectionFor(targetId)]);
+        if (sourceConnection.engine === "mongodb" || targetConnection.engine === "mongodb")
+            throw new Error("MongoDB 不支持关系表数据同步。");
+        const [source, target] = await Promise.all([
+            coreFor(sourceConnection).tableSnapshot(sourceSchema, sourceTable),
+            coreFor(targetConnection).tableSnapshot(targetSchema, targetTable),
+        ]);
+        return { source, target };
+    });
+    ipcMain.handle("sync:data-run", async (_event, sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable, mode, pageSize) => {
+        const [sourceConnection, targetConnection] = await Promise.all([connectionFor(sourceId), connectionFor(targetId)]);
+        if (sourceConnection.engine === "mongodb" || targetConnection.engine === "mongodb")
+            throw new Error("MongoDB 不支持关系表数据同步。");
+        return coreFor(sourceConnection).transferTableRows(coreFor(targetConnection), {
+            sourceTable, sourceSchema, targetTable, targetSchema,
+            mode: mode ?? "append", pageSize: pageSize ?? 250,
+        });
+    });
     ipcMain.handle("sync:apply", async (_event, id, statements) => {
         const connection = await connectionFor(id);
         if (connection.engine === "mongodb")

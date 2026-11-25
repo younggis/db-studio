@@ -20597,6 +20597,8 @@ var init_ipc_contracts = __esm({
       "backup:create": external_exports.tuple([identifier, identifier, external_exports.object({ includeData: external_exports.boolean().optional() }).optional()]),
       "backup:restore": external_exports.tuple([identifier, external_exports.string().min(1).max(5e7)]),
       "sync:preview": external_exports.tuple([identifier, identifier, identifier, identifier, external_exports.object({ includeDrops: external_exports.boolean().optional() }).optional()]),
+      "sync:data-preview": external_exports.tuple([identifier, identifier, identifier, identifier, identifier, identifier]),
+      "sync:data-run": external_exports.tuple([identifier, identifier, identifier, identifier, identifier, identifier, external_exports.enum(["append", "replace"]).optional(), external_exports.number().int().min(1).max(1e3).optional()]),
       "sync:apply": external_exports.tuple([identifier, external_exports.array(external_exports.object({ sql: external_exports.string().min(1).max(1e5) })).max(500)]),
       "gis:import": external_exports.tuple([identifier, external_exports.string().min(1).max(4096), identifier, external_exports.record(external_exports.string(), external_exports.unknown()), identifier.optional()]),
       "gis:export": external_exports.tuple([identifier, identifier, external_exports.string().min(1).max(4096), external_exports.record(external_exports.string(), external_exports.unknown()).optional(), identifier.optional()])
@@ -20681,7 +20683,9 @@ contextBridge.exposeInMainWorld("dbStudio", {
   },
   sync: {
     preview: (sourceId, sourceSchema, targetId, targetSchema, options) => invoke("sync:preview", sourceId, sourceSchema, targetId, targetSchema, options),
-    apply: (targetId, statements) => invoke("sync:apply", targetId, statements)
+    apply: (targetId, statements) => invoke("sync:apply", targetId, statements),
+    dataPreview: (sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable) => invoke("sync:data-preview", sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable),
+    dataRun: (sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable, mode, pageSize) => invoke("sync:data-run", sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable, mode, pageSize)
   },
   gis: {
     inspect: (file2, options) => ipcRenderer.invoke("gis:inspect", file2, options),

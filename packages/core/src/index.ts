@@ -37,6 +37,7 @@ import {
   buildTableUpdateStatements,
   buildBackupSql,
   splitSqlStatements,
+  quoteIdentifier,
   type BackupTable,
 } from "@db-studio/database";
 import { isQueryStreamCell, parseExcelWorkbook, parseTabularData, queryResultToXlsx, type ColumnInfo, type DatabaseEngine, type QueryResult, type QueryResultBatch, type QueryStreamOptions, type SpatialTransferValue, type TableForeignKeyInfo, type TableInfo, type TableRowChange, type TabularData } from "@db-studio/shared";
@@ -588,6 +589,20 @@ export class CoreService {
     });
   }
 
+  async tableSnapshot(schema: string, table: string): Promise<{ rowCount: number; columns: Array<{ name: string; dataType: string; primaryKey: boolean }> }> {
+    if (!schema.trim() || !table.trim()) throw new Error("Schema 与表名不能为空。");
+    const engine = this.engine ?? "postgres";
+    return this.withDatabase(async (adapter) => {
+      const columns = await this.preciseColumns(adapter, schema, table);
+      const qualified = schema ? `${quoteIdentifier(engine, schema)}.${quoteIdentifier(engine, table)}` : quoteIdentifier(engine, table);
+      const result = await adapter.query(`SELECT COUNT(*) AS total FROM ${qualified}`);
+      return {
+        rowCount: Number(result.rows[0]?.total ?? 0),
+        columns: columns.map((column) => ({ name: column.name, dataType: column.dataType, primaryKey: column.primaryKey })),
+      };
+    });
+  }
+
   async applySchemaStatements(statements: SchemaStatement[]): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }> {
     if (!statements.length) return { applied: 0, failed: [] };
     return this.withDatabase(async (adapter) => {
@@ -694,6 +709,8 @@ export class CoreService {
       columnMappings?: Array<{ sourceColumn: string; targetColumn: string }>;
       /** Retag geometry as geography (or back). Requires a valid geographic SRID; the destination engine still enforces CRS rules. */
       allowSpatialTypeConversion?: boolean;
+      /** "replace" clears destination rows before transferring; default is append. */
+      mode?: "append" | "replace";
     },
   ): Promise<{ sourceRows: number; insertedRows: number; columns: string[] }> {
     const { sourceTable, sourceSchema, targetTable, targetSchema } = options;
@@ -715,6 +732,11 @@ export class CoreService {
       const targetObject = (await targetAdapter.listTables(targetSchema))
         .find((item) => item.name === targetTable && item.type === "table");
       if (!targetObject) throw new Error(`Destination '${targetTable}' was not found or is not a base table.`);
+      if (options.mode === "replace") {
+        const quote = (name: string) => quoteIdentifier(destination.engine ?? "postgres", name);
+        const qualified = targetSchema ? `${quote(targetSchema)}.${quote(targetTable)}` : quote(targetTable);
+        await targetAdapter.query(`DELETE FROM ${qualified}`);
+      }
 
       const sourceColumns = (await sourceAdapter.getTableColumns(sourceTable, sourceSchema))
         .sort((left, right) => left.ordinalPosition - right.ordinalPosition);

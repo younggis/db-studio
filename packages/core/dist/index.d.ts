@@ -93,6 +93,14 @@ export declare class CoreService {
         }>;
     }>;
     readSchemaSnapshot(schema: string): Promise<SchemaSnapshot>;
+    tableSnapshot(schema: string, table: string): Promise<{
+        rowCount: number;
+        columns: Array<{
+            name: string;
+            dataType: string;
+            primaryKey: boolean;
+        }>;
+    }>;
     applySchemaStatements(statements: SchemaStatement[]): Promise<{
         applied: number;
         failed: Array<{
@@ -124,6 +132,8 @@ export declare class CoreService {
         }>;
         /** Retag geometry as geography (or back). Requires a valid geographic SRID; the destination engine still enforces CRS rules. */
         allowSpatialTypeConversion?: boolean;
+        /** "replace" clears destination rows before transferring; default is append. */
+        mode?: "append" | "replace";
     }): Promise<{
         sourceRows: number;
         insertedRows: number;

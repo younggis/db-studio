@@ -171,6 +171,11 @@ export declare const ipcArgSchemas: {
     readonly "sync:preview": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodObject<{
         includeDrops: z.ZodOptional<z.ZodBoolean>;
     }, z.core.$strip>>], null>;
+    readonly "sync:data-preview": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString], null>;
+    readonly "sync:data-run": z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodString, z.ZodOptional<z.ZodEnum<{
+        append: "append";
+        replace: "replace";
+    }>>, z.ZodOptional<z.ZodNumber>], null>;
     readonly "sync:apply": z.ZodTuple<[z.ZodString, z.ZodArray<z.ZodObject<{
         sql: z.ZodString;
     }, z.core.$strip>>], null>;

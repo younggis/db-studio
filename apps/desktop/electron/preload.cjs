@@ -79,6 +79,8 @@ contextBridge.exposeInMainWorld("dbStudio", {
   sync: {
     preview: (sourceId, sourceSchema, targetId, targetSchema, options) => invoke("sync:preview", sourceId, sourceSchema, targetId, targetSchema, options),
     apply: (targetId, statements) => invoke("sync:apply", targetId, statements),
+    dataPreview: (sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable) => invoke("sync:data-preview", sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable),
+    dataRun: (sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable, mode, pageSize) => invoke("sync:data-run", sourceId, sourceSchema, sourceTable, targetId, targetSchema, targetTable, mode, pageSize),
   },
   gis: {
     inspect: (file, options) => ipcRenderer.invoke("gis:inspect", file, options),

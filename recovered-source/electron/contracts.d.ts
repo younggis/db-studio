@@ -159,6 +159,11 @@ export interface DbStudioApi {
       selected: boolean;
     }>>;
     apply(targetId: string, statements: Array<{ sql: string }>): Promise<{ applied: number; failed: Array<{ sql: string; error: string }> }>;
+    dataPreview(sourceId: string, sourceSchema: string, sourceTable: string, targetId: string, targetSchema: string, targetTable: string): Promise<{
+      source: { rowCount: number; columns: Array<{ name: string; dataType: string; primaryKey: boolean }> };
+      target: { rowCount: number; columns: Array<{ name: string; dataType: string; primaryKey: boolean }> };
+    }>;
+    dataRun(sourceId: string, sourceSchema: string, sourceTable: string, targetId: string, targetSchema: string, targetTable: string, mode?: "append" | "replace", pageSize?: number): Promise<{ sourceRows: number; insertedRows: number; columns: string[] }>;
   };
   gis: {
     inspect(file: string, options?: GisInputOptions): Promise<GisDatasetInfo>;

@@ -4,15 +4,16 @@
 import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { Button, Space, Tooltip } from "antd";
-import { Activity, ArchiveRestore, GitCompareArrows, Moon, ScanSearch, Sun } from "lucide-react";
+import { Activity, ArchiveRestore, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
 import LayerHealthPanel from "./LayerHealthPanel";
 import BackupPanel from "./BackupPanel";
 import SchemaSyncPanel from "./SchemaSyncPanel";
+import DataSyncPanel from "./DataSyncPanel";
 import type { DatabaseEngine } from "@db-studio/shared";
 
 interface ConnectionChoice { id: string; name: string; engine: DatabaseEngine }
-type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | null;
+type Panel = "spatial-index" | "layer-health" | "backup" | "schema-sync" | "data-sync" | null;
 
 function readSelectedName(): string | undefined {
   const card = document.querySelector(".connection-card.selected .connection-name b");
@@ -97,6 +98,9 @@ export default function Phase3Launcher() {
           <Tooltip title="对比两个 Schema 的结构差异并同步">
             <Button type="text" size="small" aria-label="结构同步" icon={<GitCompareArrows size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("schema-sync")} />
           </Tooltip>
+          <Tooltip title="跨库同步表数据（替换或追加）">
+            <Button type="text" size="small" aria-label="数据同步" icon={<DatabaseZap size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("data-sync")} />
+          </Tooltip>
         </Space>
       </div>
 
@@ -120,6 +124,11 @@ export default function Phase3Launcher() {
       />
       <SchemaSyncPanel
         open={panel === "schema-sync"}
+        onClose={() => setPanel(null)}
+        activeId={activeId}
+      />
+      <DataSyncPanel
+        open={panel === "data-sync"}
         onClose={() => setPanel(null)}
         activeId={activeId}
       />
