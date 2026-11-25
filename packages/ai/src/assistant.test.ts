@@ -232,6 +232,32 @@ describe("AI SQL provider and validation", () => {
     expect(result.validation).toMatchObject({ valid: true, readOnly: true });
   });
 
+  it("does not reject a safe draft when the model returns object/mixed advisory fields", async () => {
+    // Reproduces the reported failure: warnings came back as objects, which
+    // previously threw "warnings 格式无效" twice and rejected the whole draft.
+    let calls = 0;
+    await listen(() => {
+      calls += 1;
+      return JSON.stringify({ choices: [{ message: { content: JSON.stringify({
+        task: "generate", dialect: "PostgreSQL", sql: "SELECT id FROM public.users LIMIT 1",
+        explanation: "Read one user.",
+        referencedObjects: ["public.users", { value: "public.orders" }],
+        assumptions: [{ text: "No join supplied" }, 42, true],
+        warnings: [{ message: "结果被限制为 1 行" }, { reason: "请复核单位" }, null, ""],
+      }) } }] });
+    });
+    const result = await runSqlAssistant(config(baseURL), {
+      task: "generate", request: "List one user.", context,
+    });
+    expect(calls).toBe(1); // accepted on the first call, no retry required
+    expect(result.result.sql).toBe("SELECT id FROM public.users LIMIT 1");
+    expect(result.result.warnings).toContain("结果被限制为 1 行");
+    expect(result.result.warnings).toContain("请复核单位");
+    expect(result.result.assumptions).toEqual(["No join supplied", "42", "true"]);
+    expect(result.result.referencedObjects).toEqual(["public.users", "public.orders"]);
+    expect(result.validation).toMatchObject({ valid: true, readOnly: true });
+  });
+
   it("falls back when an OpenAI-compatible provider rejects JSON mode", async () => {
     const submitted: Array<Record<string, unknown>> = [];
     server = createServer((request, response) => {
