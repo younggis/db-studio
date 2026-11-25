@@ -104,8 +104,23 @@ test("phase 3 launcher opens spatial index and layer health panels", async () =>
   await expect(page.getByRole("button", { name: "图层体检" })).toBeEnabled();
 });
 
+test("GIS exchange page has import/export segmented flow", async () => {
+  const page = await attach();
+  const gisButton = page.getByRole("button", { name: "GIS 交换" }).first();
+  await expect(gisButton).toBeVisible({ timeout: 20_000 });
+  await gisButton.click();
+  await expect(page.locator(".gis-exchange")).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".gx-dropzone")).toBeVisible();
+  // switch to export mode
+  await page.locator(".gis-exchange .ant-segmented-item").nth(1).click();
+  await expect(page.locator(".gx-format-pill")).toHaveCount(5, { timeout: 10_000 });
+});
+
 test("SQL page opens AI assistant and history drawers", async () => {
   const page = await attach();
+  // ensure we are on the SQL page regardless of the previous test
+  const sqlButton = page.getByRole("button", { name: "SQL 编辑器" }).first();
+  if (await sqlButton.count()) await sqlButton.click();
   const aiButton = page.locator(".panel-toolbar").getByRole("button", { name: "AI 助手" }).first();
   await expect(aiButton).toBeVisible({ timeout: 20_000 });
   await aiButton.click();

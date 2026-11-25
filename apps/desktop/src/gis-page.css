@@ -1,0 +1,80 @@
+/* New GIS exchange page replaces the compiled .gis-workspace.
+   The overlay lives in its own body-level root and never touches React's DOM. */
+body.gis-page-active .gis-workspace { display: none !important; }
+/* Hide only the compiled title; keep mode-switch buttons for navigation. */
+body.gis-page-active .workspace-head .page-title { display: none !important; }
+body.gis-page-active .workspace-head { justify-content: flex-end !important; }
+
+.gis-exchange-overlay {
+  position: fixed;
+  top: 90px;          /* below topbar (46px) + workspace-head (44px) so mode buttons stay clickable */
+  left: 258px;        /* right of sidebar */
+  right: 0;
+  bottom: 24px;       /* above statusbar */
+  overflow: auto;
+  background: var(--ds-bg);
+  z-index: 500;
+}
+
+.gis-exchange {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 48px;
+}
+.gis-exchange .gx-title { font-size: 20px; font-weight: 650; letter-spacing: -.01em; }
+.gis-exchange .gx-subtitle { font-size: 12px; color: var(--ds-ink-3); margin-top: 2px; }
+.gis-exchange .gx-card {
+  background: var(--ds-surface);
+  border: 1px solid var(--ds-line);
+  border-radius: 10px;
+  box-shadow: var(--ds-shadow);
+  padding: 18px 20px;
+}
+.gis-exchange .gx-step-head { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+.gis-exchange .gx-step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ds-brand-soft); color: var(--ds-brand);
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+}
+.gis-exchange .gx-step-title { font-size: 14px; font-weight: 600; }
+.gis-exchange .gx-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.gis-exchange .gx-field > label { font-size: 11px; color: var(--ds-ink-2); font-weight: 500; }
+.gis-exchange .gx-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.gis-exchange .gx-advanced { border: 1px solid var(--ds-line); border-radius: 8px; }
+.gis-exchange .gx-advanced .ant-collapse-header { font-size: 12px; padding: 10px 14px !important; }
+.gis-exchange .gx-advanced .ant-collapse-content-box { padding: 12px 14px !important; }
+.gis-exchange .gx-dropzone {
+  border: 1.5px dashed var(--ds-line-strong);
+  border-radius: 8px;
+  padding: 22px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  background: var(--ds-surface-2);
+}
+.gis-exchange .gx-dropzone:hover, .gis-exchange .gx-dropzone.dragover {
+  border-color: var(--ds-brand);
+  background: var(--ds-brand-soft);
+}
+.gis-exchange .gx-dropzone b { display: block; font-size: 13px; margin: 8px 0 2px; }
+.gis-exchange .gx-dropzone span { font-size: 11px; color: var(--ds-ink-3); }
+.gis-exchange .gx-format-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.gis-exchange .gx-format-pill {
+  padding: 7px 14px; border: 1px solid var(--ds-line); border-radius: 999px;
+  font-size: 12px; cursor: pointer; color: var(--ds-ink-2); transition: all .15s;
+}
+.gis-exchange .gx-format-pill:hover { border-color: var(--ds-brand); }
+.gis-exchange .gx-format-pill.active {
+  background: var(--ds-brand); color: #fff; border-color: var(--ds-brand);
+}
+.gis-exchange .gx-primary {
+  height: 36px; padding: 0 22px; font-size: 13px; font-weight: 600;
+  background: var(--ds-brand) !important; border-color: var(--ds-brand) !important;
+  border-radius: 7px !important;
+}
+.gis-exchange .gx-crs-option small { color: var(--ds-ink-3); margin-left: 6px; font-size: 10px; }
+.gis-exchange .gx-preview-wrap { max-height: 240px; overflow: auto; }
