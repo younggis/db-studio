@@ -72,10 +72,18 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 - 业务面板：Mongo AI、空间索引诊断、图层体检、查询历史、SQL AI 助手
 - 弹窗：连接表单、对象搜索、表结构、表传输
 
-编译版 SQL 主工作区（`workbench/compiled-shell.css`）：由于 shell 位于编译 chunk，
-通过类名映射把 `shell/topbar/sidebar/workspace-head/statusbar/panel-toolbar/connection-card/query-table`
-全部对齐到 `wb-*` token。CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF`
-边框、24px 状态栏、26px 按钮。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
+编译版 SQL 主工作区（`workbench/compiled-shell.css` + `CompiledWorkbenchBridge.tsx`）：
+编译 shell 位于 vendor chunk，且其早期源码 `recovered-source/src/App.tsx` 缺少
+`workspace-store` / `ai-sql-insertion` 等依赖模块，无法整体重建为真实 TSX。
+因此采用两层方案：
+1. `compiled-shell.css` 按编译类名把 `shell/topbar/sidebar/workspace-head/statusbar/`
+   `panel-toolbar/connection-card/query-table` 对齐到 `wb-*` token；
+2. `CompiledWorkbenchBridge` 只向编译 DOM **新增**共享组件 class
+   （`wb-toolbar` / `wb-statusbar` / `wb-app` / `wb-table` / `wb-tab-container`），
+   使其直接消费 `workbench.css` 的组件样式，不改动 React 树与 E2E 选择器。
+
+CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF` 边框、24px 状态栏、
+26px 按钮；编译节点已带共享 class。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
 
 共享组件的真实消费（源码扫描确认八个组件全部被使用）：
 - `WbWorkbench` / `WbToolbar` / `WbStatusBar`：MongoDB 文档页、GIS 数据交换页

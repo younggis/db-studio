@@ -12,6 +12,7 @@ const ADOPTIONS: Array<[string, string]> = [
   [".results-toolbar", "wb-toolbar"],
   [".query-table", "wb-table"],
   [".query-workspace", "wb-app"],
+  [".document-tab", "wb-tab-container"],
 ];
 
 function Bridge() {
