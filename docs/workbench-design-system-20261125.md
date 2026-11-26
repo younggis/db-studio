@@ -86,6 +86,19 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF` 边框、24px 状态栏、
 26px 按钮；编译节点已带共享 class。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
 
+## 5. 编译版 SQL 工作区整体迁移准备
+
+为最终把编译 shell 换成真实 WbWorkbench 组件树，已重建 App.tsx 缺失的三个依赖模块
+（经隔离 typecheck 验证 API 契约与 App.tsx 用法一致，并加入主工程且编译通过）：
+
+- `apps/desktop/src/workspace-store.ts`：page / sql / sqlPath / result 状态与 setter
+- `apps/desktop/src/ai-sql-insertion.ts`：appendAssistantSql（AI SQL 插入）
+- `apps/desktop/src/gis-export-bridge.ts`：invokeGisExport / parseGisExportSpatialFilter
+
+剩余障碍：两份恢复的 App.tsx 副本花括号不平衡（-3），存在历史结构性损坏；
+且其中 symbols 与当前编译 chunk 不一致。直接替换会破坏现有 SQL/连接业务逻辑。
+在此之前，编译 shell 继续通过 token 映射 + 共享 class 桥接 + 真实 WbStatusBar 接入设计系统。
+
 共享组件的真实消费（源码扫描确认八个组件全部被使用）：
 - `WbWorkbench` / `WbToolbar` / `WbStatusBar`：MongoDB 文档页、GIS 数据交换页
 - `WbToolButton`：工具启动器 9 个动作、BI 面板操作、MongoDB 页、对象树搜索/刷新
