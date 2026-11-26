@@ -38,7 +38,6 @@ export function WbToolButton({
       disabled={disabled || loading}
     >
       {loading ? <span className="wb-tool-loading">…</span> : icon}
-      {icon}
       {label && <span>{label}</span>}
     </button>
   );
