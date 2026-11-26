@@ -26,6 +26,17 @@
   font-size: var(--wb-font-size-sm);
 }
 
+/* Compiled SQL shell: replace its statusbar visually with the real
+   WbStatusBar rendered by CompiledWorkbenchBridge. */
+body:has(.compiled-wb-statusbar) .shell .statusbar { visibility: hidden; }
+.compiled-wb-statusbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+}
+
 /* Object tree search: shared WbTreeSidebar renders input + suffix directly;
    keep them on one compact row (kbd badge to the right of the placeholder). */
 .object-tree .tree-filter-wrap.wb-sidebar-search {
