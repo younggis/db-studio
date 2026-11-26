@@ -13,6 +13,9 @@ const ADOPTIONS: Array<[string, string]> = [
   [".query-table", "wb-table"],
   [".query-workspace", "wb-app"],
   [".document-tab", "wb-tab-container"],
+  [".panel-toolbar .ant-btn", "wb-tool-btn"],
+  [".results-toolbar .ant-btn", "wb-tool-btn"],
+  [".head-actions .ant-btn", "wb-tool-btn"],
 ];
 
 function Bridge() {
