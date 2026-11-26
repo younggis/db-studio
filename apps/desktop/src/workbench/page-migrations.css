@@ -26,6 +26,24 @@
   font-size: var(--wb-font-size-sm);
 }
 
+/* Object tree search: shared WbTreeSidebar renders input + suffix directly;
+   keep them on one compact row (kbd badge to the right of the placeholder). */
+.object-tree .tree-filter-wrap.wb-sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: var(--wb-space-1);
+  padding: var(--wb-space-1) var(--wb-space-2);
+}
+.object-tree .tree-filter-wrap.wb-sidebar-search input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--wb-control-h);
+}
+.object-tree .tree-filter-wrap.wb-sidebar-search .tree-filter-kbd {
+  flex: 0 0 auto;
+  margin-left: 0;
+}
+
 /* GIS exchange page: title + mode switch live in the top toolbar now. */
 .wb-app.gis-exchange {
   max-width: none;
