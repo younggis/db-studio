@@ -99,6 +99,17 @@ CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF` 边�
 且其中 symbols 与当前编译 chunk 不一致。直接替换会破坏现有 SQL/连接业务逻辑。
 在此之前，编译 shell 继续通过 token 映射 + 共享 class 桥接 + 真实 WbStatusBar 接入设计系统。
 
+## 5.1 编译 App chunk 替换试验（已回滚）
+
+已做受控试验：保留编译 chunk（供其他 vendor chunk 引用其具名导出），仅把入口的
+`import("./App-D3avBeWb.js").then(a=>a.bJ)` 指向真实 AppSource.tsx shim。
+结果：build 通过，但运行时报 **React error #130（组件类型 undefined）**，
+root  children=0。根因是编译 vendor chunk 自带 React，而真实 TSX 经 alias bridge
+解析到不同的 lazy 组件实例，两套 React/组件注册表不兼容。已回滚，E2E 恢复 7/7。
+
+因此当前 SQL shell 维持"token 映射 + 共享 class 桥接 + 真实 WbStatusBar"方案；
+AppSource.tsx（语法已修复、typecheck 通过）保留为未来整体迁移的准备资产。
+
 共享组件的真实消费（源码扫描确认八个组件全部被使用）：
 - `WbWorkbench` / `WbToolbar` / `WbStatusBar`：MongoDB 文档页、GIS 数据交换页
 - `WbToolButton`：工具启动器 9 个动作、BI 面板操作、MongoDB 页、对象树搜索/刷新
