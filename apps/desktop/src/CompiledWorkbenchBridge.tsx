@@ -8,8 +8,6 @@ import { WbStatusBar } from "./workbench/Workbench";
 
 const ADOPTIONS: Array<[string, string]> = [
   [".statusbar", "wb-statusbar"],
-  [".panel-toolbar", "wb-toolbar"],
-  [".results-toolbar", "wb-toolbar"],
   [".query-table", "wb-table"],
   [".query-workspace", "wb-app"],
   [".document-tab", "wb-tab-container"],

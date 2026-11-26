@@ -16,6 +16,7 @@ import "./workbench-theme.css";
 import "./workbench/workbench.css";
 import "./workbench/page-migrations.css";
 import "./workbench/compiled-shell.css";
+import "./sql-workbench.css";
 import "./vendor/index-CLh2VPBN.js";
 
 // Phase3Launcher is loaded lazily after the App chunk has initialised so both
@@ -23,3 +24,4 @@ import "./vendor/index-CLh2VPBN.js";
 void import("./Phase3Launcher").then(({ mountPhase3Launcher }) => mountPhase3Launcher());
 void import("./GisPageOverlay").then(({ mountGisPageOverlay }) => mountGisPageOverlay());
 void import("./CompiledWorkbenchBridge").then(({ mountCompiledWorkbenchBridge }) => mountCompiledWorkbenchBridge());
+void import("./SqlWorkbenchOverlay").then(({ mountSqlWorkbenchOverlay }) => mountSqlWorkbenchOverlay());

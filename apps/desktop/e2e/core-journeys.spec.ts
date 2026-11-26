@@ -162,20 +162,20 @@ test("global workbench tokens are consistent across all pages", async () => {
 
   // SQL page (compiled shell, bridged to shared components).
   await page.locator(".connection-select").first().click();
-  await expect(page.locator(".query-workspace")).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
   const sql = await sample();
   expect(sql.font).toBe("12px");
   expect(sql.statusH).toBe("24px");
-  await expect(page.locator(".query-workspace.wb-app")).toBeVisible();
+  await expect(page.locator(".sql-workbench.wb-app")).toBeVisible();
   await expect(page.locator(".panel-toolbar.wb-toolbar")).toBeVisible();
   // Every compiled-shell action button adopts the shared WbToolButton class.
   const compiledButtons = await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll(".panel-toolbar .ant-btn"));
+    const buttons = Array.from(document.querySelectorAll(".sql-workbench .panel-toolbar .wb-tool-btn"));
     return { total: buttons.length, shared: buttons.filter((b) => b.classList.contains("wb-tool-btn")).length };
   });
   expect(compiledButtons.total).toBeGreaterThan(0);
   expect(compiledButtons.shared).toBe(compiledButtons.total);
-  await expect(page.locator(".compiled-wb-statusbar .wb-statusbar")).toBeVisible();
+  await expect(page.locator(".sql-workbench .wb-statusbar")).toBeVisible();
 
   // MongoDB page (real WbWorkbench tree).
   const mongoCard = page.locator(".connection-card").filter({ hasText: "MongoDB" }).first();
