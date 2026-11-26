@@ -31,3 +31,7 @@ export const workspaceStore = createStore<WorkspaceState>((set) => ({
 export function useWorkspaceStore<T>(selector: (state: WorkspaceState) => T): T {
   return useStore(workspaceStore, selector);
 }
+
+useWorkspaceStore.getState = workspaceStore.getState;
+useWorkspaceStore.setState = workspaceStore.setState;
+useWorkspaceStore.subscribe = workspaceStore.subscribe;
