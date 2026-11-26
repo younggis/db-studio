@@ -1,0 +1,9 @@
+const base = require("./electron-builder.static-gdal-geos-msi-singletree-20261126.cjs");
+
+module.exports = {
+  ...base,
+  directories: {
+    ...base.directories,
+    output: "release-static-gdal-geos-msi-iconfix-20261126",
+  },
+};
