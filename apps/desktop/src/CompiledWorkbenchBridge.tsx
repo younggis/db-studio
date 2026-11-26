@@ -31,6 +31,13 @@ function Bridge() {
       }
       const isSql = !!document.querySelector(".query-workspace");
       setSqlActive(isSql);
+      // Place the source-ized object tree directly below the compiled
+      // connection list, so both live in one left sidebar (vertical stack).
+      const connectionList = document.querySelector(".shell .sidebar .connection-list");
+      if (connectionList && isSql) {
+        const bottom = Math.ceil(connectionList.getBoundingClientRect().bottom);
+        document.documentElement.style.setProperty("--sql-tree-top", `${bottom + 8}px`);
+      }
       const state = document.querySelector(".status-left")?.textContent?.trim()
         || document.querySelector(".status-ready")?.textContent?.trim();
       if (state) setStatus(state.slice(0, 80));

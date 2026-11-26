@@ -24,6 +24,19 @@ body.sql-wb-active #sql-wb-overlay-root { left: 258px !important; top: 46px !imp
 }
 #sql-wb-overlay-root .wb-app.sql-wb { height: 100%; }
 
+/* Stack the object tree below the connection list in the SAME left sidebar. */
+.sql-workbench .wb-main > .wb-sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--sql-tree-top, 350px);
+  bottom: 24px;
+  width: 258px;
+  z-index: 521;
+  background: var(--ds-sidebar, var(--wb-bg-toolbar));
+  border-right: 1px solid var(--wb-border);
+  box-shadow: none;
+}
+
 .wb-sql-editor { height: 100%; padding: var(--wb-space-2); }
 .wb-sql-editor textarea {
   width: 100%;
