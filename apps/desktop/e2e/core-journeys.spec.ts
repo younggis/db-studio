@@ -129,6 +129,67 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   }
 });
 
+test("global workbench tokens are consistent across all pages", async () => {
+  const page = await attach();
+
+  // Read the authoritative tokens once; every page must compute the same values.
+  const tokens = await page.evaluate(() => {
+    const style = getComputedStyle(document.documentElement);
+    return {
+      brand: style.getPropertyValue("--wb-brand").trim(),
+      toolbar: style.getPropertyValue("--wb-bg-toolbar").trim(),
+      fontSize: style.getPropertyValue("--wb-font-size").trim(),
+      controlH: style.getPropertyValue("--wb-control-h").trim(),
+    };
+  });
+  expect(tokens).toEqual({
+    brand: "#1677ff",
+    toolbar: "#f3f4f6",
+    fontSize: "12px",
+    controlH: "26px",
+  });
+
+  const sample = async () => page.evaluate(() => {
+    const shell = document.querySelector(".shell");
+    const status = document.querySelector(".compiled-wb-statusbar .wb-statusbar, .wb-app .wb-statusbar");
+    return {
+      font: shell ? getComputedStyle(shell).fontSize : "",
+      toolbarBg: document.querySelector(".topbar, .wb-toolbar")
+        ? getComputedStyle(document.querySelector(".topbar, .wb-toolbar")!).backgroundColor : "",
+      statusH: status ? getComputedStyle(status).height : "",
+    };
+  });
+
+  // SQL page (compiled shell, bridged to shared components).
+  await page.locator(".connection-select").first().click();
+  await expect(page.locator(".query-workspace")).toBeVisible({ timeout: 20_000 });
+  const sql = await sample();
+  expect(sql.font).toBe("12px");
+  expect(sql.statusH).toBe("24px");
+  await expect(page.locator(".query-workspace.wb-app")).toBeVisible();
+  await expect(page.locator(".panel-toolbar.wb-toolbar")).toBeVisible();
+
+  // MongoDB page (real WbWorkbench tree).
+  const mongoCard = page.locator(".connection-card").filter({ hasText: "MongoDB" }).first();
+  if (await mongoCard.count()) await mongoCard.locator("button").first().click();
+  await page.getByRole("button", { name: "Mongo 文档" }).first().click();
+  await expect(page.locator(".wb-app.mongo-page")).toBeVisible({ timeout: 10_000 });
+  const mongo = await sample();
+  expect(mongo.font).toBe("12px");
+  expect(mongo.statusH).toBe("24px");
+
+  // GIS page (real WbWorkbench tree).
+  await page.getByRole("button", { name: "GIS 交换" }).first().click();
+  await expect(page.locator(".wb-app.gis-exchange")).toBeVisible({ timeout: 10_000 });
+  const gis = await sample();
+  expect(gis.font).toBe("12px");
+  expect(gis.statusH).toBe("24px");
+
+  // Restore a SQL connection so tool-launcher buttons are enabled again.
+  const pgCard = page.locator(".connection-card").filter({ hasText: "PostgreSQL" }).first();
+  if (await pgCard.count()) await pgCard.locator("button").first().click();
+});
+
 test("phase 3 launcher opens spatial index and layer health panels", async () => {
   const page = await attach();
   await expect(page.locator(".phase3-launcher")).toBeVisible({ timeout: 20_000 });
