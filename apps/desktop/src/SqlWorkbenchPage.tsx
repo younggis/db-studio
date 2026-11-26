@@ -57,25 +57,34 @@ export default function SqlWorkbenchPage() {
     if (!connectionId || !schema) return;
     window.dbStudio.database.tables(connectionId, schema).then((items) => {
       setTables(items);
-      setExpandedKeys([connectionId, `${connectionId}:${schema}`]);
+      setExpandedKeys([`obj:${connectionId}`, `obj:${connectionId}:${schema || "public"}`]);
     }).catch(() => setTables([]));
   }, [connectionId, schema]);
 
-  const treeData = useMemo<DataNode[]>(() => connections.map((c) => ({
-    key: c.id,
-    title: c.name,
-    icon: <Database size={13} />,
-    children: c.id === connectionId ? [{
-      key: `${c.id}:${schema || "public"}`,
-      title: schema || "public",
+  // Navicat-style object tree: only the selected connection's schema/tables.
+  // (Connection selection lives in the leftmost compiled connection panel.)
+  const activeConnection = connections.find((c) => c.id === connectionId);
+  const treeData = useMemo<DataNode[]>(() => {
+    if (!connectionId) return [];
+    const rootKey = `obj:${connectionId}`;
+    const schemaKey = `obj:${connectionId}:${schema || "public"}`;
+    return [{
+      key: rootKey,
+      title: activeConnection?.name ?? "当前连接",
       icon: <Database size={13} />,
-      children: tables.map((t) => ({
-        key: `${c.id}:${t.schema || schema}.${t.name}`,
-        title: t.name,
-        icon: <Table2 size={13} />,
-      })),
-    }] : undefined,
-  })), [connections, connectionId, schema, tables]); // eslint-disable-line react-hooks/exhaustive-deps
+      children: [{
+        key: schemaKey,
+        title: schema || "public",
+        icon: <Database size={13} />,
+        // navicatTransform wraps these table nodes in a "Tables" group.
+        children: tables.map((t) => ({
+          key: `${connectionId}:${t.schema || schema}.${t.name}`,
+          title: t.name,
+          icon: <Table2 size={13} />,
+        })),
+      }],
+    }];
+  }, [connectionId, schema, tables, activeConnection?.name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function inspect(table: TableInfo) {
     if (!connectionId) return;
