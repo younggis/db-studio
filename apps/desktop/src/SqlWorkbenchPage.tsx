@@ -13,7 +13,7 @@ import {
 } from "./workbench/Workbench";
 import AiAssistantPanel from "./AiAssistantPanel";
 import QueryHistoryDrawer from "./QueryHistoryDrawer";
-import { groupTablesByParent } from "./tree-partition";
+import DatabaseObjectTree from "./DatabaseObjectTree";
 import type { DataNode } from "antd/es/tree";
 import type { Key } from "react";
 
@@ -48,7 +48,8 @@ export default function SqlWorkbenchPage() {
   useEffect(() => {
     if (!connectionId) return;
     window.dbStudio.database.schemas(connectionId).then((items) => {
-      setSchemas(items); setSchema((current) => current || items[0] || "");
+      setSchemas(items);
+      setSchema((current) => current || (items.includes("public") ? "public" : items[0]) || "");
     }).catch(() => setSchemas([]));
   }, [connectionId]);
 
@@ -65,17 +66,13 @@ export default function SqlWorkbenchPage() {
     title: c.name,
     icon: <Database size={13} />,
     children: c.id === connectionId ? [{
-      key: `${c.id}:${schema}`,
-      title: schema || c.name,
+      key: `${c.id}:${schema || "public"}`,
+      title: schema || "public",
       icon: <Database size={13} />,
-      children: groupTablesByParent(tables.map((t) => ({
-        key: `${c.id}:${schema}.${t.name}`, title: t.name, node: t,
-      }))).map((group) => ({
-        key: group.key,
-        title: group.title,
+      children: tables.map((t) => ({
+        key: `${c.id}:${t.schema || schema}.${t.name}`,
+        title: t.name,
         icon: <Table2 size={13} />,
-        isLeaf: true,
-        onClick: () => { void inspect(group.node); },
       })),
     }] : undefined,
   })), [connections, connectionId, schema, tables]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -140,12 +137,12 @@ export default function SqlWorkbenchPage() {
         </WbToolbar>
       }
       sidebar={
-        <WbTreeSidebar
-          treeData={treeData}
-          expandedKeys={expandedKeys}
-          onExpand={setExpandedKeys}
-          title={<span>对象浏览器</span>}
-          height={520}
+        <DatabaseObjectTree
+          data={treeData}
+          loading={false}
+          onSearch={() => undefined}
+          onRefresh={() => { void window.dbStudio.database.schemas(connectionId).then(setSchemas); }}
+          onSelect={() => undefined}
         />
       }
       inspector={

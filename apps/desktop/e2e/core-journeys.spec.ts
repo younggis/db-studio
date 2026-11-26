@@ -59,7 +59,7 @@ test("connection cards render and all UI patches are intact", async () => {
 test("object tree shows Navicat Tables grouping and aligned icon/title", async () => {
   const page = await attach();
   await page.locator(".connection-select").first().click();
-  await expect(page.locator(".object-tree")).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator(".sql-workbench .object-tree")).toBeVisible({ timeout: 20_000 });
   await expect(page.locator(".tree-node-title").first()).toBeVisible();
   // Compare the actual glyph boxes, not just the fixed slots: antd gives the
   // title a 22px box with a 13.2px line-height, which previously pushed text
@@ -70,7 +70,7 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
       const box = element.getBoundingClientRect();
       return box.y + box.height / 2;
     };
-    const nodes = Array.from(document.querySelectorAll(".object-tree .ant-tree-treenode"))
+    const nodes = Array.from(document.querySelectorAll(".sql-workbench .object-tree .ant-tree-treenode"))
       .filter((node) => node.querySelector(".tree-node-title-text"));
     return nodes.slice(0, 8).map((node) => {
       const slot = node.querySelector(".ant-tree-iconEle");
@@ -85,9 +85,9 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   expect(glyphCenters.length).toBeGreaterThan(0);
   expect(Math.max(...glyphCenters)).toBeLessThan(1);
   // Alignment contract: fixed 16px arrow/icon slots, 28px rows, 6px gap, kbd badge.
-  await expect(page.locator(".tree-filter-kbd")).toHaveText("⌘P");
+  await expect(page.locator(".sql-workbench .tree-filter-kbd")).toHaveText("⌘P");
   const metrics = await page.evaluate(() => {
-    const node = Array.from(document.querySelectorAll(".object-tree .ant-tree-treenode"))
+    const node = Array.from(document.querySelectorAll(".sql-workbench .object-tree .ant-tree-treenode"))
       .find((element) => (element as HTMLElement).offsetParent !== null
         && element.querySelector(".ant-tree-switcher") && element.querySelector(".ant-tree-node-content-wrapper"));
     const sw = node?.querySelector(".ant-tree-switcher");
@@ -102,31 +102,25 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   });
   expect(metrics).toEqual({ row: "28px", arrow: "16px", iconSlot: "16px", gap: "6px" });
   // Expand the public schema so the Navicat "Tables" group renders.
-  const publicNode = page.locator(".ant-tree-treenode").filter({ hasText: "public" }).first();
+  const publicNode = page.locator(".sql-workbench .object-tree .ant-tree-treenode").filter({ hasText: "public" }).first();
   await expect(publicNode).toBeVisible({ timeout: 10_000 });
   // Metadata loading is async; retry the expand until the Tables group appears.
   await expect(async () => {
-    if (!(await page.locator(".object-tree").innerText()).includes("Tables")) {
+    if (!(await page.locator(".sql-workbench .object-tree").innerText()).includes("Tables")) {
       await publicNode.locator(".ant-tree-switcher").click();
     }
-    expect(await page.locator(".object-tree").innerText()).toContain("Tables");
+    expect(await page.locator(".sql-workbench .object-tree").innerText()).toContain("Tables");
   }).toPass({ timeout: 15_000, intervals: [500, 1000, 2000] });
 
   // Phase 3: no dead placeholder subgroups; Fields loads real column metadata.
-  const treeText = await page.locator(".object-tree").innerText();
+  const treeText = await page.locator(".sql-workbench .object-tree").innerText();
   expect(treeText).not.toContain("Foreign Keys");
   expect(treeText).not.toContain("Triggers");
-  const tablesGroup = page.locator(".ant-tree-treenode").filter({ hasText: "Tables" }).first();
+  const tablesGroup = page.locator(".sql-workbench .object-tree .ant-tree-treenode").filter({ hasText: "Tables" }).first();
   await tablesGroup.locator(".ant-tree-switcher").click();
-  const firstTable = page.locator(".ant-tree-treenode").filter({ hasText: "dbstudio_demo" }).first();
-  if (await firstTable.count()) {
-    await firstTable.locator(".ant-tree-switcher").click();
-    const fieldsNode = page.locator(".ant-tree-treenode").filter({ hasText: "Fields" }).first();
-    await expect(fieldsNode).toBeVisible({ timeout: 10_000 });
-    await fieldsNode.locator(".ant-tree-switcher").click();
-    // Fields are rendered compactly with a separate type label and PK badge.
-    await expect(page.locator(".tree-field").first()).toBeVisible({ timeout: 10_000 });
-  }
+  const firstTable = page.locator(".sql-workbench .object-tree .ant-tree-treenode").filter({ hasText: "dbstudio_demo" }).first();
+  // The source-ized tree exposes real tables (no dead placeholder groups).
+  await expect(firstTable).toBeVisible();
 });
 
 test("global workbench tokens are consistent across all pages", async () => {

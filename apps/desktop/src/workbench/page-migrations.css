@@ -77,10 +77,11 @@ body:has(.compiled-wb-statusbar) .shell .statusbar { visibility: hidden; }
   width: 100%;
   gap: var(--wb-space-3);
 }
+/* GIS cards fill the viewport width — no centred max-width container. */
 .wb-app.gis-exchange .gx-card {
-  max-width: 960px;
   width: 100%;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
   border: 1px solid var(--wb-border);
   border-radius: var(--wb-radius);
   box-shadow: none;

@@ -1,1 +1,0 @@
-function p(o){const i=new Map(o.map(t=>[t.title,t])),s=new Map,a=[];for(const t of o){const e=t.parentName,n=e?.includes(".")?e.slice(e.indexOf(".")+1):e,r=n?i.get(n):void 0;if(r&&r!==t){const c=s.get(n)??[];c.push(t),s.set(n,c)}else a.push(t)}return a.map(t=>({...t,partitions:s.get(t.title)??[]}))}export{p as g};

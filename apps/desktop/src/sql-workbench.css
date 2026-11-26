@@ -1,8 +1,8 @@
 /* Source-ized SQL workspace replaces the compiled .query-workspace. */
 body.sql-wb-active > #root .shell .query-workspace { display: none !important; }
-/* sidebar-bottom is redundant on the SQL page; the source-ized page has its
-   own status. Keep the compiled object tree visible: E2E asserts its grouping
-   and alignment, and both trees reflect the same metadata. */
+/* The source-ized page now embeds DatabaseObjectTree in its own sidebar, so
+   hide the compiled duplicate tree — exactly one tree is visible on the page. */
+body.sql-wb-active > #root .shell .sidebar .object-tree { display: none !important; }
 body.sql-wb-active > #root .shell .sidebar-bottom { display: none !important; }
 body.sql-wb-active #sql-wb-overlay-root { left: 258px !important; top: 46px !important; }
 
