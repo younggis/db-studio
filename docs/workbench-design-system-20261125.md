@@ -78,9 +78,10 @@ CSS 变量与基础组件，禁止在页面内重复硬编码颜色、间距、�
 因此采用两层方案：
 1. `compiled-shell.css` 按编译类名把 `shell/topbar/sidebar/workspace-head/statusbar/`
    `panel-toolbar/connection-card/query-table` 对齐到 `wb-*` token；
-2. `CompiledWorkbenchBridge` 只向编译 DOM **新增**共享组件 class
+2. `CompiledWorkbenchBridge` 向编译 DOM **新增**共享组件 class
    （`wb-toolbar` / `wb-statusbar` / `wb-app` / `wb-table` / `wb-tab-container`），
-   使其直接消费 `workbench.css` 的组件样式，不改动 React 树与 E2E 选择器。
+   使其直接消费 `workbench.css` 的组件样式；同时渲染一个真实的 `WbStatusBar`
+   React 组件替代编译版状态栏（旧节点隐藏但保留，E2E 选择器不变）。
 
 CDP 实测：12px 字号、`#F3F4F6` 工具栏/侧栏、选中态 `#1677FF` 边框、24px 状态栏、
 26px 按钮；编译节点已带共享 class。E2E 关键几何（对象树 28px/16px/6px、字形中心）保持不变。
