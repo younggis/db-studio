@@ -55,11 +55,14 @@ export default function SpatialIndexPanel({ open, onClose, connectionId, engine,
   }
 
   return (
-    <Drawer rootClassName="wb-surface"
+    <Drawer
+      rootClassName="wb-surface"
       title={<span><Database size={16} /> 空间索引诊断</span>}
       open={open}
       onClose={onClose}
       width={640}
+      maskClosable={true}
+      keyboard={true}
       destroyOnHidden
     >
       <Alert

@@ -3,7 +3,8 @@
 // separate dropdown), so there is exactly one connection selector visible.
 import { useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { Button, Space, Tooltip } from "antd";
+import { createPortal } from "react-dom";
+import { useMonaco } from "./vendor/index-SBiI3Tbs.js";
 import { WbToolButton } from "./workbench/Workbench";
 import { Activity, AlarmClock, ArchiveRestore, BarChart3, DatabaseZap, GitCompareArrows, Moon, ScanSearch, Sun, TableProperties } from "lucide-react";
 import SpatialIndexPanel from "./SpatialIndexPanel";
@@ -37,6 +38,32 @@ export default function Phase3Launcher() {
   const [panel, setPanel] = useState<Panel>(null);
   const [vectorPath, setVectorPath] = useState<string>();
   const [dark, setDark] = useState(false);
+  const monaco = useMonaco();
+  const [topbar, setTopbar] = useState<Element | null>(null);
+
+  useEffect(() => {
+    const root = document.getElementById("root");
+    if (!root) return;
+    const sync = () => setTopbar(root.querySelector(".topbar"));
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { childList: true, subtree: true });
+    sync();
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!monaco || !topbar) return;
+    const root = topbar.closest(".shell");
+    if (!root) return;
+    const theme = dark ? "vs-dark" : "vs";
+    const sync = () => {
+      if (root.querySelector(`.monaco-editor:not(.${theme})`)) monaco.editor.setTheme(theme);
+    };
+    const observer = new MutationObserver(sync);
+    observer.observe(root, { childList: true, subtree: true });
+    sync();
+    return () => observer.disconnect();
+  }, [dark, monaco, topbar]);
 
   useEffect(() => {
     window.dbStudio.connections.list().then((items) => {
@@ -85,19 +112,18 @@ export default function Phase3Launcher() {
 
   return (
     <>
-      <div className="phase3-launcher" aria-label="GIS 辅助工具">
-        <Space size={4} className="wb-app">
+      {topbar && createPortal(
+      <nav className="phase3-launcher" aria-label="数据库工具">
           <WbToolButton ariaLabel="切换主题" tooltip={dark ? "切换浅色主题" : "切换深色护眼主题"} icon={dark ? <Sun size={14} /> : <Moon size={14} />} onClick={toggleTheme} />
           <WbToolButton ariaLabel="索引诊断" tooltip="查看当前连接的表空间索引建议（只展示不执行）" icon={<ScanSearch size={14} />} disabled={!activeId} onClick={openSpatialIndex} />
           <WbToolButton ariaLabel="图层体检" tooltip="选择矢量文件并做导入前体检" icon={<Activity size={14} />} onClick={() => void openLayerHealth()} />
-          <WbToolButton ariaLabel="备份恢复" tooltip="逻辑备份与 SQL 恢复" icon={<ArchiveRestore size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("backup")} />
+          <WbToolButton label="备份" ariaLabel="备份恢复" tooltip="逻辑备份与 SQL 恢复" icon={<ArchiveRestore size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("backup")} />
           <WbToolButton ariaLabel="结构同步" tooltip="对比两个 Schema 的结构差异并同步" icon={<GitCompareArrows size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("schema-sync")} />
           <WbToolButton ariaLabel="数据同步" tooltip="跨库同步表数据（替换或追加）" icon={<DatabaseZap size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("data-sync")} />
-          <WbToolButton ariaLabel="表设计器" tooltip="可视化建表与改表 DDL" icon={<TableProperties size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("table-designer")} />
-          <WbToolButton ariaLabel="自动化调度" tooltip="定时备份与 SQL 任务" icon={<AlarmClock size={14} />} onClick={() => setPanel("automation")} />
-          <WbToolButton ariaLabel="BI 图表" tooltip="查询结果图表与仪表盘" icon={<BarChart3 size={14} />} onClick={() => setPanel("bi")} />
-        </Space>
-      </div>
+          <WbToolButton label="表设计" ariaLabel="表设计器" tooltip="可视化建表与改表 DDL" icon={<TableProperties size={14} />} disabled={!activeId || selected?.engine === "mongodb"} onClick={() => setPanel("table-designer")} />
+          <WbToolButton label="自动化" ariaLabel="自动化调度" tooltip="定时备份与 SQL 任务" icon={<AlarmClock size={14} />} onClick={() => setPanel("automation")} />
+          <WbToolButton label="图表" ariaLabel="BI 图表" tooltip="查询结果图表与仪表盘" icon={<BarChart3 size={14} />} onClick={() => setPanel("bi")} />
+      </nav>, topbar)}
 
       <SpatialIndexPanel
         open={panel === "spatial-index"}

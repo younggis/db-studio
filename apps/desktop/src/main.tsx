@@ -17,6 +17,9 @@ import "./workbench/workbench.css";
 import "./workbench/page-migrations.css";
 import "./workbench/compiled-shell.css";
 import "./sql-workbench.css";
+import "./navicat-workbench.css";
+import "./bi-panel.css";
+import "./spatial-result.css";
 import "./vendor/index-CLh2VPBN.js";
 
 // Phase3Launcher is loaded lazily after the App chunk has initialised so both

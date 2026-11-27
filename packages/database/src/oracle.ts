@@ -200,20 +200,54 @@ export class OracleAdapter implements DatabaseAdapter {
     parameters: unknown[] = [],
     options: Pick<ExecuteOptions, "fetchTypeHandler"> = {},
   ): Promise<QueryResult> {
-    const statement = removeTrailingSemicolon(sql);
-    if (!statement) throw new Error("SQL statement cannot be empty.");
-    const result = await (await this.connect()).execute(statement, parameters, {
-      outFormat: oracledb.OUT_FORMAT_OBJECT,
-      autoCommit: true,
-      ...options,
-    });
-    const rows = (result.rows ?? []) as Array<Record<string, unknown>>;
-    return {
-      columns: result.metaData?.map((column) => column.name) ?? Object.keys(rows[0] ?? {}),
-      rows,
-      rowCount: result.rowsAffected ?? rows.length,
-      command: statement.trimStart().split(/\s+/, 1)[0]?.toUpperCase(),
-    };
+    const startTime = new Date();
+    let status: 'success' | 'error' = 'success';
+    let errorMessage: string | undefined;
+
+    try {
+      const statement = removeTrailingSemicolon(sql);
+      if (!statement) throw new Error("SQL statement cannot be empty.");
+      const result = await (await this.connect()).execute(statement, parameters, {
+        outFormat: oracledb.OUT_FORMAT_OBJECT,
+        autoCommit: true,
+        ...options,
+      });
+      const endTime = new Date();
+      const rows = (result.rows ?? []) as Array<Record<string, unknown>>;
+      const rowCount = result.rowsAffected ?? rows.length;
+      const command = statement.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
+      const affectedRows = result.rowsAffected !== undefined && rows.length === 0 ? result.rowsAffected : undefined;
+
+      return {
+        columns: result.metaData?.map((column) => column.name) ?? Object.keys(rows[0] ?? {}),
+        rows,
+        rowCount,
+        command,
+        metrics: {
+          startTime,
+          endTime,
+          duration: endTime.getTime() - startTime.getTime(),
+          rowCount,
+          affectedRows,
+          status: 'success',
+        },
+      };
+    } catch (error) {
+      const endTime = new Date();
+      status = 'error';
+      errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      const enhancedError = error as any;
+      enhancedError.metrics = {
+        startTime,
+        endTime,
+        duration: endTime.getTime() - startTime.getTime(),
+        rowCount: 0,
+        status,
+        errorMessage,
+      };
+      throw enhancedError;
+    }
   }
 
   async *queryStream(sql: string, parameters: unknown[] = [], options: OracleQueryStreamOptions = {}): AsyncGenerator<QueryResultBatch> {

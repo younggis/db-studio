@@ -91,26 +91,67 @@ export class MySqlAdapter implements DatabaseAdapter {
   }
 
   async query(sql: string, parameters: unknown[] = []): Promise<QueryResult> {
-    const connection = await this.getConnection();
-    const [result, fields] = await connection.execute(sql, normalizeParameters(parameters));
-    const command = sql.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
-    if (Array.isArray(result)) {
-      const rows = result as Array<Record<string, unknown>>;
-      return {
-        columns: fields?.map((field) => field.name) ?? Object.keys(rows[0] ?? {}),
-        rows,
-        rowCount: rows.length,
-        command,
-      };
-    }
+    const startTime = new Date();
+    let status: 'success' | 'error' = 'success';
+    let errorMessage: string | undefined;
 
-    const resultHeader = result as { affectedRows?: number };
-    return {
-      columns: [],
-      rows: [],
-      rowCount: resultHeader.affectedRows ?? 0,
-      command,
-    };
+    try {
+      const connection = await this.getConnection();
+      const [result, fields] = await connection.execute(sql, normalizeParameters(parameters));
+      const endTime = new Date();
+      const command = sql.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
+
+      if (Array.isArray(result)) {
+        const rows = result as Array<Record<string, unknown>>;
+        const rowCount = rows.length;
+        return {
+          columns: fields?.map((field) => field.name) ?? Object.keys(rows[0] ?? {}),
+          rows,
+          rowCount,
+          command,
+          metrics: {
+            startTime,
+            endTime,
+            duration: endTime.getTime() - startTime.getTime(),
+            rowCount,
+            affectedRows: command !== 'SELECT' ? rowCount : undefined,
+            status: 'success',
+          },
+        };
+      }
+
+      const resultHeader = result as { affectedRows?: number };
+      const affectedRows = resultHeader.affectedRows ?? 0;
+      return {
+        columns: [],
+        rows: [],
+        rowCount: affectedRows,
+        command,
+        metrics: {
+          startTime,
+          endTime,
+          duration: endTime.getTime() - startTime.getTime(),
+          rowCount: affectedRows,
+          affectedRows,
+          status: 'success',
+        },
+      };
+    } catch (error) {
+      const endTime = new Date();
+      status = 'error';
+      errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      const enhancedError = error as any;
+      enhancedError.metrics = {
+        startTime,
+        endTime,
+        duration: endTime.getTime() - startTime.getTime(),
+        rowCount: 0,
+        status,
+        errorMessage,
+      };
+      throw enhancedError;
+    }
   }
 
   async *queryStream(sql: string, parameters: unknown[] = [], options: QueryStreamOptions = {}): AsyncGenerator<QueryResultBatch> {

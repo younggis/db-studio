@@ -55,13 +55,83 @@ export class PostgresAdapter implements DatabaseAdapter {
   }
 
   async query(sql: string, parameters: unknown[] = []): Promise<QueryResult> {
-    const result = await this.pool.query(sql, parameters);
-    return {
-      columns: result.fields.map((field) => field.name),
-      rows: result.rows as Record<string, unknown>[],
-      rowCount: result.rowCount ?? result.rows.length,
-      command: result.command,
-    };
+    const startTime = new Date();
+    let status: 'success' | 'error' = 'success';
+    let errorMessage: string | undefined;
+
+    try {
+      const result = await this.pool.query(sql, parameters);
+      const endTime = new Date();
+      const rowCount = result.rowCount ?? result.rows.length;
+
+      // Extract column names
+      const columns = result.fields.map((field) => field.name);
+
+      // Detect geometry columns (heuristic: common geometry column names)
+      const columnMetadata: Array<{ name: string; dataType?: string; geometryType?: any; srid?: number | null; coordinateDimension?: 2 | 3 | 4 }> = [];
+      const geometryColumnNames = new Set(['geom', 'geometry', 'wkb_geometry', 'the_geom', 'shape']);
+
+      for (const field of result.fields) {
+        const metadata: any = { name: field.name };
+
+        // Check if this looks like a geometry column by name pattern
+        const lowerName = field.name.toLowerCase();
+        const isLikelyGeometry = geometryColumnNames.has(lowerName) ||
+                                 lowerName.includes('geom') ||
+                                 lowerName.includes('geometry');
+
+        if (isLikelyGeometry && result.rows.length > 0) {
+          // Sample the first non-null value to detect geometry type
+          const sampleValue = result.rows.find(row => row[field.name] != null)?.[field.name];
+          if (sampleValue && Buffer.isBuffer(sampleValue)) {
+            try {
+              const { getWkbGeometryType } = await import('@db-studio/shared');
+              const detectedType = getWkbGeometryType(sampleValue);
+              if (detectedType && detectedType !== 'Unknown') {
+                metadata.geometryType = detectedType;
+                metadata.coordinateDimension = 2; // Default, could be enhanced
+              }
+            } catch {
+              // Silently skip if WKB parsing fails
+            }
+          }
+        }
+
+        columnMetadata.push(metadata);
+      }
+
+      return {
+        columns,
+        rows: result.rows as Record<string, unknown>[],
+        rowCount,
+        command: result.command,
+        columnMetadata: columnMetadata.some(c => c.geometryType) ? columnMetadata : undefined,
+        metrics: {
+          startTime,
+          endTime,
+          duration: endTime.getTime() - startTime.getTime(),
+          rowCount,
+          affectedRows: result.command !== 'SELECT' ? rowCount : undefined,
+          status: 'success',
+        },
+      };
+    } catch (error) {
+      const endTime = new Date();
+      status = 'error';
+      errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      // Re-throw with metrics embedded if possible
+      const enhancedError = error as any;
+      enhancedError.metrics = {
+        startTime,
+        endTime,
+        duration: endTime.getTime() - startTime.getTime(),
+        rowCount: 0,
+        status,
+        errorMessage,
+      };
+      throw enhancedError;
+    }
   }
 
   async *queryStream(sql: string, parameters: unknown[] = [], options: QueryStreamOptions = {}): AsyncGenerator<QueryResultBatch> {

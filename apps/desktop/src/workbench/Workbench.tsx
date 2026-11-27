@@ -1,8 +1,9 @@
 // Reusable workbench primitives for all page refactors.
 // Every page must use these components + the wb-* tokens from workbench-theme.css
 // so sizing, borders, typography and states stay identical across the product.
-import type { Key, ReactNode } from "react";
-import { Table, Tabs, Tooltip, Tree } from "antd";
+import type { Key, ReactNode, Ref } from "react";
+import { ConfigProvider, Table, Tabs, Tooltip, Tree } from "antd";
+import { ChevronRight } from "lucide-react";
 import type { TableProps } from "antd/es/table";
 import type { DataNode } from "antd/es/tree";
 
@@ -67,7 +68,7 @@ export function WbDataTable<RecordType extends object>(props: TableProps<RecordT
 /* ---------------- Left tree sidebar ---------------- */
 export function WbTreeSidebar({
   treeData, expandedKeys, onExpand, selectedKeys, onSelect, loading, title, actions, height = 600,
-  className, headClassName, searchClassName, hostClassName, searchValue, onSearchChange,
+  className, headClassName, searchClassName, hostClassName, hostRef, searchValue, onSearchChange,
   searchPlaceholder, searchSuffix, searchInputRef, loadData, titleRender,
 }: {
   treeData: DataNode[];
@@ -83,6 +84,7 @@ export function WbTreeSidebar({
   headClassName?: string;
   searchClassName?: string;
   hostClassName?: string;
+  hostRef?: Ref<HTMLDivElement>;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   searchPlaceholder?: string;
@@ -104,21 +106,24 @@ export function WbTreeSidebar({
         />
         {searchSuffix}
       </div>
-      <div className={`wb-tree-host ${hostClassName ?? ""}`.trim()}>
+      <div ref={hostRef} className={`wb-tree-host ${hostClassName ?? ""}`.trim()}>
         {loading ? <div className="wb-tree-loading">加载中…</div> : (
-          <Tree
-            blockNode
-            showIcon
-            virtual
-            height={height}
-            treeData={treeData}
-            expandedKeys={expandedKeys}
-            onExpand={(keys) => onExpand?.(keys)}
-            selectedKeys={selectedKeys}
-            onSelect={(keys) => onSelect?.(keys)}
-            loadData={loadData}
-            titleRender={titleRender}
-          />
+          <ConfigProvider theme={{ components: { Tree: { titleHeight: 18 } } }}>
+            <Tree
+              blockNode
+              showIcon
+              virtual
+              height={height}
+              switcherIcon={({ isLeaf }) => isLeaf ? null : <ChevronRight className="wb-tree-chevron" aria-hidden="true" />}
+              treeData={treeData}
+              expandedKeys={expandedKeys}
+              onExpand={(keys) => onExpand?.(keys)}
+              selectedKeys={selectedKeys}
+              onSelect={(keys) => onSelect?.(keys)}
+              loadData={loadData}
+              titleRender={titleRender}
+            />
+          </ConfigProvider>
         )}
       </div>
     </aside>

@@ -1,19 +1,17 @@
-// Mounts the redesigned GIS page as a fixed overlay beside the React tree.
-// IMPORTANT: never inject nodes into the compiled App's containers — that
-// breaks React reconciliation when the page switches. We only observe the DOM,
-// toggle a body class, and render into our own body-level root.
+// Render GIS through a portal so it participates in the workspace layout.
 import { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
+import { createPortal } from "react-dom";
 import GisExchangePage from "./GisExchangePage";
 
 function Overlay() {
-  const [active, setActive] = useState(false);
+  const [workspace, setWorkspace] = useState<Element | null>(null);
 
   useEffect(() => {
     const evaluate = () => {
-      const isGis = !!document.querySelector(".gis-workspace");
-      setActive(isGis);
-      document.body.classList.toggle("gis-page-active", isGis);
+      const target = document.querySelector("#root .gis-workspace")?.closest(".workspace") ?? null;
+      setWorkspace(target);
+      document.body.classList.toggle("gis-page-active", target !== null);
     };
     evaluate();
     const observer = new MutationObserver(evaluate);
@@ -21,8 +19,7 @@ function Overlay() {
     return () => observer.disconnect();
   }, []);
 
-  if (!active) return null;
-  return <div className="gis-exchange-overlay"><GisExchangePage /></div>;
+  return workspace && createPortal(<div className="gis-exchange-overlay"><GisExchangePage /></div>, workspace);
 }
 
 export function mountGisPageOverlay(): void {

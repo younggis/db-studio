@@ -55,10 +55,32 @@ export class SqlServerAdapter {
         return { database: row.database, serverVersion: row.server_version };
     }
     async query(statement, parameters = []) {
-        const pool = await this.connect();
-        const request = pool.request();
-        bindParameters(request, parameters);
-        return queryResult(await request.query(statement), statement);
+        const startTime = new Date();
+        let status = 'success';
+        let errorMessage;
+        try {
+            const pool = await this.connect();
+            const request = pool.request();
+            bindParameters(request, parameters);
+            const result = await request.query(statement);
+            const endTime = new Date();
+            return queryResult(result, statement, { startTime, endTime, status });
+        }
+        catch (error) {
+            const endTime = new Date();
+            status = 'error';
+            errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            const enhancedError = error;
+            enhancedError.metrics = {
+                startTime,
+                endTime,
+                duration: endTime.getTime() - startTime.getTime(),
+                rowCount: 0,
+                status,
+                errorMessage,
+            };
+            throw enhancedError;
+        }
     }
     async *queryStream(statement, parameters = [], options = {}) {
         const batchSize = queryStreamBatchSize(options);
@@ -602,16 +624,30 @@ export class SqlServerAdapter {
         return this.connection;
     }
 }
-function queryResult(result, statement) {
+function queryResult(result, statement, timing) {
     const rows = (result.recordset ?? []);
     const metadata = result.recordset?.columns ?? {};
     const columns = Object.values(metadata).sort((left, right) => left.index - right.index).map((column) => column.name);
-    return {
+    const rowCount = rows.length > 0 ? rows.length : result.rowsAffected.reduce((total, count) => total + count, 0);
+    const command = statement.trim().match(/^[a-z]+/i)?.[0].toUpperCase();
+    const affectedRows = rows.length === 0 ? result.rowsAffected.reduce((total, count) => total + count, 0) : undefined;
+    const queryResult = {
         columns,
         rows,
-        rowCount: rows.length > 0 ? rows.length : result.rowsAffected.reduce((total, count) => total + count, 0),
-        command: statement.trim().match(/^[a-z]+/i)?.[0].toUpperCase(),
+        rowCount,
+        command,
     };
+    if (timing) {
+        queryResult.metrics = {
+            startTime: timing.startTime,
+            endTime: timing.endTime,
+            duration: timing.endTime.getTime() - timing.startTime.getTime(),
+            rowCount,
+            affectedRows,
+            status: timing.status,
+        };
+    }
+    return queryResult;
 }
 function bindParameters(request, parameters) {
     parameters.forEach((value, index) => {

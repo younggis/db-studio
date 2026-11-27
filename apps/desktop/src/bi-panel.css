@@ -1,0 +1,73 @@
+/* BI chart / dashboard drawer — compact workbench skin, scoped to the drawer
+   so no full-screen overlay ever inherits the .wb-app surface rule. */
+.ant-drawer.bi-drawer .ant-drawer-body { padding: 16px; background: var(--wb-bg-subtle); }
+
+.bi-panel { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.bi-panel-intro { margin: 0; font-size: var(--wb-font-size-sm); color: var(--wb-text-muted); }
+.bi-panel .ant-tabs-nav { margin-bottom: 12px; }
+.bi-panel .ant-tabs-nav::before { display: none; }
+.bi-panel .ant-tabs-tab { padding: 4px 12px; font-size: var(--wb-font-size); }
+
+.bi-design { display: flex; flex-direction: column; gap: 12px; }
+.bi-card {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-bg-surface);
+  overflow: hidden;
+}
+.bi-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 30px; padding: 0 12px;
+  background: var(--wb-bg-toolbar);
+  border-bottom: 1px solid var(--wb-border);
+  font-size: var(--wb-font-size); font-weight: 600; color: var(--wb-text);
+}
+.bi-card-head small { font-size: var(--wb-font-size-sm); font-weight: normal; color: var(--wb-text-muted); }
+.bi-card-body { padding: 12px; }
+.bi-row { display: flex; align-items: center; gap: 8px; }
+.bi-row + .bi-row { margin-top: 10px; }
+.bi-label { flex: 0 0 40px; width: 40px; font-size: var(--wb-font-size-sm); color: var(--wb-text-secondary); }
+.bi-sql {
+  margin-top: 10px;
+  font-family: var(--wb-font-mono) !important;
+  font-size: var(--wb-font-size) !important;
+  line-height: var(--wb-line-height) !important;
+}
+.bi-preview .bi-card-body { background: var(--wb-bg-surface); }
+
+.bi-save-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-bg-surface);
+}
+.bi-save-bar .ant-input { flex: 1; }
+.bi-panel .wb-tool-btn.bi-primary {
+  background: var(--wb-brand); color: var(--wb-text-inverse);
+  border: 1px solid var(--wb-brand);
+}
+.bi-panel .wb-tool-btn.bi-primary:hover { background: var(--wb-brand-hover); }
+
+.bi-dashboard-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.bi-dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.bi-widget {
+  border: 1px solid var(--wb-border);
+  border-radius: var(--wb-radius);
+  background: var(--wb-bg-surface);
+  padding: 10px 12px;
+}
+.bi-widget-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding-bottom: 8px; margin-bottom: 8px;
+  border-bottom: 1px solid var(--wb-border);
+  font-size: var(--wb-font-size);
+}
+.bi-widget-meta { padding-top: 6px; font-size: var(--wb-font-size-sm); color: var(--wb-text-muted); }
+.bi-chart-empty {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 160px; border: 1px dashed var(--wb-border-strong);
+  border-radius: var(--wb-radius); color: var(--wb-text-muted);
+  font-size: var(--wb-font-size);
+}

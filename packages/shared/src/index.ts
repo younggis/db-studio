@@ -4,6 +4,8 @@ export { databaseEngines };
 export { oracleSdo2dWkbToDimensionalWkb } from "./oracle-gis-wkb.js";
 export { decodeGeoPackageGeometry, encodeGeoPackageGeometry, importColumnTypeFromSqliteDeclaration } from "./geopackage.js";
 export { decodeSpatiaLiteGeometry, encodeSpatiaLiteGeometry, isSpatiaLiteGeometryBlob } from "./spatialite.js";
+export { parseWkbToGeojson, batchParseWkb, getWkbGeometryType } from "./wkb-geojson.js";
+export type { GeoJSONGeometry, WkbParseResult, WkbParseOptions } from "./wkb-geojson.js";
 
 export type DatabaseEngine = (typeof databaseEngines)[number];
 
@@ -14,11 +16,52 @@ export interface DatabaseCapabilities {
   spatial: boolean;
 }
 
+export interface QueryExecutionMetrics {
+  startTime: Date;
+  endTime: Date;
+  /** Query execution duration in milliseconds */
+  duration: number;
+  /** Number of rows returned (SELECT) or affected (INSERT/UPDATE/DELETE); 'unknown' for streaming queries */
+  rowCount: number | 'unknown';
+  /** Rows affected by DML statements (INSERT/UPDATE/DELETE) */
+  affectedRows?: number;
+  status: 'success' | 'error' | 'cancelled';
+  errorMessage?: string;
+}
+
+/** Geometry type for spatial columns */
+export type GeometryType =
+  | 'Point'
+  | 'LineString'
+  | 'Polygon'
+  | 'MultiPoint'
+  | 'MultiLineString'
+  | 'MultiPolygon'
+  | 'GeometryCollection'
+  | 'Unknown';
+
+/** Extended column metadata for query results */
+export interface QueryResultColumn {
+  name: string;
+  /** Original database type name */
+  dataType?: string;
+  /** Geometry type if this is a spatial column */
+  geometryType?: GeometryType;
+  /** SRID (Spatial Reference System Identifier) for spatial columns */
+  srid?: number | null;
+  /** Coordinate dimension: 2=XY, 3=XYZ or XYM, 4=XYZM */
+  coordinateDimension?: 2 | 3 | 4;
+}
+
 export interface QueryResult {
   columns: string[];
   rows: Record<string, unknown>[];
   rowCount: number;
   command?: string;
+  /** Execution metrics including timing, row counts, and status */
+  metrics?: QueryExecutionMetrics;
+  /** Extended column metadata with geometry information */
+  columnMetadata?: QueryResultColumn[];
 }
 
 export interface QueryResultBatch {
@@ -94,6 +137,16 @@ export interface TableForeignKeyInfo {
 
 export { parseTabularData, queryResultToCsv } from "./format.js";
 export type { TabularData } from "./format.js";
+export {
+  formatSelectionAsPlainText,
+  formatSelectionAsCsv,
+  formatSelectionAsJson,
+  formatSelectionAsInsert,
+  formatSelectionWithHeaders,
+  calculateSelectionStats,
+  isSelectionTooLarge,
+} from "./result-formatters.js";
+export type { SelectionStats } from "./result-formatters.js";
 export { parseExcelWorkbook, queryResultToXlsx } from "./spreadsheet.js";
 export {
   appendQueryHistory,

@@ -12,6 +12,49 @@ The current GIS service maps extensions to OGR drivers. File validation is perfo
 | Spatial CSV (additional format) | `.csv` | OGR CSV output writes geometry in a WKT column and creates `.prj`/`.csvt` sidecars for CRS and field types; export refuses to overwrite any of these companions; UTF-8 output only | Passed; two features including NULL geometry round-tripped through PostGIS with EPSG:4326 output, CRS/type sidecars, WKT geometry and Chinese attributes; a source attribute named `WKT` was preserved while the geometry column was disambiguated as `geom_WKT` |
 | DXF (additional local-corpus format, outside P0) | `.dxf` | GDAL DXF reader/writer enabled; export emits CAD drawing entities and warns that OGR CRS metadata, arbitrary database attributes/styles, and non-ANSI_1252 text may not be preserved | Geometry and feature count passed for one 413-feature local file; 20/20 geometry samples matched. Strict text comparison found one changed CAD text column; attribute round-trip is not claimed |
 
+## 坐标维度与曲线类型支持
+
+`GisLayerInfo` 现在暴露三个新字段，供 UI 和 CLI 显示以及测试断言：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `hasZ` | `boolean \| undefined` | 图层几何是否包含 Z（高程）坐标 |
+| `hasM` | `boolean \| undefined` | 图层几何是否包含 M（测量值）坐标 |
+| `coordinateDimension` | `2 \| 3 \| 4` | 坐标维度：2=XY、3=XYZ 或 XYM、4=XYZM |
+| `baseGeometryType` | `string \| null` | 去除维度标记后的基础类型，如 `"LineString"`（来自 `"3D Line String Z"`） |
+
+这些字段由 `normalizeBaseGeometryType()` 函数填充，该函数处理 OGR 返回的所有已知维度编码方式：
+
+- **位前缀**：`3D Point`、`Measured Polygon`
+- **后缀标记**：`Point Z`、`LineString M`、`Polygon ZM`
+- **25D 编码**：`Point 25D`（等同于 Z）
+- **多词类型名**：`Line String` → `LineString`，`Multi Polygon` → `MultiPolygon`
+
+### 各格式对维度的保留情况
+
+| 格式 | Z 坐标 | M 坐标 | ZM | 说明 |
+|------|--------|--------|-----|------|
+| Shapefile | ✅ | ✅ | ✅ | `.shz`/`.shm` 变体；操作报告含警告 |
+| GeoPackage | ✅ | ✅ | ✅ | 完整 Z/M 支持 |
+| PostGIS | ✅ | ✅ | ✅ | 通过 `GEOMETRY(PointZM, 4326)` 等类型 |
+| GeoJSON | ✅ | ❌ | Z only | RFC 7946 不支持 M；转换报告有警告 |
+| MapInfo TAB | ❌ | ❌ | ❌ | 两者均丢失；转换报告有警告 |
+| KML | ⚠️ 高程 | ❌ | Z only | Z 映射到 KML 高程字段 |
+
+### 曲线几何类型支持
+
+OGR 支持 ISO SQL/MM 曲线类型（CircularString、CompoundCurve、CurvePolygon、MultiCurve、MultiSurface），以及多面体类型（TIN、PolyhedralSurface）。`normalizeBaseGeometryType()` 可正确识别这些类型，`baseGeometryType` 字段将返回规范化名称。
+
+| 曲线类型 | GeoPackage | PostGIS | 其他格式 |
+|----------|------------|---------|---------|
+| CircularString | ✅ 保留 | ✅ 保留 | ❌ 线性化为 LineString |
+| CompoundCurve | ✅ 保留 | ✅ 保留 | ❌ 线性化 |
+| CurvePolygon | ✅ 保留 | ✅ 保留 | ❌ 线性化 |
+| TIN | ✅ 保留 | ✅ 保留 | ❌ 拆分为三角面 |
+| PolyhedralSurface | ✅ 保留 | ✅ 保留 | ❌ |
+
+**注意**：Shapefile、GeoJSON、KML 和 MapInfo TAB 不支持曲线类型；OGR 在导出时自动线性化，但 DB Studio 在操作报告的 warnings 中标注该行为。
+
 Dimension probe (`pnpm run test:integration:gis-dimensions`, GDAL 3.12.2): a PointZM feature keeps Z/M in Shapefile and GeoPackage; GeoJSON/KML keep Z but drop M; MapInfo TAB drops both and is reported as 2D. These losses appear in `operationReport.warnings`. Generic `Geometry`/`GeometryCollection` sources trigger a conservative warning where the target cannot preserve the unknown dimensions.
 
 Evidence: `node tests/integration/postgis-gis-roundtrip.mjs` against the project PostGIS service. Each format retained two features (including one null geometry) and Chinese values 甲/乙 when imported to EPSG:3857 and exported to EPSG:4326. The test also checks transformed coordinates and output extent.

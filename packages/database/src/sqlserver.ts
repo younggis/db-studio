@@ -75,10 +75,34 @@ export class SqlServerAdapter implements DatabaseAdapter {
   }
 
   async query(statement: string, parameters: unknown[] = []): Promise<QueryResult> {
-    const pool = await this.connect();
-    const request = pool.request();
-    bindParameters(request, parameters);
-    return queryResult(await request.query(statement), statement);
+    const startTime = new Date();
+    let status: 'success' | 'error' = 'success';
+    let errorMessage: string | undefined;
+
+    try {
+      const pool = await this.connect();
+      const request = pool.request();
+      bindParameters(request, parameters);
+      const result = await request.query(statement);
+      const endTime = new Date();
+
+      return queryResult(result, statement, { startTime, endTime, status });
+    } catch (error) {
+      const endTime = new Date();
+      status = 'error';
+      errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      const enhancedError = error as any;
+      enhancedError.metrics = {
+        startTime,
+        endTime,
+        duration: endTime.getTime() - startTime.getTime(),
+        rowCount: 0,
+        status,
+        errorMessage,
+      };
+      throw enhancedError;
+    }
   }
 
   async *queryStream(statement: string, parameters: unknown[] = [], options: QueryStreamOptions = {}): AsyncGenerator<QueryResultBatch> {
@@ -666,16 +690,37 @@ export class SqlServerAdapter implements DatabaseAdapter {
   }
 }
 
-function queryResult(result: IResult<Record<string, unknown>>, statement: string): QueryResult {
+function queryResult(
+  result: IResult<Record<string, unknown>>,
+  statement: string,
+  timing?: { startTime: Date; endTime: Date; status: 'success' | 'error' }
+): QueryResult {
   const rows = (result.recordset ?? []) as Record<string, unknown>[];
   const metadata = result.recordset?.columns ?? {};
   const columns = Object.values(metadata).sort((left, right) => left.index - right.index).map((column) => column.name);
-  return {
+  const rowCount = rows.length > 0 ? rows.length : result.rowsAffected.reduce((total, count) => total + count, 0);
+  const command = statement.trim().match(/^[a-z]+/i)?.[0].toUpperCase();
+  const affectedRows = rows.length === 0 ? result.rowsAffected.reduce((total, count) => total + count, 0) : undefined;
+
+  const queryResult: QueryResult = {
     columns,
     rows,
-    rowCount: rows.length > 0 ? rows.length : result.rowsAffected.reduce((total, count) => total + count, 0),
-    command: statement.trim().match(/^[a-z]+/i)?.[0].toUpperCase(),
+    rowCount,
+    command,
   };
+
+  if (timing) {
+    queryResult.metrics = {
+      startTime: timing.startTime,
+      endTime: timing.endTime,
+      duration: timing.endTime.getTime() - timing.startTime.getTime(),
+      rowCount,
+      affectedRows,
+      status: timing.status,
+    };
+  }
+
+  return queryResult;
 }
 
 function bindParameters(request: sql.Request, parameters: unknown[]): void {

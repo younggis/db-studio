@@ -506,6 +506,16 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
       statusbar={
         <WbStatusBar left={`MongoDB · ${database || "未选择数据库"} / ${collection || "未选择集合"}`} right={`${documents.length} 个文档`} />
       }
+      inspector={
+        <WbInspector open={indexesOpen} title={`${collection || "Collection"} 索引`} onClose={() => setIndexesOpen(false)} width={360}>
+          <Space.Compact style={{ width: "100%", marginBottom: 16 }}>
+            <Input value={geometryField} onChange={(event) => setGeometryField(event.target.value)} placeholder="GeoJSON 字段路径" aria-label="GeoJSON 字段路径" />
+            <WbToolButton className="mongo-primary" onClick={() => void create2dsphere()} loading={metaLoading} label="创建 2dsphere" />
+          </Space.Compact>
+          {metaError !== undefined && <Alert showIcon type="error" message="读取索引失败" description={describeError(metaError, "未知错误")} />}
+          <WbDataTable rowKey="name" columns={indexColumns} dataSource={indexes} loading={metaLoading} pagination={false} />
+        </WbInspector>
+      }
     >
       <section className="mongo-query-panel">
         {mode === "find" ? (
@@ -546,15 +556,6 @@ export default function MongoDocumentsPage({ connectionId, defaultDatabase }: Mo
         )}
         <div className="mongo-results-body">{renderBody()}</div>
       </section>
-
-      inspector={<WbInspector open={indexesOpen} title={`${collection || "Collection"} 索引`} onClose={() => setIndexesOpen(false)} width={360}>
-        <Space.Compact style={{ width: "100%", marginBottom: 16 }}>
-          <Input value={geometryField} onChange={(event) => setGeometryField(event.target.value)} placeholder="GeoJSON 字段路径" aria-label="GeoJSON 字段路径" />
-          <WbToolButton className="mongo-primary" onClick={() => void create2dsphere()} loading={metaLoading} label="创建 2dsphere" />
-        </Space.Compact>
-        {metaError !== undefined && <Alert showIcon type="error" message="读取索引失败" description={describeError(metaError, "未知错误")} />}
-        <WbDataTable rowKey="name" columns={indexColumns} dataSource={indexes} loading={metaLoading} pagination={false} />
-</WbInspector>}
 
       <Modal title="编辑文档" open={editingDoc !== null} onCancel={() => setEditingDoc(null)} onOk={() => void saveEdit()}
         okText="保存修改" cancelText="取消" width={720} destroyOnClose>

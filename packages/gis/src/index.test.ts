@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { PassThrough } from "node:stream";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { appendCrsOptions, appendGeometryValidityOptions, buildFieldProjectionSql, buildGeoJsonStringSubtypeSchemaOverride, buildKmlIdAttributeMapping, buildPostgresColumnTypeOverrides, buildPostgresNumericColumnTypeOverrides, companionFileWarnings, formatConversionWarnings, geoJsonJsonSubtypeImportWarning, GdalService, parseGisDriverCreationOptions, parseGisSpatialExtent } from "./index.js";
+import { appendCrsOptions, appendGeometryValidityOptions, buildFieldProjectionSql, buildGeoJsonStringSubtypeSchemaOverride, buildKmlIdAttributeMapping, buildPostgresColumnTypeOverrides, buildPostgresNumericColumnTypeOverrides, companionFileWarnings, formatConversionWarnings, geoJsonJsonSubtypeImportWarning, GdalService, parseGisDriverCreationOptions, parseGisSpatialExtent, normalizeBaseGeometryType } from "./index.js";
 
 vi.mock("node:child_process", async (importOriginal) => {
   const actual = await importOriginal<typeof import("node:child_process")>();
@@ -1173,5 +1173,49 @@ describe("GIS conversion limitation reports", () => {
 
     await expect(new GdalService().convert(input, output, { targetCrs: "EPSG:3857" }))
       .rejects.toThrow("RFC 7946 GeoJSON output uses WGS 84");
+  });
+});
+
+describe("normalizeBaseGeometryType", () => {
+  it("strips leading 3D prefix", () => {
+    expect(normalizeBaseGeometryType("3D Point")).toBe("Point");
+    expect(normalizeBaseGeometryType("3D Polygon")).toBe("Polygon");
+    expect(normalizeBaseGeometryType("3D Multi Polygon")).toBe("MultiPolygon");
+  });
+
+  it("strips trailing Z/M/ZM markers", () => {
+    expect(normalizeBaseGeometryType("Point Z")).toBe("Point");
+    expect(normalizeBaseGeometryType("LineString M")).toBe("LineString");
+    expect(normalizeBaseGeometryType("Polygon ZM")).toBe("Polygon");
+    expect(normalizeBaseGeometryType("Point 25D")).toBe("Point");
+  });
+
+  it("strips Measured prefix", () => {
+    expect(normalizeBaseGeometryType("Measured Line String")).toBe("LineString");
+    expect(normalizeBaseGeometryType("Measured Polygon")).toBe("Polygon");
+  });
+
+  it("normalises multi-word OGR type names", () => {
+    expect(normalizeBaseGeometryType("Line String")).toBe("LineString");
+    expect(normalizeBaseGeometryType("Multi Polygon")).toBe("MultiPolygon");
+    expect(normalizeBaseGeometryType("Geometry Collection")).toBe("GeometryCollection");
+  });
+
+  it("handles curve and surface types", () => {
+    expect(normalizeBaseGeometryType("CircularString Z")).toBe("CircularString");
+    expect(normalizeBaseGeometryType("CurvePolygon ZM")).toBe("CurvePolygon");
+    expect(normalizeBaseGeometryType("TIN")).toBe("TIN");
+    expect(normalizeBaseGeometryType("PolyhedralSurface")).toBe("PolyhedralSurface");
+  });
+
+  it("returns null for null input", () => {
+    expect(normalizeBaseGeometryType(null)).toBeNull();
+    expect(normalizeBaseGeometryType("")).toBeNull();
+  });
+
+  it("preserves plain types unchanged", () => {
+    expect(normalizeBaseGeometryType("Point")).toBe("Point");
+    expect(normalizeBaseGeometryType("Polygon")).toBe("Polygon");
+    expect(normalizeBaseGeometryType("MultiLineString")).toBe("MultiLineString");
   });
 });

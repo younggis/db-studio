@@ -104,67 +104,112 @@ export default function BiPanel({ open, onClose }: { open: boolean; onClose: () 
   }
 
   return (
-    <Drawer title="BI 图表 / 仪表盘" width={960} open={open} onClose={onClose} rootClassName="wb-app">
-      <WbTabContainer activeKey={activeTab} onChange={(key) => setActiveTab(key as "design" | "dashboard")} items={[
-        {
-          key: "design",
-          label: "图表设计",
-          children: <>
-            <div className="dbtools-row">
-              <span className="dbtools-label">连接</span>
-              <Select value={connectionId || undefined} onChange={setConnectionId}
-                options={connections.map((item) => ({ value: item.id, label: `${item.name} · ${item.engine}` }))} style={{ width: 280 }} />
-              <WbToolButton icon={<Play size={14} />} loading={busy} onClick={() => void runQuery()} label="执行查询" />
-            </div>
-            <Input.TextArea rows={3} value={sql} onChange={(event) => setSql(event.target.value)} spellCheck={false}
-              placeholder="SELECT category, SUM(value) AS total FROM t GROUP BY category" style={{ fontFamily: "monospace", fontSize: 12 }} />
-            <div className="dbtools-row">
-              <span className="dbtools-label">X 轴</span>
-              <Select value={xField || undefined} onChange={setXField} options={columns.map((item) => ({ value: item, label: item }))} style={{ width: 180 }} />
-              <span className="dbtools-label">Y 轴</span>
-              <Select mode="multiple" value={yFields} onChange={setYFields} options={columns.map((item) => ({ value: item, label: item }))} style={{ width: 260 }} placeholder="数值字段" />
-            </div>
-            <div className="dbtools-row">
-              <span className="dbtools-label">图表</span>
-              <Select value={chartType} onChange={setChartType} options={CHART_TYPES} style={{ width: 120 }} />
-              <span className="dbtools-label">聚合</span>
-              <Select value={aggregation} onChange={setAggregation}
-                options={[{ value: "none", label: "原始值" }, { value: "sum", label: "求和" }, { value: "count", label: "计数" }, { value: "avg", label: "平均" }]}
-                style={{ width: 120 }} />
-            </div>
-            <MiniChart type={chartType} data={chartData} height={300} />
-            <div className="dbtools-actions">
-              <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="图表标题" style={{ width: 220 }} />
-              <WbToolButton className="mongo-primary" icon={<Save size={14} />} loading={busy} onClick={() => void saveWidget()} label="保存到仪表盘" />
-            </div>
-          </>,
-        },
-        {
-          key: "dashboard",
-          label: "仪表盘",
-          children: <>
-            <Space style={{ marginBottom: 12 }}>
-              <WbToolButton icon={<RefreshCw size={14} />} loading={busy} onClick={() => void refreshDashboard()} label="刷新全部" />
-              <Text type="secondary">{widgets.length} 个图表</Text>
-            </Space>
-            <div className="bi-dashboard-grid">
-              {widgets.map((widget) => (
-                <div className="bi-widget" key={widget.id}>
-                  <div className="bi-widget-head">
-                    <b>{widget.title}</b>
-                    <Space size={2}>
-                      <Text type="secondary">{widget.type}</Text>
-                      <WbToolButton danger icon={<Trash2 size={13} />} ariaLabel="删除图表" onClick={() => void removeWidget(widget.id)} />
-                    </Space>
+    <Drawer
+      title="BI 图表 / 仪表盘"
+      width={1040}
+      open={open}
+      onClose={onClose}
+      maskClosable={true}
+      keyboard={true}
+      rootClassName="wb-app-drawer bi-drawer"
+    >
+      <div className="bi-panel">
+        <p className="bi-panel-intro">从查询结果设计图表，保存到仪表盘后可在任意连接上刷新查看。</p>
+        <WbTabContainer activeKey={activeTab} onChange={(key) => setActiveTab(key as "design" | "dashboard")} items={[
+          {
+            key: "design",
+            label: "图表设计",
+            children: (
+              <div className="bi-design">
+                <section className="bi-card">
+                  <header className="bi-card-head"><span>数据源</span><small>选择连接并运行查询</small></header>
+                  <div className="bi-card-body">
+                    <div className="bi-row">
+                      <span className="bi-label">连接</span>
+                      <Select value={connectionId || undefined} onChange={setConnectionId}
+                        options={connections.map((item) => ({ value: item.id, label: `${item.name} · ${item.engine}` }))}
+                        style={{ width: 320 }} placeholder="选择连接" />
+                      <WbToolButton className="bi-primary" icon={<Play size={14} />} loading={busy}
+                        onClick={() => void runQuery()} label="执行查询" />
+                    </div>
+                    <Input.TextArea className="bi-sql" rows={4} value={sql} onChange={(event) => setSql(event.target.value)} spellCheck={false}
+                      placeholder="SELECT category, SUM(value) AS total FROM t GROUP BY category" />
                   </div>
-                  <MiniChart type={widget.type as ChartType} data={dashboardData[widget.id] ?? { labels: [], series: [] }} height={220} />
+                </section>
+
+                <section className="bi-card">
+                  <header className="bi-card-head"><span>字段与图表</span><small>{columns.length} 列 · {rows.length} 行</small></header>
+                  <div className="bi-card-body">
+                    <div className="bi-row">
+                      <span className="bi-label">X 轴</span>
+                      <Select value={xField || undefined} onChange={setXField}
+                        options={columns.map((item) => ({ value: item, label: item }))} style={{ width: 220 }} placeholder="分类字段" />
+                      <span className="bi-label">Y 轴</span>
+                      <Select mode="multiple" value={yFields} onChange={setYFields}
+                        options={columns.map((item) => ({ value: item, label: item }))} style={{ flex: 1 }} placeholder="数值字段" />
+                    </div>
+                    <div className="bi-row">
+                      <span className="bi-label">图表</span>
+                      <Select value={chartType} onChange={setChartType} options={CHART_TYPES} style={{ width: 140 }} />
+                      <span className="bi-label">聚合</span>
+                      <Select value={aggregation} onChange={setAggregation}
+                        options={[
+                          { value: "none", label: "原始值" }, { value: "sum", label: "求和" },
+                          { value: "count", label: "计数" }, { value: "avg", label: "平均" },
+                        ]} style={{ width: 140 }} />
+                    </div>
+                  </div>
+                </section>
+
+                <section className="bi-card bi-preview">
+                  <header className="bi-card-head"><span>预览</span><small>{chartData.labels.length} 个数据点</small></header>
+                  <div className="bi-card-body"><MiniChart type={chartType} data={chartData} height={280} /></div>
+                </section>
+
+                <div className="bi-save-bar">
+                  <Input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="图表标题" />
+                  <WbToolButton className="bi-primary" icon={<Save size={14} />} loading={busy}
+                    onClick={() => void saveWidget()} label="保存到仪表盘" />
                 </div>
-              ))}
-              {widgets.length === 0 && <div className="bi-chart-empty"><BarChart3 size={22} /><span>还没有保存的图表，请先在「图表设计」中创建一个。</span></div>}
-            </div>
-          </>,
-        },
-      ]} />
+              </div>
+            ),
+          },
+          {
+            key: "dashboard",
+            label: "仪表盘",
+            children: (
+              <div className="bi-dashboard">
+                <div className="bi-dashboard-bar">
+                  <WbToolButton icon={<RefreshCw size={14} />} loading={busy}
+                    onClick={() => void refreshDashboard()} label="刷新全部" />
+                  <Text type="secondary">共 {widgets.length} 个图表</Text>
+                </div>
+                <div className="bi-dashboard-grid">
+                  {widgets.map((widget) => (
+                    <section className="bi-widget" key={widget.id}>
+                      <header className="bi-widget-head">
+                        <b>{widget.title}</b>
+                        <Space size={4}>
+                          <Text type="secondary">{widget.type}</Text>
+                          <WbToolButton danger icon={<Trash2 size={13} />} ariaLabel="删除图表"
+                            onClick={() => void removeWidget(widget.id)} />
+                        </Space>
+                      </header>
+                      <MiniChart type={widget.type as ChartType}
+                        data={dashboardData[widget.id] ?? { labels: [], series: [] }} height={220} />
+                      <footer className="bi-widget-meta">{widget.xField} · {widget.yFields.join("、")}</footer>
+                    </section>
+                  ))}
+                  {widgets.length === 0 && (
+                    <div className="bi-chart-empty"><BarChart3 size={24} />
+                      <span>还没有保存的图表，请先在「图表设计」中创建一个。</span></div>
+                  )}
+                </div>
+              </div>
+            ),
+          },
+        ]} />
+      </div>
     </Drawer>
   );
 }

@@ -55,11 +55,14 @@ export default function LayerHealthPanel({ open, onClose, filePath, sourceEncodi
   useEffect(() => { setReport(undefined); }, [layerName]);
 
   return (
-    <Drawer rootClassName="wb-surface"
+    <Drawer
+      rootClassName="wb-surface"
       title={<span><Activity size={16} /> 图层体检</span>}
       open={open}
       onClose={onClose}
       width={680}
+      maskClosable={true}
+      keyboard={true}
       destroyOnHidden
     >
       <Alert

@@ -4,6 +4,7 @@ export { databaseEngines };
 export { oracleSdo2dWkbToDimensionalWkb } from "./oracle-gis-wkb.js";
 export { decodeGeoPackageGeometry, encodeGeoPackageGeometry, importColumnTypeFromSqliteDeclaration } from "./geopackage.js";
 export { decodeSpatiaLiteGeometry, encodeSpatiaLiteGeometry, isSpatiaLiteGeometryBlob } from "./spatialite.js";
+export { parseWkbToGeojson, batchParseWkb, getWkbGeometryType } from "./wkb-geojson.js";
 export function isQueryStreamCell(value) {
     if (!value || typeof value !== "object")
         return false;
@@ -14,6 +15,7 @@ export function isQueryStreamCell(value) {
         && typeof cell.destroy === "function";
 }
 export { parseTabularData, queryResultToCsv } from "./format.js";
+export { formatSelectionAsPlainText, formatSelectionAsCsv, formatSelectionAsJson, formatSelectionAsInsert, formatSelectionWithHeaders, calculateSelectionStats, isSelectionTooLarge, } from "./result-formatters.js";
 export { parseExcelWorkbook, queryResultToXlsx } from "./spreadsheet.js";
 export { appendQueryHistory, clearQueryHistory, createEmptyQueryHistorySnapshot, normalizeQueryHistorySnapshot, parseQueryExecutionRecord, parseQueryFavorite, removeQueryFavorite, upsertQueryFavorite, MAX_QUERY_HISTORY_ENTRIES, MAX_QUERY_FAVORITES, MAX_QUERY_SQL_LENGTH, } from "./query-history.js";
 export function isSpatialTransferValue(value) {

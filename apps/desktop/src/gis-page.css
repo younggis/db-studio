@@ -1,19 +1,14 @@
-/* New GIS exchange page replaces the compiled .gis-workspace.
-   The overlay lives in its own body-level root and never touches React's DOM. */
+/* The GIS page replaces the legacy view inside the shared workspace. */
 body.gis-page-active .gis-workspace { display: none !important; }
 /* Hide only the compiled title; keep mode-switch buttons for navigation. */
 body.gis-page-active .workspace-head .page-title { display: none !important; }
 body.gis-page-active .workspace-head { justify-content: flex-end !important; }
 
 .gis-exchange-overlay {
-  position: fixed;
-  top: 90px;          /* below topbar (46px) + workspace-head (44px) so mode buttons stay clickable */
-  left: 258px;        /* right of sidebar */
-  right: 0;
-  bottom: 24px;       /* above statusbar */
-  overflow: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
   background: var(--ds-bg);
-  z-index: 500;
 }
 
 .gis-exchange {

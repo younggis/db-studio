@@ -1,12 +1,24 @@
-/* Phase 3 launcher: unobtrusive floating toolbar composed at the App boundary. */
-.phase3-launcher {
-  position: fixed;
-  right: 16px;
-  bottom: 36px;
-  z-index: 900;
-  padding: 6px 8px;
-  background: var(--wb-bg-surface);
-  border: 1px solid var(--wb-border);
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(32, 48, 64, 0.12);
+.topbar .phase3-launcher {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  margin-inline-start: 4px;
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid var(--wb-border);
+}
+.topbar .topbar-actions { order: 2; flex-shrink: 0; }
+.phase3-launcher .wb-tool-btn { flex: none; padding-inline: 6px; }
+.phase3-launcher .wb-tool-btn svg { width: 16px; height: 16px; }
+.phase3-launcher .wb-tool-btn:not(:disabled) svg { color: var(--wb-brand); }
+.phase3-launcher .wb-tool-btn:nth-child(4):not(:disabled) svg { color: var(--wb-success); }
+.phase3-launcher .wb-tool-btn:nth-child(8) svg { color: var(--wb-warning); }
+
+@media (max-width: 1120px) {
+  .phase3-launcher .wb-tool-btn > span { display: none; }
+}
+@media (max-width: 800px) {
+  .topbar .phase3-launcher { overflow-x: auto; }
+  .topbar .env-label { display: none; }
 }

@@ -37,11 +37,42 @@ body.sql-wb-active #sql-wb-overlay-root { left: 258px !important; top: 46px !imp
   box-shadow: none;
 }
 
-.wb-sql-editor { height: 100%; padding: var(--wb-space-2); }
+/* Editor above, results below, separated by a draggable splitter. */
+.wb-sql-split { height: 100%; display: flex; flex-direction: column; min-height: 0; background: var(--wb-bg-surface); }
+.wb-sql-pane { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.wb-pane-head {
+  flex: 0 0 24px; height: 24px; display: flex; align-items: center; gap: 6px;
+  padding: 0 8px; background: var(--wb-bg-toolbar);
+  border-bottom: 1px solid var(--wb-border);
+  font-size: var(--wb-font-size-sm); color: var(--wb-text-secondary);
+}
+.wb-sql-splitter {
+  flex: 0 0 5px; cursor: row-resize; display: grid; place-items: center;
+  background: var(--wb-bg-toolbar);
+  border-top: 1px solid var(--wb-border); border-bottom: 1px solid var(--wb-border);
+}
+.wb-sql-splitter span { width: 32px; height: 2px; border-radius: 2px; background: var(--wb-border-strong); }
+.wb-sql-splitter:hover, .wb-sql-splitter.is-dragging { background: var(--wb-bg-selected); }
+.wb-sql-splitter:hover span, .wb-sql-splitter.is-dragging span { background: var(--wb-brand); }
+.wb-sql-splitter:focus-visible { outline: 1px solid var(--wb-brand); outline-offset: -1px; }
+
+.wb-sql-editor { flex: 1 1 auto; min-height: 0; height: auto; padding: var(--wb-space-2); display: flex; flex-direction: column; gap: 4px; }
+
+/* One tab per SQL window; the "+" button creates a new independent buffer. */
+.wb-query-tabs { flex: 0 0 auto; }
+.wb-query-tabs .ant-tabs-nav { margin: 0; }
+.wb-query-tabs .ant-tabs-nav::before { display: none; }
+.wb-query-tabs .ant-tabs-tab { padding: 2px 8px; }
+.wb-query-tabs .ant-tabs-tab-btn, .wb-query-tabs .ant-tabs-tab-remove { font-size: var(--wb-font-size); }
+.wb-query-tabs .ant-tabs-content-holder { display: none; }
+.wb-query-tab-context { margin-left: 6px; color: var(--wb-text-muted); font-size: 10px; font-weight: normal; }
+.wb-query-tabs .ant-tabs-add { padding: 0 8px; font-size: 14px; line-height: 22px; }
+
 .wb-sql-editor textarea {
   width: 100%;
-  height: 100%;
-  min-height: 240px;
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 200px;
   resize: none;
   border: 1px solid var(--wb-border);
   border-radius: var(--wb-radius);
@@ -54,5 +85,14 @@ body.sql-wb-active #sql-wb-overlay-root { left: 258px !important; top: 46px !imp
   background: var(--wb-bg-surface);
 }
 .wb-sql-editor textarea:focus { border-color: var(--wb-brand); }
-.wb-results { height: 100%; overflow: auto; }
+.wb-results { flex: 1 1 auto; min-height: 0; height: auto; overflow: auto; }
+.wb-selection-bar {
+  position: sticky; bottom: 0; display: flex; align-items: center; gap: 12px;
+  padding: 4px 8px; background: var(--wb-bg-selected);
+  border-top: 1px solid var(--wb-border);
+  font-size: var(--wb-font-size-sm); color: var(--wb-brand);
+}
+.wb-selection-hint { color: var(--wb-text-muted); }
+.wb-selection-bar button { margin-left: auto; border: 0; background: none; color: var(--wb-brand); cursor: pointer; padding: 0; font-size: inherit; }
+.wb-results-head { padding: 3px 8px; font-size: var(--wb-font-size-sm); color: var(--wb-text-muted); border-bottom: 1px solid var(--wb-border); }
 .wb-error { color: var(--wb-danger); padding: var(--wb-space-2); font-size: var(--wb-font-size-sm); }

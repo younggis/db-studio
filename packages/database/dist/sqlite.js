@@ -25,25 +25,65 @@ export class SqliteAdapter {
         };
     }
     async query(sql, parameters = []) {
-        const statement = this.database.prepare(sql);
-        const bindings = normalizeParameters(parameters);
-        const columns = statement.columns().map((column) => column.name);
-        if (columns.length > 0) {
-            const rows = statement.all(...bindings);
+        const startTime = new Date();
+        let status = 'success';
+        let errorMessage;
+        try {
+            const statement = this.database.prepare(sql);
+            const bindings = normalizeParameters(parameters);
+            const columns = statement.columns().map((column) => column.name);
+            const command = sql.trimStart().split(/\s+/, 1)[0]?.toUpperCase();
+            const endTime = new Date();
+            if (columns.length > 0) {
+                const rows = statement.all(...bindings);
+                const rowCount = rows.length;
+                return {
+                    columns,
+                    rows,
+                    rowCount,
+                    command,
+                    metrics: {
+                        startTime,
+                        endTime,
+                        duration: endTime.getTime() - startTime.getTime(),
+                        rowCount,
+                        affectedRows: command !== 'SELECT' ? rowCount : undefined,
+                        status: 'success',
+                    },
+                };
+            }
+            const result = statement.run(...bindings);
+            const affectedRows = Number(result.changes);
             return {
-                columns,
-                rows,
-                rowCount: rows.length,
-                command: sql.trimStart().split(/\s+/, 1)[0]?.toUpperCase(),
+                columns: [],
+                rows: [],
+                rowCount: affectedRows,
+                command,
+                metrics: {
+                    startTime,
+                    endTime,
+                    duration: endTime.getTime() - startTime.getTime(),
+                    rowCount: affectedRows,
+                    affectedRows,
+                    status: 'success',
+                },
             };
         }
-        const result = statement.run(...bindings);
-        return {
-            columns: [],
-            rows: [],
-            rowCount: Number(result.changes),
-            command: sql.trimStart().split(/\s+/, 1)[0]?.toUpperCase(),
-        };
+        catch (error) {
+            const endTime = new Date();
+            status = 'error';
+            errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            const enhancedError = error;
+            enhancedError.metrics = {
+                startTime,
+                endTime,
+                duration: endTime.getTime() - startTime.getTime(),
+                rowCount: 0,
+                status,
+                errorMessage,
+            };
+            throw enhancedError;
+        }
     }
     async *queryStream(sql, parameters = [], options = {}) {
         const statement = this.database.prepare(sql);

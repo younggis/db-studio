@@ -1,0 +1,294 @@
+/* Navicat-inspired desktop workbench skin.
+   Keep the database-workbench layout dense and predictable across SQL, Mongo,
+   GIS and utility pages. This file is imported last so legacy page skins all
+   resolve through the same tokens and control treatment. */
+:root {
+  --wb-bg-toolbar: #f3f4f6;
+  --wb-bg-surface: #ffffff;
+  --wb-bg-hover: #e8edf4;
+  --wb-bg-selected: #e2effc;
+  --wb-bg-subtle: #f6f7f9;
+  --wb-border: #d7dde6;
+  --wb-border-strong: #b8c2cf;
+  --wb-brand: #1677ff;
+  --wb-brand-hover: #096cad;
+  --wb-brand-soft: #e2effc;
+  --wb-success: #369b58;
+  --wb-warning: #d98a18;
+  --wb-danger: #d94848;
+  --wb-info: #1681c9;
+  --wb-text: #263445;
+  --wb-text-secondary: #5e6c7b;
+  --wb-text-muted: #8491a0;
+  --wb-font-sans: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  --wb-font-mono: "Cascadia Mono", "Consolas", "Courier New", monospace;
+  --wb-font-size: 12px;
+  --wb-font-size-sm: 11px;
+  --wb-control-h: 26px;
+  --wb-row-h: 26px;
+  --wb-toolbar-h: 32px;
+  --wb-statusbar-h: 24px;
+  --wb-radius: 3px;
+  --wb-radius-sm: 2px;
+  --ds-shadow: none;
+  --ds-radius: var(--wb-radius);
+  --ds-font: var(--wb-font-sans);
+}
+
+[data-theme="dark"] {
+  --wb-bg-toolbar: #252c35;
+  --wb-bg-surface: #1d232b;
+  --wb-bg-hover: #303a46;
+  --wb-bg-selected: #193a55;
+  --wb-bg-subtle: #222932;
+  --wb-border: #394451;
+  --wb-border-strong: #536172;
+  --wb-brand: #48a3e2;
+  --wb-brand-hover: #70b8eb;
+  --wb-brand-soft: #193a55;
+  --wb-success: #55b979;
+  --wb-warning: #e4a347;
+  --wb-danger: #ef6b6b;
+  --wb-info: #48a3e2;
+  --wb-text: #e3e9f0;
+  --wb-text-secondary: #b3bfcc;
+  --wb-text-muted: #8997a7;
+}
+
+html, body, #root { min-width: 0; min-height: 0; }
+body {
+  color: var(--wb-text);
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+  background: var(--wb-bg-surface);
+}
+
+/* The shared shell reads like a desktop database tool: clear bands, fine
+   separators, compact controls and an unobstructed work area. */
+.shell, .wb-app, .wb-surface {
+  color: var(--wb-text);
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+}
+.shell, .main-frame, .workspace, .wb-workspace { background: var(--wb-bg-surface); }
+.topbar, .workspace-head, .wb-toolbar, .wb-sidebar-head, .wb-inspector-head,
+.panel-toolbar, .results-toolbar, .wb-statusbar, .statusbar {
+  background: var(--wb-bg-toolbar) !important;
+  color: var(--wb-text) !important;
+  border-color: var(--wb-border) !important;
+  box-shadow: none !important;
+}
+.topbar { border-bottom: 1px solid var(--wb-border) !important; }
+.topbar .brand-lockup strong, .workspace-head .page-title h4,
+.results-title b, .mongo-results-title, .gx-step-title { color: var(--wb-text) !important; }
+.sidebar, .wb-sidebar {
+  background: var(--wb-bg-toolbar) !important;
+  border-color: var(--wb-border) !important;
+  box-shadow: none !important;
+}
+.sidebar-heading, .tree-label, .wb-sidebar-head { color: var(--wb-text-secondary) !important; }
+.shell .sidebar { background: var(--wb-bg-surface) !important; }
+.shell .sidebar .object-tree {
+  width: 100%;
+  min-width: 0;
+  margin-top: 2px;
+  padding-top: 0;
+  border-right: 0 !important;
+  background: var(--wb-bg-surface) !important;
+}
+.topbar .phase3-launcher { background: transparent !important; }
+.shell .sidebar .tree-label, .shell .sidebar-heading { background: var(--wb-bg-toolbar); }
+.shell .sidebar-heading { height: 30px; flex: 0 0 30px; padding: 0 8px !important; }
+.shell .sidebar .connection-list { padding: 2px 0 !important; gap: 0 !important; min-height: 0; }
+.shell .sidebar .connection-card { flex: 0 0 auto; }
+.shell .sidebar .connection-card { border-color: transparent !important; border-radius: 0 !important; }
+.shell .sidebar .connection-select { padding: 1px 8px !important; line-height: 1.2; }
+.shell .sidebar .connection-name b { line-height: 1.2; }
+.shell .sidebar .sidebar-bottom { flex: 0 0 auto; padding: 4px 8px; }
+.shell .sidebar .connection-select .db-icon { background: var(--wb-brand-soft); color: var(--wb-brand) !important; }
+.shell .sidebar .connection-name small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+.shell .query-workspace { padding: 0; gap: 0; }
+.shell .query-workspace .editor-panel,
+.shell .query-workspace .results-panel { border: 0 !important; border-radius: 0 !important; }
+.shell .query-workspace .document-tab { border: 0; background: transparent; }
+.shell .query-workspace .toolbar-actions .ant-btn:not(.ant-btn-primary) { font-size: var(--wb-font-size) !important; }
+.shell .query-workspace .pane-splitter { min-height: 5px; }
+.sidebar .object-tree, .wb-sidebar-search { border-color: var(--wb-border) !important; }
+.connection-card { border-radius: var(--wb-radius) !important; }
+.connection-card.selected, .object-tree .ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background: var(--wb-bg-selected) !important;
+  border-color: var(--wb-brand) !important;
+  color: var(--wb-brand) !important;
+}
+.connection-card.selected { box-shadow: inset 2px 0 0 var(--wb-brand) !important; }
+.object-tree .ant-tree-node-content-wrapper:hover,
+.wb-app .ant-tree-node-content-wrapper:hover { background: var(--wb-bg-hover) !important; }
+
+/* One control language across compiled and source pages. */
+.shell .ant-btn, .wb-app .ant-btn, .wb-surface .ant-btn,
+.shell input, .shell select, .shell textarea,
+.wb-app input, .wb-app select, .wb-app textarea,
+.wb-surface input, .wb-surface select, .wb-surface textarea,
+.shell .ant-input, .shell .ant-select-selector,
+.wb-app .ant-input, .wb-app .ant-select-selector,
+.wb-surface .ant-input, .wb-surface .ant-select-selector {
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+}
+.shell .ant-btn, .wb-app .ant-btn, .wb-surface .ant-btn {
+  min-height: var(--wb-control-h);
+}
+.shell .ant-btn-primary, .wb-app .ant-btn-primary, .wb-surface .ant-btn-primary,
+.mongo-primary.ant-btn-primary, .gx-primary {
+  color: #fff !important;
+  background: var(--wb-brand) !important;
+  border-color: var(--wb-brand) !important;
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+}
+.shell .ant-btn-primary:hover, .wb-app .ant-btn-primary:hover,
+.wb-surface .ant-btn-primary:hover, .mongo-primary.ant-btn-primary:hover,
+.gx-primary:hover { background: var(--wb-brand-hover) !important; border-color: var(--wb-brand-hover) !important; }
+.shell .ant-input:focus, .shell .ant-select-focused .ant-select-selector,
+.wb-app .ant-input:focus, .wb-app .ant-select-focused .ant-select-selector,
+.wb-surface .ant-input:focus, .wb-surface .ant-select-focused .ant-select-selector {
+  border-color: var(--wb-brand) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--wb-brand) 18%, transparent) !important;
+}
+.shell .ant-tag, .wb-app .ant-tag, .wb-surface .ant-tag { border-radius: var(--wb-radius-sm) !important; }
+
+/* Surfaces and cards should read as adjacent panes, not floating dashboard
+   tiles. Retain page spacing while removing inconsistent oversized radii. */
+.editor-panel, .results-panel, .mongo-topbar, .mongo-query-panel,
+.mongo-results-panel, .mongo-doc-tree, .json-mini, .gis-exchange .gx-card,
+.gis-exchange .gx-advanced, .dbtools-automation-form, .bi-chart, .bi-widget,
+.wb-app .ant-card, .wb-app .ant-collapse,
+.shell .ant-card, .shell .ant-collapse {
+  border-color: var(--wb-border) !important;
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+}
+.mongo-page { max-width: none; padding: 12px 14px 32px; gap: 10px; }
+.mongo-topbar, .mongo-query-panel { padding: 8px 10px; }
+.wb-app .mongo-topbar {
+  height: auto;
+  flex: 0 0 auto;
+  gap: var(--wb-space-1) var(--wb-space-2);
+  padding: var(--wb-space-1) var(--wb-space-2);
+  border: 0;
+  border-bottom: 1px solid var(--wb-border);
+  background: var(--wb-bg-toolbar);
+}
+.wb-app .mongo-topbar-right { max-width: 100%; margin-left: auto; }
+.mongo-labeled-select { height: var(--wb-control-h); border-radius: var(--wb-radius); }
+.mongo-results-toolbar, .json-mini-head { background: var(--wb-bg-toolbar); border-color: var(--wb-border); }
+.mongo-results-body { padding: 8px; }
+.mongo-doc-tree { background: var(--wb-bg-surface); }
+.mongo-template { border-radius: var(--wb-radius); }
+.gis-exchange { gap: 10px; padding: 12px 14px 28px; }
+.gis-exchange .gx-card { padding: 12px 14px; }
+.gis-exchange .gx-step-num { border-radius: var(--wb-radius); }
+.gis-exchange .gx-advanced { border-radius: var(--wb-radius); }
+.gis-exchange .gx-dropzone { border-radius: var(--wb-radius); }
+.gis-exchange .gx-format-pill { border-radius: var(--wb-radius); padding: 5px 10px; }
+.wb-app.gis-exchange .wb-workspace { background: var(--wb-bg-surface); }
+
+/* Shared grids and tabs: quiet headers, hairline separators, blue active state. */
+.query-table .ant-table-thead > tr > th,
+.wb-table .ant-table-thead > tr > th,
+.mongo-table .ant-table-thead > tr > th {
+  background: var(--wb-bg-toolbar) !important;
+  color: var(--wb-text-secondary) !important;
+  border-color: var(--wb-border) !important;
+  font-size: var(--wb-font-size-sm) !important;
+  font-weight: 600 !important;
+}
+.query-table .ant-table-tbody > tr > td,
+.wb-table .ant-table-tbody > tr > td,
+.mongo-table .ant-table-tbody > tr > td { border-color: var(--wb-border) !important; }
+.query-table .ant-table-tbody > tr:nth-child(even) > td,
+.wb-table .ant-table-tbody > tr:nth-child(even) > td,
+.mongo-table .ant-table-tbody > tr:nth-child(even) > td { background: var(--wb-bg-subtle) !important; }
+.query-table .ant-table-tbody > tr:hover > td,
+.wb-table .ant-table-tbody > tr:hover > td,
+.mongo-table .ant-table-tbody > tr:hover > td { background: var(--wb-bg-hover) !important; }
+.wb-tab-container .ant-tabs-nav, .shell .ant-tabs-nav { background: var(--wb-bg-toolbar); border-color: var(--wb-border); }
+.wb-tab-container .ant-tabs-tab, .shell .ant-tabs-tab { border-radius: var(--wb-radius) var(--wb-radius) 0 0 !important; }
+.wb-tab-container .ant-tabs-tab-active .ant-tabs-tab-btn,
+.shell .ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--wb-brand) !important; }
+.wb-statusbar, .statusbar { color: var(--wb-text-secondary) !important; }
+.status-ready, .environment-dot, .connected-indicator { color: var(--wb-success) !important; }
+
+/* Portals are used for dialogs, popovers and dropdowns on every page. */
+.ant-modal-content, .ant-drawer-content, .ant-popover-inner, .ant-dropdown,
+.ant-select-dropdown, .ant-picker-dropdown, .ant-tooltip-inner {
+  border-radius: var(--wb-radius) !important;
+  box-shadow: 0 4px 14px rgba(25, 42, 62, .14) !important;
+}
+.ant-modal-header, .ant-drawer-header { background: var(--wb-bg-toolbar) !important; border-color: var(--wb-border) !important; }
+[data-theme="dark"] .ant-modal-content, [data-theme="dark"] .ant-drawer-content,
+[data-theme="dark"] .ant-popover-inner, [data-theme="dark"] .ant-dropdown,
+[data-theme="dark"] .ant-select-dropdown { background: var(--wb-bg-surface) !important; color: var(--wb-text) !important; }
+
+[data-theme="dark"] { color-scheme: dark; }
+[data-theme="dark"] :is(
+  .ant-input, .ant-input-number, .ant-select-selector, .ant-btn-default,
+  .ant-segmented, .ant-collapse-content, .ant-table, .ant-table-tbody > tr > td,
+  .ant-dropdown-menu, .ant-segmented-thumb, .ant-segmented-item-selected
+) {
+  color: var(--wb-text) !important;
+  background: var(--wb-bg-surface) !important;
+  border-color: var(--wb-border-strong) !important;
+}
+[data-theme="dark"] :is(
+  .gx-title, .ant-collapse-header, .ant-select-item, .ant-segmented-item,
+  .ant-drawer-title, .ant-modal-title, .ant-drawer-close, .ant-modal-close
+) { color: var(--wb-text) !important; }
+[data-theme="dark"] :is(.ant-select-item-option-active, .ant-dropdown-menu-item:hover) {
+  background: var(--wb-bg-hover) !important;
+}
+[data-theme="dark"] :is(.ant-select-item-option-selected, .ant-segmented-item-selected) {
+  background: var(--wb-bg-selected) !important;
+}
+[data-theme="dark"] .ant-table-tbody > tr:hover > td { background: var(--wb-bg-hover) !important; }
+[data-theme="dark"] .gis-exchange .ant-select {
+  color: var(--wb-text) !important;
+  background: var(--wb-bg-surface) !important;
+  border-color: var(--wb-border-strong) !important;
+}
+[data-theme="dark"] .gis-exchange :is(.ant-select-input, .ant-select-selection-search-input) {
+  background: transparent !important;
+  color: var(--wb-text) !important;
+}
+[data-theme="dark"] :is(.ant-select-content, .ant-select-selection-item, .ant-select-arrow, .ant-select-suffix) {
+  color: var(--wb-text) !important;
+}
+[data-theme="dark"] .ant-select :is(.ant-select-content-value, .ant-select-selection-item) {
+  color: var(--wb-text) !important;
+  -webkit-text-fill-color: var(--wb-text) !important;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] :is(.ant-select-placeholder, .ant-select-selection-placeholder) {
+  color: var(--wb-text-muted) !important;
+}
+.shell .ant-btn-primary:disabled, .wb-app .ant-btn-primary:disabled,
+.wb-surface .ant-btn-primary:disabled {
+  color: var(--wb-text-muted) !important;
+  background: var(--wb-bg-subtle) !important;
+  border-color: var(--wb-border) !important;
+}
+
+@media (max-width: 900px) {
+  .mongo-page, .gis-exchange { padding: 8px; }
+  .mongo-editor-grid { grid-template-columns: minmax(0, 1fr); }
+  .gis-exchange .gx-row { grid-template-columns: minmax(0, 1fr); }
+}

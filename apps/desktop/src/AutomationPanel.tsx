@@ -78,7 +78,15 @@ export default function AutomationPanel({ open, onClose }: { open: boolean; onCl
   }
 
   return (
-    <Drawer title="自动化调度" width={840} open={open} onClose={onClose} rootClassName="wb-app">
+    <Drawer
+      title="自动化调度"
+      width={840}
+      open={open}
+      onClose={onClose}
+      maskClosable={true}
+      keyboard={true}
+      rootClassName="wb-app-drawer"
+    >
       <Space style={{ marginBottom: 12 }}>
         <Button icon={<Plus size={14} />} onClick={() => startEdit()}>新建任务</Button>
         <Button icon={<RefreshCw size={14} />} onClick={() => void refresh()}>刷新</Button>

@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Key } from "react";
-import { Button, Dropdown, Space, Spin, Tooltip, Tree, Typography } from "antd";
+import { Dropdown, Space, Tooltip } from "antd";
 import type { MenuProps } from "antd";
 import type { DataNode } from "antd/es/tree";
 import { RefreshCw, Search } from "lucide-react";
 import { groupTablesByParent } from "./tree-partition";
 import { WbTreeSidebar, WbToolButton } from "./workbench/Workbench";
-
-const { Text } = Typography;
 
 interface DatabaseObjectTreeProps {
   data: DataNode[];
@@ -45,12 +43,16 @@ interface PartitionedDataNode extends DataNode {
 function tableNode(table: DataNode, extraChildren: DataNode[] = []): DataNode {
   return {
     ...table,
+    isLeaf: false,
+    icon: undefined,
+    className: "tree-chevron-only",
     children: [
       ...extraChildren,
       {
         key: `${String(table.key)}:fields`,
         title: "Fields",
-        icon: <span className="tree-sub-icon" />,
+        isLeaf: false,
+        className: "tree-chevron-only",
       },
     ],
   };
@@ -74,7 +76,7 @@ export function navicatTransform(nodes: DataNode[]): DataNode[] {
           const extra = partitionNodes.length ? [{
             key: `${group.key}:partitions`,
             title: `分区 (${partitionNodes.length})`,
-            icon: <span className="tree-group-icon" />,
+            className: "tree-chevron-only",
             children: partitionNodes,
           }] : [];
           return tableNode(group.node, extra);
@@ -84,7 +86,7 @@ export function navicatTransform(nodes: DataNode[]): DataNode[] {
           children: [{
             key: `${String(schema.key)}:tables`,
             title: "Tables",
-            icon: <span className="tree-group-icon" />,
+            className: "tree-chevron-only",
             children: tables,
           }],
         };
@@ -107,20 +109,20 @@ export default function DatabaseObjectTree({
   const [filter, setFilter] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
   const treeHostRef = useRef<HTMLDivElement>(null);
-  const [treeHeight, setTreeHeight] = useState(360);
-  const rawTreeData = navicatTransform(data);
+  const [treeHeight, setTreeHeight] = useState(1);
+  const rawTreeData = useMemo(() => navicatTransform(data), [data]);
 
   // Virtual scrolling needs an explicit height. Measure the available sidebar
   // area instead of hard-coding it so splitter/layout changes stay correct.
   useEffect(() => {
     const host = treeHostRef.current;
     if (!host) return;
-    const update = () => setTreeHeight(Math.max(160, host.clientHeight));
+    const update = () => setTreeHeight(Math.max(1, host.clientHeight));
     update();
     const observer = new ResizeObserver(update);
     observer.observe(host);
     return () => observer.disconnect();
-  }, [loading]);
+  }, []);
 
   // Default: expand only the connection(s), never the whole tree.
   useEffect(() => {
@@ -211,6 +213,7 @@ export default function DatabaseObjectTree({
       headClassName="tree-label"
       searchClassName="tree-filter-wrap"
       hostClassName="tree-virtual-host"
+      hostRef={treeHostRef}
       height={treeHeight}
       title={<span>对象浏览器</span>}
       actions={

@@ -120,6 +120,34 @@
   border: 1px solid var(--wb-border);
 }
 
+/* Drawer roots are full-viewport fixed overlays. Never apply the .wb-app
+   surface rule to them: antd keeps the root after close and only hides the
+   panel wrapper, which would leave a white full-screen layer over the app. */
+.ant-drawer.wb-app-drawer {
+  font-family: var(--wb-font-sans);
+  font-size: var(--wb-font-size);
+  color: var(--wb-text);
+}
+.ant-drawer.wb-app-drawer .ant-drawer-content {
+  background: var(--wb-bg-surface);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--wb-border);
+}
+.ant-drawer.wb-app-drawer .ant-btn {
+  height: var(--wb-control-h);
+  padding: 0 var(--wb-space-2);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+}
+.ant-drawer.wb-app-drawer .ant-input,
+.ant-drawer.wb-app-drawer .ant-select-selector {
+  min-height: var(--wb-control-h);
+  font-size: var(--wb-font-size);
+  border-radius: var(--wb-radius) !important;
+  box-shadow: none !important;
+}
+
 /* Non-page surfaces (drawers/modals/popovers): tokens only, no layout shell. */
 .wb-surface,
 .wb-surface * { box-sizing: border-box; }

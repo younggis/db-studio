@@ -1660,6 +1660,52 @@ function isUnspecifiedGeometryType(geometryType) {
     const compact = geometryType.toUpperCase().replace(/[^A-Z0-9]/g, "");
     return compact === "GEOMETRY" || compact === "GEOMETRYCOLLECTION" || compact.startsWith("UNKNOWN");
 }
+/**
+ * Strip dimension markers (Z, M, ZM, 3D, 25D, Measured) from an OGR geometry type string
+ * and normalise spacing so callers get a consistent base type like "LineString".
+ * Returns null for null/empty input.
+ *
+ * Examples:
+ *   "3D Point"            → "Point"
+ *   "Line String Z"       → "LineString"
+ *   "Measured Polygon"    → "Polygon"
+ *   "Polygon ZM"          → "Polygon"
+ *   "Point 25D"           → "Point"
+ *   "CircularString Z"    → "CircularString"
+ *   "TIN"                 → "TIN"
+ */
+export function normalizeBaseGeometryType(geometryType) {
+    if (!geometryType)
+        return null;
+    // Strip leading "3D " or "Measured " prefix
+    let result = geometryType.trim()
+        .replace(/^3D\s+/i, '')
+        .replace(/^Measured\s+/i, '');
+    // Strip trailing dimension markers: Z, M, ZM, 25D
+    result = result.replace(/\s+(ZM|Z|M|25D)\s*$/i, '').trim();
+    // Normalise internal whitespace (OGR may return "Line String", "Multi Point", etc.)
+    result = result.replace(/\s+/g, '');
+    // Map common OGR multi-word type names
+    const ogrAliases = {
+        'LINESTRING': 'LineString',
+        'MULTIPOINT': 'MultiPoint',
+        'MULTILINESTRING': 'MultiLineString',
+        'MULTIPOLYGON': 'MultiPolygon',
+        'GEOMETRYCOLLECTION': 'GeometryCollection',
+        'CIRCULARSTRING': 'CircularString',
+        'COMPOUNDCURVE': 'CompoundCurve',
+        'CURVEPOLYGON': 'CurvePolygon',
+        'MULTICURVE': 'MultiCurve',
+        'MULTISURFACE': 'MultiSurface',
+        'POLYHEDRALSURFACE': 'PolyhedralSurface',
+        'TRIANGLE': 'Triangle',
+        'TIN': 'TIN',
+        'POLYGON': 'Polygon',
+        'POINT': 'Point',
+        'GEOMETRY': 'Geometry',
+    };
+    return ogrAliases[result.toUpperCase()] ?? result;
+}
 function formatMapInfoBounds(extent) {
     if (!extent)
         return undefined;
@@ -1827,10 +1873,14 @@ function normalizeLayer(input) {
     const geometryFields = Array.isArray(layer.geometryFields) ? layer.geometryFields : [];
     const geometryField = recordOf(geometryFields[0]);
     const fields = Array.isArray(layer.fields) ? layer.fields : [];
+    const rawGeomType = asString(geometryField.type) || asString(layer.geometryType);
+    const gHasZ = hasGeometryDimension(rawGeomType, "Z");
+    const gHasM = hasGeometryDimension(rawGeomType, "M");
+    const gDim = (2 + (gHasZ ? 1 : 0) + (gHasM ? 1 : 0));
     return {
         name: asString(layer.name) || "layer",
         fidColumnName: typeof layer.fidColumnName === "string" ? layer.fidColumnName : null,
-        geometryType: asString(geometryField.type) || asString(layer.geometryType),
+        geometryType: rawGeomType,
         geometryFields: geometryFields.map((item) => {
             const field = recordOf(item);
             return { name: asString(field.name), type: asString(field.type) };
@@ -1852,6 +1902,10 @@ function normalizeLayer(input) {
                 nullable: typeof item.nullable === "boolean" ? item.nullable : undefined,
             };
         }),
+        hasZ: gHasZ || undefined,
+        hasM: gHasM || undefined,
+        coordinateDimension: gDim,
+        baseGeometryType: rawGeomType ? normalizeBaseGeometryType(rawGeomType) : null,
     };
 }
 function normalizeCrs(value) {

@@ -37,6 +37,14 @@ export interface GisLayerInfo {
         maxY: number;
     } | null;
     fields: GisFieldInfo[];
+    /** True if any geometry in this layer contains Z (elevation) coordinates */
+    hasZ?: boolean;
+    /** True if any geometry in this layer contains M (measure) coordinates */
+    hasM?: boolean;
+    /** Coordinate dimension: 2=XY, 3=XYZ or XYM, 4=XYZM */
+    coordinateDimension?: 2 | 3 | 4;
+    /** Normalised base geometry type without dimension suffix (e.g. "Polygon" from "3D Polygon") */
+    baseGeometryType?: string | null;
 }
 export interface GisDatasetInfo {
     path: string;
@@ -232,4 +240,19 @@ export declare function appendCrsOptions(args: string[], source: GisDatasetInfo,
 export declare function appendGeometryValidityOptions(args: string[], makeValid?: boolean): void;
 export declare function buildKmlIdAttributeMapping(layer: GisLayerInfo, fieldMappings?: GisFieldMapping[]): GisFieldMapping | undefined;
 export declare function formatConversionWarnings(output: string, sourceLayers?: GisLayerInfo[], fieldMappings?: GisFieldMapping[]): string[];
+/**
+ * Strip dimension markers (Z, M, ZM, 3D, 25D, Measured) from an OGR geometry type string
+ * and normalise spacing so callers get a consistent base type like "LineString".
+ * Returns null for null/empty input.
+ *
+ * Examples:
+ *   "3D Point"            → "Point"
+ *   "Line String Z"       → "LineString"
+ *   "Measured Polygon"    → "Polygon"
+ *   "Polygon ZM"          → "Polygon"
+ *   "Point 25D"           → "Point"
+ *   "CircularString Z"    → "CircularString"
+ *   "TIN"                 → "TIN"
+ */
+export declare function normalizeBaseGeometryType(geometryType: string | null): string | null;
 //# sourceMappingURL=index.d.ts.map

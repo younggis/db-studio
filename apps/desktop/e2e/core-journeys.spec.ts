@@ -123,6 +123,98 @@ test("object tree shows Navicat Tables grouping and aligned icon/title", async (
   await expect(firstTable).toBeVisible();
 });
 
+test("SQL editor supports multiple independent query windows", async () => {
+  const page = await attach();
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
+  const tabs = page.locator(".sql-workbench .wb-query-tabs .ant-tabs-tab");
+  const editor = page.locator(".sql-workbench textarea[aria-label='SQL 编辑器']");
+  await expect(tabs).toHaveCount(1);
+
+  await editor.fill("SELECT 1 -- first");
+  await page.locator(".sql-workbench .panel-toolbar").getByRole("button", { name: "新建查询" }).click();
+  await expect(tabs).toHaveCount(2);
+  await editor.fill("SELECT 2 -- second");
+
+  await tabs.first().click();
+  await expect(editor).toHaveValue("SELECT 1 -- first");
+  await tabs.nth(1).click();
+  await expect(editor).toHaveValue("SELECT 2 -- second");
+
+  // Database context is per window: switching tabs moves the connection
+  // selector with it, so the object browser never needs re-selection.
+  const connSelect = page.locator(".sql-workbench .panel-toolbar .ant-select").first();
+  const selectedConnection = async () => (await connSelect.locator(".ant-select-content").innerText()).trim();
+  const firstConnection = await selectedConnection();
+  await connSelect.click();
+  await page.locator(".ant-select-item-option").nth(1).click();
+  const secondConnection = await selectedConnection();
+  expect(secondConnection).not.toBe(firstConnection);
+  await tabs.first().click();
+  expect(await selectedConnection()).toBe(firstConnection);
+  await tabs.nth(1).click();
+  expect(await selectedConnection()).toBe(secondConnection);
+
+  // Closing a window keeps the other window's SQL intact.
+  await tabs.nth(1).locator(".ant-tabs-tab-remove").click();
+  await expect(tabs).toHaveCount(1);
+  await expect(editor).toHaveValue("SELECT 1 -- first");
+});
+
+test("SQL editor and results are stacked with an object-browser context menu", async () => {
+  const page = await attach();
+  if (!(await page.locator(".sql-workbench").count())) {
+    const sqlButton = page.getByRole("button", { name: "SQL 编辑器" }).first();
+    if (await sqlButton.count()) await sqlButton.click();
+  }
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
+
+  const editorBox = await page.locator(".sql-workbench textarea[aria-label='SQL 编辑器']").boundingBox();
+  const resultsBox = await page.locator(".sql-workbench .wb-results").boundingBox();
+  expect(editorBox).not.toBeNull();
+  expect(resultsBox).not.toBeNull();
+  expect(resultsBox!.y).toBeGreaterThan(editorBox!.y + editorBox!.height);
+  await expect(page.locator(".wb-sql-splitter")).toBeVisible();
+
+  const rootNode = page.locator(".sql-workbench .object-tree .ant-tree-treenode")
+    .filter({ hasText: "PostgreSQL" }).first();
+  await rootNode.locator(".tree-node-title").click({ button: "right" });
+  await expect(page.locator(".ant-dropdown-menu-item").first()).toBeVisible({ timeout: 10_000 });
+  const labels = await page.locator(".ant-dropdown-menu-item").allInnerTexts();
+  expect(labels.some((label) => label.includes("新建 SQL 查询"))).toBe(true);
+  await page.keyboard.press("Escape");
+});
+
+test("spatial result viewer renders geometry columns", async () => {
+  const page = await attach();
+  if (!(await page.locator(".sql-workbench").count())) {
+    const sqlButton = page.getByRole("button", { name: "SQL 编辑器" }).first();
+    if (await sqlButton.count()) await sqlButton.click();
+  }
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
+  const connSelect = page.locator(".sql-workbench .panel-toolbar .ant-select").first();
+  await connSelect.click();
+  await page.locator(".ant-select-item-option").first().click();
+  await page.locator(".sql-workbench textarea[aria-label='SQL 编辑器']")
+    .fill("SELECT ST_GeomFromText('POLYGON((116 39,117 39,117 40,116 40,116 39))', 4326) AS geom, 9223372036854775807::bigint AS big, '{\"a\":1}'::json AS doc");
+  await page.locator(".sql-workbench .panel-toolbar").getByRole("button", { name: "执行查询" }).click();
+  await expect(page.locator(".sql-workbench .wb-results .ant-table-row")).toHaveCount(1, { timeout: 20_000 });
+
+  await page.getByRole("button", { name: "空间结果预览" }).click();
+  await expect(page.locator(".spatial-drawer .spatial-canvas")).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator(".spatial-drawer .spatial-toolbar")).toContainText("geom");
+  await expect(page.locator(".spatial-drawer .spatial-toolbar")).toContainText("1 / 1 行");
+
+  // Clicking the interior of a polygon (not just its border) must select it,
+  // and must never unmount the workbench (a Buffer reference used to blank it).
+  const canvas = page.locator(".spatial-canvas");
+  const box = await canvas.boundingBox();
+  await canvas.click({ position: { x: box!.width / 2, y: box!.height / 2 } });
+  await expect(page.locator(".spatial-drawer .spatial-inspector")).toContainText("行号");
+  await expect(page.locator(".spatial-drawer .spatial-inspector")).toContainText("big");
+  await expect(page.locator(".sql-workbench")).toBeVisible();
+  await page.locator(".ant-drawer-open .ant-drawer-close").first().click();
+});
+
 test("global workbench tokens are consistent across all pages", async () => {
   const page = await attach();
 
@@ -237,16 +329,42 @@ test("MongoDB documents page has compact query bar and view switcher", async () 
   await expect(page.locator(".mongo-page .json-mini-label")).toHaveText("Aggregate Pipeline");
 });
 
-test("SQL page opens AI assistant and history drawers", async () => {
+test("topbar tool drawers close back to the workbench", async () => {
   const page = await attach();
-  // ensure we are on the SQL page regardless of the previous test
+  // The previous test leaves the MongoDB page open; return to SQL first.
   const sqlButton = page.getByRole("button", { name: "SQL 编辑器" }).first();
   if (await sqlButton.count()) await sqlButton.click();
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
+  for (const name of ["BI 图表", "自动化调度"]) {
+    await page.getByRole("button", { name }).first().click();
+    await expect(page.locator(".ant-drawer-open .ant-drawer-title")).toBeVisible({ timeout: 10_000 });
+    if (name === "BI 图表") await expect(page.locator(".bi-panel")).toBeVisible();
+    await page.locator(".ant-drawer-open .ant-drawer-close").first().click();
+    await expect(page.locator(".ant-drawer-mask")).toHaveCount(0, { timeout: 10_000 });
+    await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 10_000 });
+    // antd keeps drawer roots mounted after close. Their background must stay
+    // transparent, otherwise a full-screen white layer hides the workbench.
+    const backgrounds = await page.locator(".ant-drawer").evaluateAll(
+      (els) => els.map((el) => getComputedStyle(el).backgroundColor));
+    expect(backgrounds.length).toBeGreaterThan(0);
+    expect(backgrounds.every((bg) => bg === "rgba(0, 0, 0, 0)")).toBe(true);
+  }
+});
+
+test("SQL page opens AI assistant and history drawers", async () => {
+  const page = await attach();
+  // Ensure we are on the SQL page without clicking a button the SQL overlay
+  // itself may be covering (the overlay is already active in some run orders).
+  if (!(await page.locator(".sql-workbench").count())) {
+    const sqlButton = page.getByRole("button", { name: "SQL 编辑器" }).first();
+    if (await sqlButton.count()) await sqlButton.click();
+  }
+  await expect(page.locator(".sql-workbench")).toBeVisible({ timeout: 20_000 });
   const aiButton = page.locator(".panel-toolbar").getByRole("button", { name: "AI 助手" }).first();
   await expect(aiButton).toBeVisible({ timeout: 20_000 });
   await aiButton.click();
   await expect(page.locator(".ai-drawer-title")).toContainText("AI SQL Assistant", { timeout: 10_000 });
-  await page.locator(".ant-drawer-close").first().click();
+  await page.locator(".ant-drawer-open .ant-drawer-close").first().click();
   const history = page.locator(".toolbar-actions").getByRole("button", { name: "历史" });
   await expect(history).toBeVisible({ timeout: 10_000 });
   await history.click();

@@ -62,7 +62,15 @@ export default function BackupPanel({ open, onClose, connectionId, connectionNam
   }
 
   return (
-    <Drawer title="备份 / 恢复" width={640} open={open} onClose={onClose} rootClassName="wb-app">
+    <Drawer
+      title="备份 / 恢复"
+      width={640}
+      open={open}
+      onClose={onClose}
+      maskClosable={true}
+      keyboard={true}
+      rootClassName="wb-app-drawer"
+    >
       <div className="dbtools-form">
         <div className="dbtools-row">
           <span className="dbtools-label">连接</span>
